@@ -15,7 +15,10 @@ export async function POST(req: Request) {
 
     // TODO: send email confirmation (Mailgun)
     return NextResponse.json({ success: true, data });
-  } catch (err: Error | any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: "An unknown error occurred" }, { status: 500 });
   }
 }

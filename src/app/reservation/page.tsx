@@ -126,14 +126,14 @@ export default function Reservation() {
           transition={{ duration: 0.6 }}
           className="text-center relative mb-8"
         >
-          <Link 
+          <Link
             href="/"
             className="absolute left-0 top-1/2 transform -translate-y-1/2 flex items-center text-gray-600 hover:text-amber-700 transition-colors duration-200 group"
           >
-            <svg 
-              className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-200" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -210,11 +210,11 @@ export default function Reservation() {
                     <option value="">Select a date</option>
                     {dateOptions.map((date) => (
                       <option key={date} value={date}>
-                        {new Date(date).toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
+                        {new Date(date).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
                         })}
                       </option>
                     ))}
@@ -239,10 +239,10 @@ export default function Reservation() {
                     <option value="">Select a time</option>
                     {timeSlots.map((time) => (
                       <option key={time} value={time}>
-                        {new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', { 
-                          hour: 'numeric', 
+                        {new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', {
+                          hour: 'numeric',
                           minute: '2-digit',
-                          hour12: true 
+                          hour12: true
                         })}
                       </option>
                     ))}
@@ -297,7 +297,7 @@ export default function Reservation() {
             </div>
 
             <p className="text-xs text-gray-500 text-center">
-              * Required fields. You'll receive a confirmation email shortly after booking.
+              {"* Required fields. You'll receive a confirmation email shortly after booking."}
             </p>
           </form>
         </motion.div>

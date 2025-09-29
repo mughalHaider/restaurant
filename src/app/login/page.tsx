@@ -13,7 +13,7 @@ export default function EmployeeLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     // Simulate API call for magic link
     setTimeout(() => {
       setIsLoading(false);
@@ -32,14 +32,14 @@ export default function EmployeeLogin() {
           className="text-center relative"
         >
           {/* Back Button */}
-          <Link 
+          <Link
             href="/"
             className="absolute left-0 top-1/2 transform -translate-y-1/2 flex items-center text-gray-600 hover:text-amber-700 transition-colors duration-200 group"
           >
-            <svg 
-              className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-200" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -123,8 +123,8 @@ export default function EmployeeLogin() {
                 Magic Link Sent!
               </h3>
               <p className="text-sm text-gray-600 mb-6">
-                We've sent a secure login link to <strong>{email}</strong>. 
-                Check your email and click the link to access your dashboard.
+                {"We've sent a secure login link to "} <strong>{email}</strong>
+                {". Check your email and click the link to access your dashboard."}
               </p>
               <div className="space-y-3">
                 <button

@@ -6,7 +6,7 @@ import { Plus, Edit2, Trash2, Users } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Select } from "@/components/ui/select";
 import { Pagination } from "@/components/ui/pagination";
-
+import { withRole } from "@/lib/withRole";
 
 type Table = {
   id: string;
@@ -20,10 +20,10 @@ type ModalData = {
   table: Table | null;
 };
 
-export default function TablesPage() {
+function TablesPage({ role }: { role: string }) {
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -240,13 +240,15 @@ export default function TablesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Table Management</h1>
           <p className="text-gray-600 mt-1">Manage your restaurant tables and seating capacity</p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-150 font-medium cursor-pointer"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Add Table</span>
-        </button>
+        {role !== "waiter" && (
+          <button
+            onClick={openAddModal}
+            className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-150 font-medium cursor-pointer"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Add Table</span>
+          </button>
+        )}
       </div>
 
       {/* Stats Grid */}
@@ -274,7 +276,7 @@ export default function TablesPage() {
         <div className="p-6 border-b">
           <h3 className="text-lg font-semibold text-gray-900">All Tables ({tables.length})</h3>
         </div>
-        
+
         {loading ? (
           <div className="p-12 text-center text-gray-500">Loading tables...</div>
         ) : tables.length === 0 ? (
@@ -331,22 +333,24 @@ export default function TablesPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => openEditModal(table)}
-                            className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
-                            title="Edit"
-                          >
-                            <Edit2 className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => openDeleteModal(table)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
+                        {role !== "waiter" && (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => openEditModal(table)}
+                              className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
+                              title="Edit"
+                            >
+                              <Edit2 className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => openDeleteModal(table)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -373,3 +377,5 @@ export default function TablesPage() {
     </div>
   );
 }
+
+export default withRole(TablesPage, ["admin", "manager", "waiter"]);

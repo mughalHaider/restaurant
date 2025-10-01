@@ -3,6 +3,7 @@
 import { Select } from "@/components/ui/select";
 import { supabase } from "@/lib/supabaseClient";
 import { getWeek } from "@/lib/utils";
+import { withRole } from "@/lib/withRole";
 import {
   AlertCircle,
   Calendar,
@@ -32,7 +33,7 @@ type DailyStat = { date: string; count: number };
 type WeeklyStat = { week: number; count: number };
 type StatusStat = { status: string; count: number; percentage: number };
 
-export default function StatsPage() {
+function StatsPage() {
   const [daily, setDaily] = useState<DailyStat[]>([]);
   const [weekly, setWeekly] = useState<WeeklyStat[]>([]);
   const [statusStats, setStatusStats] = useState<StatusStat[]>([]);
@@ -311,3 +312,5 @@ export default function StatsPage() {
     </div>
   );
 }
+
+export default withRole(StatsPage, ["admin", "manager"]);

@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { supabase } from "@/lib/supabaseClient";
 
 export default function EmployeeLogin() {
   const [email, setEmail] = useState('');
@@ -14,12 +15,44 @@ export default function EmployeeLogin() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call for magic link
-    setTimeout(() => {
+    // 1. Check employee in DB
+    const { data: employees, error } = await supabase
+      .from("employees")
+      .select("*")
+      .eq("email", email)
+      .single();
+
+    if (error || !employees) {
       setIsLoading(false);
-      setIsSubmitted(true);
-    }, 2000);
+      alert("No employee found with this email.");
+      return;
+    }
+
+    if (employees.status !== "active") {
+      setIsLoading(false);
+      alert("Your account is not active yet. Contact admin.");
+      return;
+    }
+
+    // 2. Send magic link
+    const { error: inviteError } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/employee-auth-callback`,
+      },
+    });
+
+    setIsLoading(false);
+
+    if (inviteError) {
+      console.error(inviteError);
+      alert("Error sending magic link. Try again later.");
+      return;
+    }
+
+    setIsSubmitted(true);
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

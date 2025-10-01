@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { withRole } from "@/lib/withRole";
 import {
   Search,
   Calendar,
@@ -31,7 +32,7 @@ type Table = {
   id: string;
   number: number;
   capacity: number;
-  status: string;
+  status: "available" | "reserved" | "occupied";
 };
 
 type ActionModalData = {
@@ -39,12 +40,13 @@ type ActionModalData = {
   reservation: Reservation | null;
 };
 
-export default function ReservationsPage() {
+function ReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [tables, setTables] = useState<Table[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,13 +64,18 @@ export default function ReservationsPage() {
       setLoading(true);
       const { data: resData } = await supabase
         .from("reservations")
-        .select("*")
+        .select(`
+    *,
+    restaurant_tables ( number, capacity )
+  `)
         .order("date", { ascending: true })
         .order("time", { ascending: true });
+
       const { data: tableData } = await supabase
         .from("restaurant_tables")
         .select("*")
         .order("number", { ascending: true });
+
       setReservations(resData || []);
       setTables(tableData || []);
       setLoading(false);
@@ -85,23 +92,48 @@ export default function ReservationsPage() {
     setActionModal({ type: null, reservation: null });
   };
 
+  // Confirm reservation (only if table assigned)
+  const confirmReservation = async (reservation: Reservation) => {
+    if (!reservation.table_id) {
+      setErrorMessage("⚠️ Please assign a table before confirming.");
+      return;
+    }
+
+    await supabase
+      .from("reservations")
+      .update({ status: "accepted" })
+      .eq("id", reservation.id);
+
+    // Update table status → reserved
+    await supabase
+      .from("restaurant_tables")
+      .update({ status: "reserved" })
+      .eq("id", reservation.table_id);
+
+    setReservations((prev) =>
+      prev.map((r) =>
+        r.id === reservation.id ? { ...r, status: "accepted" } : r
+      )
+    );
+    setTables((prev) =>
+      prev.map((t) =>
+        t.id === reservation.table_id ? { ...t, status: "reserved" } : t
+      )
+    );
+    setActionModal({ type: null, reservation: null });
+  };
+
   // Assign table
   const assignTable = async (reservationId: string, tableId: string) => {
     await supabase
       .from("reservations")
       .update({ table_id: tableId })
       .eq("id", reservationId);
+
     setReservations((prev) =>
       prev.map((r) =>
         r.id === reservationId ? { ...r, table_id: tableId } : r
       )
-    );
-    await supabase
-      .from("restaurant_tables")
-      .update({ status: "reserved" })
-      .eq("id", tableId);
-    setTables((prev) =>
-      prev.map((t) => (t.id === tableId ? { ...t, status: "reserved" } : t))
     );
   };
 
@@ -111,8 +143,13 @@ export default function ReservationsPage() {
       r.name.toLowerCase().includes(search.toLowerCase()) ||
       r.email.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "all" || r.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && r.status !== "accepted"; // exclude confirmed
   });
+
+  // Confirmed reservations
+  const confirmedReservations = reservations.filter(
+    (r) => r.status === "accepted"
+  );
 
   // Pagination
   const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
@@ -128,9 +165,7 @@ export default function ReservationsPage() {
   const pendingCount = reservations.filter(
     (r) => r.status === "pending"
   ).length;
-  const acceptedCount = reservations.filter(
-    (r) => r.status === "accepted"
-  ).length;
+  const acceptedCount = confirmedReservations.length;
   const arrivedCount = reservations.filter(
     (r) => r.status === "arrived"
   ).length;
@@ -157,6 +192,7 @@ export default function ReservationsPage() {
     reservation: Reservation
   ) => {
     setActionModal({ type, reservation });
+    setErrorMessage(null); // clear old error
   };
 
   const getModalContent = () => {
@@ -170,22 +206,21 @@ export default function ReservationsPage() {
         description: "Are you sure you want to confirm this reservation?",
         actionText: "Confirm",
         actionClass: "bg-green-500 hover:bg-green-600",
-        newStatus: "accepted",
+        action: () => confirmReservation(reservation),
       },
       cancel: {
         title: "Cancel Reservation",
-        description:
-          "Are you sure you want to cancel this reservation? This action cannot be undone.",
+        description: "Are you sure you want to cancel this reservation?",
         actionText: "Cancel Reservation",
         actionClass: "bg-red-500 hover:bg-red-600",
-        newStatus: "cancelled",
+        action: () => updateStatus(reservation.id, "cancelled"),
       },
       arrived: {
         title: "Mark as Arrived",
         description: "Confirm that the guest has arrived at the restaurant.",
         actionText: "Mark Arrived",
         actionClass: "bg-blue-500 hover:bg-blue-600",
-        newStatus: "arrived",
+        action: () => updateStatus(reservation.id, "arrived"),
       },
     };
 
@@ -200,6 +235,12 @@ export default function ReservationsPage() {
         description={config.description}
       >
         <div className="space-y-4">
+          {errorMessage && (
+            <div className="text-red-600 text-sm bg-red-100 p-2 rounded">
+              {errorMessage}
+            </div>
+          )}
+
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Guest:</span>
@@ -225,6 +266,12 @@ export default function ReservationsPage() {
                 {reservation.guests} guests
               </span>
             </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Table Assigned:</span>
+              <span className="font-medium text-gray-900">
+                {reservation.table_id ? reservation.table_id : "None"}
+              </span>
+            </div>
           </div>
 
           <div className="flex gap-3 justify-end">
@@ -235,7 +282,7 @@ export default function ReservationsPage() {
               Cancel
             </button>
             <button
-              onClick={() => updateStatus(reservation.id, config.newStatus)}
+              onClick={config.action}
               className={`px-4 py-2 text-white rounded-lg transition-colors cursor-pointer ${config.actionClass}`}
             >
               {config.actionText}
@@ -247,7 +294,7 @@ export default function ReservationsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-10">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Reservations</h1>
@@ -280,7 +327,6 @@ export default function ReservationsPage() {
         </div>
       </div>
 
-      {/* Search and Filter */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
@@ -312,11 +358,11 @@ export default function ReservationsPage() {
         </div>
       </div>
 
-      {/* Reservations Table */}
+      {/* All Reservations Table */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b">
           <h3 className="text-lg font-semibold text-gray-900">
-            All Reservations ({filteredReservations.length})
+            Pending Reservations ({filteredReservations.length})
           </h3>
         </div>
 
@@ -326,7 +372,7 @@ export default function ReservationsPage() {
           </div>
         ) : paginatedReservations.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-gray-500">No reservations found</p>
+            <p className="text-gray-500">No Pending reservations found</p>
           </div>
         ) : (
           <>
@@ -390,7 +436,7 @@ export default function ReservationsPage() {
                           options={tables
                             .filter(
                               (t) =>
-                                t.status === "free" || t.id === res.table_id
+                                t.status === "available" || t.id === res.table_id
                             )
                             .map((t) => ({
                               value: t.id,
@@ -421,15 +467,13 @@ export default function ReservationsPage() {
                               <CheckCircle className="w-5 h-5" />
                             </button>
                           )}
-                          {res.status !== "cancelled" && (
-                            <button
-                              onClick={() => openActionModal("cancel", res)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                              title="Cancel"
-                            >
-                              <XCircle className="w-5 h-5" />
-                            </button>
-                          )}
+                          <button
+                            onClick={() => openActionModal("cancel", res)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                            title="Cancel/Delete"
+                          >
+                            <XCircle className="w-5 h-5" />
+                          </button>
                           {res.status === "accepted" && (
                             <button
                               onClick={() => openActionModal("arrived", res)}
@@ -459,8 +503,82 @@ export default function ReservationsPage() {
         )}
       </div>
 
+      {/* Confirmed Reservations Table */}
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="p-6 border-b">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Confirmed Reservations ({confirmedReservations.length})
+          </h3>
+        </div>
+        {confirmedReservations.length === 0 ? (
+          <div className="p-6 text-gray-500">No confirmed reservations</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Guest
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Party Size
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Table
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {confirmedReservations.map((res) => {
+                  const table = tables.find((t) => t.id === res.table_id);
+                  return (
+                    <tr key={res.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                        {res.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {new Date(res.date).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{res.time}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {res.guests}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {table ? `Table ${table.number} (${table.capacity})` : "—"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => openActionModal("arrived", res)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                          title="Mark Arrived"
+                        >
+                          <UserCheck className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+
+
       {/* Action Modal */}
       {actionModal.type && getModalContent()}
     </div>
   );
 }
+
+export default withRole(ReservationsPage, ["admin", "manager", "waiter"]);

@@ -1,7 +1,9 @@
 // src/app/dashboard/settings/page.tsx
 'use client';
 
-export default function SettingsPage() {
+import { withRole } from "@/lib/withRole";
+
+function SettingsPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Settings</h1>
@@ -46,3 +48,6 @@ export default function SettingsPage() {
     </div>
   );
 }
+
+
+export default withRole(SettingsPage, ["admin"]);

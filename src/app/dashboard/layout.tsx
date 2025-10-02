@@ -4,7 +4,6 @@ import { LogOut, Menu, X, Home, Calendar, Table, BarChart3, Users, Settings, Che
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter, usePathname } from "next/navigation";
-import "@/globals.css";
 
 type Role = "waiter" | "manager" | "admin";
 
@@ -279,7 +278,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-50 to-amber-50/30 hide-scrollbar">
+        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-50 to-amber-50/30">
           {children}
         </main>
       </div>

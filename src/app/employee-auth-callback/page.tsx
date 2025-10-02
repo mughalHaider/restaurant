@@ -50,10 +50,6 @@ export default function EmployeeAuthCallback() {
         return;
       }
 
-      // 4. Save role locally
-      localStorage.setItem("employeeRole", emp.role);
-      localStorage.setItem("employeeEmail", email);
-
       // 5. Redirect based on role
       if (emp.role === "manager") {
         router.replace("/dashboard/");

@@ -1,3 +1,5 @@
+
+
 // app/employee-login/page.tsx
 'use client';
 
@@ -10,10 +12,12 @@ export default function EmployeeLogin() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // ✅ new state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null); // reset errors
 
     // 1. Check employee in DB
     const { data: employees, error } = await supabase
@@ -24,13 +28,13 @@ export default function EmployeeLogin() {
 
     if (error || !employees) {
       setIsLoading(false);
-      alert("No employee found with this email.");
+      setErrorMessage("No employee found with this email."); // ✅ inline error
       return;
     }
 
     if (employees.status !== "active") {
       setIsLoading(false);
-      alert("Your account is not active yet. Contact admin.");
+      setErrorMessage("Your account is not active yet. Contact admin."); // ✅ inline error
       return;
     }
 
@@ -48,48 +52,28 @@ export default function EmployeeLogin() {
 
     if (inviteError) {
       console.error(inviteError);
-      alert("Error sending magic link. Try again later.");
+      setErrorMessage("Error sending magic link. Try again later."); // ✅ inline error
       return;
     }
 
     setIsSubmitted(true);
   };
 
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        {/* Header with Back Button */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center relative"
         >
-          {/* Back Button */}
-          <Link
-            href="/"
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 flex items-center text-gray-600 hover:text-amber-700 transition-colors duration-200 group"
-          >
-            <svg
-              className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-200"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </Link>
-
           <Link href="/" className="inline-block">
             <h1 className="text-3xl font-bold text-amber-800 font-serif">Madot Restaurant</h1>
           </Link>
-          <h2 className="mt-6 text-2xl sm:text-3xl font-bold text-gray-900">
-            Employee Login
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Secure passwordless authentication for staff
-          </p>
+          <h2 className="mt-6 text-2xl sm:text-3xl font-bold text-gray-900">Employee Login</h2>
+          <p className="mt-2 text-sm text-gray-600">Secure passwordless authentication for staff</p>
         </motion.div>
 
         {/* Login Form */}
@@ -120,6 +104,11 @@ export default function EmployeeLogin() {
                 </div>
               </div>
 
+              {/* ✅ Inline Error Message */}
+              {errorMessage && (
+                <p className="text-sm text-red-600">{errorMessage}</p>
+              )}
+
               <div>
                 <motion.button
                   type="submit"
@@ -143,7 +132,6 @@ export default function EmployeeLogin() {
               </div>
             </form>
           ) : (
-            // Success State
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -181,8 +169,6 @@ export default function EmployeeLogin() {
             </motion.div>
           )}
         </motion.div>
-
-        {/* Support Link */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

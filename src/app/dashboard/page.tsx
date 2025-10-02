@@ -164,7 +164,7 @@ function DashboardPage() {
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Today's Reservations</p>
+              <p className="text-sm font-medium text-gray-600 mb-1">Today&apos;s Reservations</p>
               <p className="text-4xl font-bold text-gray-900">{reservations.length}</p>
             </div>
             <div className="p-3 bg-amber-100 rounded-xl">
@@ -222,7 +222,7 @@ function DashboardPage() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Today's Schedule</h3>
+              <h3 className="text-xl font-bold text-gray-900">Today&apos;s Schedule</h3>
               <p className="text-gray-600 mt-1">Confirmed reservations for your shift</p>
             </div>
             <div className="flex items-center gap-2">

@@ -290,7 +290,7 @@ function EmployeesPage() {
             <Filter className="text-gray-400 w-5 h-5" />
             <select
               value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value as any)}
+              onChange={(e) => setRoleFilter(e.target.value as "all" | "waiter" | "manager")}
               className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
             >
               <option value="all">All Roles</option>
@@ -304,7 +304,7 @@ function EmployeesPage() {
             <Filter className="text-gray-400 w-5 h-5" />
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
+              onChange={(e) => setStatusFilter(e.target.value as "all" | "pending" | "active" | "inactive")}
               className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
             >
               <option value="all">All Status</option>

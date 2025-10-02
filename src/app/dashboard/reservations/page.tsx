@@ -12,6 +12,9 @@ import {
   XCircle,
   UserCheck,
   Filter,
+  Edit,
+  Save,
+  X,
 } from "lucide-react";
 import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
@@ -36,11 +39,11 @@ type Table = {
 };
 
 type ActionModalData = {
-  type: "confirm" | "cancel" | "arrived" | null;
+  type: "confirm" | "cancel" | "arrived" | "edit" | null;
   reservation: Reservation | null;
 };
 
-function ReservationsPage() {
+function ReservationsPage({ role }: { role: string }) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [tables, setTables] = useState<Table[]>([]);
   const [search, setSearch] = useState("");
@@ -58,6 +61,15 @@ function ReservationsPage() {
     reservation: null,
   });
 
+  // Edit state for confirmed reservations
+  const [editingReservationId, setEditingReservationId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    date: "",
+    time: "",
+    guests: 0,
+    table_id: "",
+  });
+
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
@@ -65,9 +77,9 @@ function ReservationsPage() {
       const { data: resData } = await supabase
         .from("reservations")
         .select(`
-    *,
-    restaurant_tables ( number, capacity )
-  `)
+          *,
+          restaurant_tables ( number, capacity )
+        `)
         .order("date", { ascending: true })
         .order("time", { ascending: true });
 
@@ -94,37 +106,81 @@ function ReservationsPage() {
 
   // Confirm reservation (only if table assigned)
   const confirmReservation = async (reservation: Reservation) => {
-    if (!reservation.table_id) {
-      setErrorMessage("⚠️ Please assign a table before confirming.");
-      return;
+  if (!reservation.table_id) {
+    setErrorMessage("⚠️ Please assign a table before confirming.");
+    return;
+  }
+
+  await supabase
+    .from("reservations")
+    .update({ status: "accepted" })
+    .eq("id", reservation.id);
+
+  // Update table status → reserved
+  await supabase
+    .from("restaurant_tables")
+    .update({ status: "reserved" })
+    .eq("id", reservation.table_id);
+
+  setReservations((prev) =>
+    prev.map((r) =>
+      r.id === reservation.id ? { ...r, status: "accepted" } : r
+    )
+  );
+  setTables((prev) =>
+    prev.map((t) =>
+      t.id === reservation.table_id ? { ...t, status: "reserved" } : t
+    )
+  );
+  setActionModal({ type: null, reservation: null });
+
+  // 🚀 Send confirmation email via Resend API
+  const table = tables.find((t) => t.id === reservation.table_id);
+  try {
+    const response = await fetch("/api/send-confirmation-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: reservation.email,
+        name: reservation.name,
+        date: reservation.date,
+        time: reservation.time,
+        table: table ? `Table ${table.number} (${table.capacity} seats)` : "N/A",
+      }),
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      console.error("Email failed:", result.error);
+      alert("Reservation confirmed ✅ but email could not be sent.");
+    }
+  } catch (err) {
+    console.error("Error sending email:", err);
+    alert("Reservation confirmed ✅ but email could not be sent.");
+  }
+};
+
+
+  // Assign table for pending reservations
+  const assignTable = async (reservationId: string, tableId: string) => {
+    const reservation = reservations.find(r => r.id === reservationId);
+    const previousTableId = reservation?.table_id;
+
+    // If changing from one table to another, update previous table status
+    if (previousTableId && previousTableId !== tableId) {
+      await supabase
+        .from("restaurant_tables")
+        .update({ status: "available" })
+        .eq("id", previousTableId);
     }
 
-    await supabase
-      .from("reservations")
-      .update({ status: "accepted" })
-      .eq("id", reservation.id);
-
-    // Update table status → reserved
+    // Update new table status to reserved
     await supabase
       .from("restaurant_tables")
       .update({ status: "reserved" })
-      .eq("id", reservation.table_id);
+      .eq("id", tableId);
 
-    setReservations((prev) =>
-      prev.map((r) =>
-        r.id === reservation.id ? { ...r, status: "accepted" } : r
-      )
-    );
-    setTables((prev) =>
-      prev.map((t) =>
-        t.id === reservation.table_id ? { ...t, status: "reserved" } : t
-      )
-    );
-    setActionModal({ type: null, reservation: null });
-  };
-
-  // Assign table
-  const assignTable = async (reservationId: string, tableId: string) => {
+    // Update reservation with new table
     await supabase
       .from("reservations")
       .update({ table_id: tableId })
@@ -135,6 +191,122 @@ function ReservationsPage() {
         r.id === reservationId ? { ...r, table_id: tableId } : r
       )
     );
+
+    // Update tables state
+    setTables((prev) =>
+      prev.map((t) => {
+        if (t.id === previousTableId) {
+          return { ...t, status: "available" };
+        } else if (t.id === tableId) {
+          return { ...t, status: "reserved" };
+        }
+        return t;
+      })
+    );
+  };
+
+  // Start editing confirmed reservation
+  const startEditing = (reservation: Reservation) => {
+    setEditingReservationId(reservation.id);
+    setEditForm({
+      date: reservation.date,
+      time: reservation.time,
+      guests: reservation.guests,
+      table_id: reservation.table_id || "",
+    });
+  };
+
+  // Cancel editing
+  const cancelEditing = () => {
+    setEditingReservationId(null);
+    setEditForm({
+      date: "",
+      time: "",
+      guests: 0,
+      table_id: "",
+    });
+  };
+
+  // Save edited reservation
+  const saveEdit = async () => {
+    if (!editingReservationId) return;
+
+    const reservation = reservations.find(r => r.id === editingReservationId);
+    if (!reservation) return;
+
+    const previousTableId = reservation.table_id;
+    const newTableId = editForm.table_id;
+
+    try {
+      // If table is being changed, update table statuses
+      if (previousTableId !== newTableId) {
+        // Free up the previous table
+        if (previousTableId) {
+          await supabase
+            .from("restaurant_tables")
+            .update({ status: "available" })
+            .eq("id", previousTableId);
+        }
+
+        // Reserve the new table
+        if (newTableId) {
+          await supabase
+            .from("restaurant_tables")
+            .update({ status: "reserved" })
+            .eq("id", newTableId);
+        }
+      }
+
+      // Update reservation details
+      const { error } = await supabase
+        .from("reservations")
+        .update({
+          date: editForm.date,
+          time: editForm.time,
+          guests: editForm.guests,
+          table_id: newTableId || null,
+        })
+        .eq("id", editingReservationId);
+
+      if (error) {
+        console.error("Error updating reservation:", error);
+        alert("Error updating reservation");
+        return;
+      }
+
+      // Update local state
+      setReservations((prev) =>
+        prev.map((r) =>
+          r.id === editingReservationId
+            ? {
+              ...r,
+              date: editForm.date,
+              time: editForm.time,
+              guests: editForm.guests,
+              table_id: newTableId || null,
+            }
+            : r
+        )
+      );
+
+      // Update tables state
+      setTables((prev) =>
+        prev.map((t) => {
+          if (t.id === previousTableId && previousTableId !== newTableId) {
+            return { ...t, status: "available" };
+          } else if (t.id === newTableId && previousTableId !== newTableId) {
+            return { ...t, status: "reserved" };
+          }
+          return t;
+        })
+      );
+
+      cancelEditing();
+      alert("Reservation updated successfully!");
+    } catch (error) {
+      console.error("Error saving reservation edit:", error);
+      alert("Error updating reservation");
+    }
   };
 
   // Filter reservations
@@ -143,12 +315,12 @@ function ReservationsPage() {
       r.name.toLowerCase().includes(search.toLowerCase()) ||
       r.email.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "all" || r.status === statusFilter;
-    return matchesSearch && matchesStatus && r.status !== "accepted"; // exclude confirmed
+    return matchesSearch && matchesStatus && r.status !== "accepted" && r.status !== "arrived"; // exclude confirmed
   });
 
   // Confirmed reservations
   const confirmedReservations = reservations.filter(
-    (r) => r.status === "accepted"
+    (r) => r.status === "accepted" || r.status === "arrived"
   );
 
   // Pagination
@@ -174,15 +346,15 @@ function ReservationsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "accepted":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 border border-green-200";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 border border-yellow-200";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 border border-red-200";
       case "arrived":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 border border-blue-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 border border-gray-200";
     }
   };
 
@@ -224,7 +396,7 @@ function ReservationsPage() {
       },
     };
 
-    const config = type ? modalConfig[type] : null;
+    const config = type ? modalConfig[type as keyof typeof modalConfig] : null;
     if (!config) return null;
 
     return (
@@ -269,7 +441,7 @@ function ReservationsPage() {
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Table Assigned:</span>
               <span className="font-medium text-gray-900">
-                {reservation.table_id ? reservation.table_id : "None"}
+                {reservation.table_id ? `Table ${tables.find(t => t.id === reservation.table_id)?.number}` : "None"}
               </span>
             </div>
           </div>
@@ -290,6 +462,13 @@ function ReservationsPage() {
           </div>
         </div>
       </Modal>
+    );
+  };
+
+  // Get available tables for dropdown (available + current table if reserved)
+  const getAvailableTables = (currentTableId?: string | null) => {
+    return tables.filter(
+      (t) => t.status === "available" || t.id === currentTableId
     );
   };
 
@@ -362,7 +541,7 @@ function ReservationsPage() {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b">
           <h3 className="text-lg font-semibold text-gray-900">
-            Pending Reservations ({filteredReservations.length})
+            Pending Reqests ({filteredReservations.length})
           </h3>
         </div>
 
@@ -433,15 +612,10 @@ function ReservationsPage() {
                         <Select
                           value={res.table_id || ""}
                           onValueChange={(value) => assignTable(res.id, value)}
-                          options={tables
-                            .filter(
-                              (t) =>
-                                t.status === "available" || t.id === res.table_id
-                            )
-                            .map((t) => ({
-                              value: t.id,
-                              label: `Table ${t.number} (${t.capacity})`,
-                            }))}
+                          options={getAvailableTables(res.table_id).map((t) => ({
+                            value: t.id,
+                            label: `Table ${t.number} (${t.capacity} seats)`,
+                          }))}
                           placeholder="Assign Table"
                           className="min-w-[150px]"
                         />
@@ -521,16 +695,16 @@ function ReservationsPage() {
                     Guest
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Time
+                    Date & Time
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Party Size
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Table
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Actions
@@ -540,40 +714,151 @@ function ReservationsPage() {
               <tbody className="divide-y divide-gray-200">
                 {confirmedReservations.map((res) => {
                   const table = tables.find((t) => t.id === res.table_id);
+
+                  // Prevent editing UI for arrived reservations
+                  const isEditing = editingReservationId === res.id && res.status !== "arrived";
+
                   return (
                     <tr key={res.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {res.name}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {new Date(res.date).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{res.time}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {res.guests}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {table ? `Table ${table.number} (${table.capacity})` : "—"}
-                      </td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() => openActionModal("arrived", res)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                          title="Mark Arrived"
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{res.name}</div>
+                          <div className="text-sm text-gray-500">{res.email}</div>
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="date"
+                              value={editForm.date}
+                              onChange={(e) => setEditForm((prev) => ({ ...prev, date: e.target.value }))}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                            <input
+                              type="time"
+                              value={editForm.time}
+                              onChange={(e) => setEditForm((prev) => ({ ...prev, time: e.target.value }))}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <div className="flex items-center space-x-2 text-sm text-gray-900">
+                              <Calendar className="w-4 h-4 text-gray-400" />
+                              <span>{new Date(res.date).toLocaleDateString()}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
+                              <Clock className="w-4 h-4 text-gray-400" />
+                              <span>{res.time}</span>
+                            </div>
+                          </div>
+                        )}
+                      </td>
+
+                      <td className="px-6 py-4">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            min="1"
+                            value={editForm.guests}
+                            onChange={(e) => setEditForm((prev) => ({ ...prev, guests: parseInt(e.target.value) || 1 }))}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                          />
+                        ) : (
+                          <div className="flex items-center text-sm text-gray-900">
+                            <Users className="w-4 h-4 mr-2 text-gray-400" />
+                            {res.guests} guests
+                          </div>
+                        )}
+                      </td>
+
+                      <td className="px-6 py-4">
+                        {isEditing ? (
+                          <Select
+                            value={editForm.table_id}
+                            onValueChange={(value) => setEditForm((prev) => ({ ...prev, table_id: value }))}
+                            options={getAvailableTables(res.table_id).map((t) => ({
+                              value: t.id,
+                              label: `Table ${t.number} (${t.capacity} seats)`,
+                            }))}
+                            placeholder="Select Table"
+                            className="min-w-[150px]"
+                          />
+                        ) : (
+                          <span className="text-sm text-gray-600">
+                            {table ? `Table ${table.number} (${table.capacity})` : "—"}
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                            res.status
+                          )}`}
                         >
-                          <UserCheck className="w-5 h-5" />
-                        </button>
+                          {res.status.charAt(0).toUpperCase() + res.status.slice(1)}
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          {isEditing ? (
+                            <>
+                              <button
+                                onClick={saveEdit}
+                                className="flex items-center space-x-1 px-2 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
+                              >
+                                <Save className="w-4 h-4" />
+                                <span>Save</span>
+                              </button>
+                              <button
+                                onClick={cancelEditing}
+                                className="flex items-center space-x-1 px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                                <span>Cancel</span>
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              {/* HIDE Edit and Mark Arrived buttons for reservations that are already 'arrived' */}
+                              {res.status !== "arrived" && (
+                                <>
+                                  {role !== "waiter" && (
+                                    <button
+                                      onClick={() => startEditing(res)}
+                                      className="flex items-center space-x-1 px-2 py-1 text-orange-800 rounded text-sm hover:bg-orange-100 transition-colors"
+                                      title="Edit Reservation"
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                    </button>
+                                  )}
+
+                                  <button
+                                    onClick={() => openActionModal("arrived", res)}
+                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                                    title="Mark Arrived"
+                                  >
+                                    <UserCheck className="w-5 h-5" />
+                                  </button>
+                                </>
+                              )}
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
                 })}
+
               </tbody>
             </table>
           </div>
         )}
       </div>
-
-
 
       {/* Action Modal */}
       {actionModal.type && getModalContent()}

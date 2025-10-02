@@ -107,20 +107,20 @@ function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="animate-pulse space-y-6">
+      <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+        <div className="animate-pulse space-y-4 sm:space-y-6">
           {/* Welcome Skeleton */}
-          <div className="h-24 bg-gray-200 rounded-xl"></div>
+          <div className="h-20 sm:h-24 bg-gray-200 rounded-xl"></div>
           
           {/* Stats Grid Skeleton */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-32 bg-gray-200 rounded-xl"></div>
+              <div key={i} className="h-24 sm:h-32 bg-gray-200 rounded-xl"></div>
             ))}
           </div>
           
           {/* Table Skeleton */}
-          <div className="h-96 bg-gray-200 rounded-xl"></div>
+          <div className="h-64 sm:h-96 bg-gray-200 rounded-xl"></div>
         </div>
       </div>
     );
@@ -129,19 +129,19 @@ function DashboardPage() {
   const occupancyRate = totalTables > 0 ? Math.round((reservedTables / totalTables) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Welcome section */}
-      <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl shadow-lg p-8 text-white">
+      <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 text-white">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">
+          <div className="flex-1">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">
               {userName ? `Welcome back, ${userName}!` : "Welcome to Madot!"}
             </h1>
-            <p className="text-amber-100 text-lg">
+            <p className="text-amber-100 text-sm sm:text-base lg:text-lg">
               {role ? `Ready to manage today's operations as ${role}` : "Loading your dashboard..."}
             </p>
-            <p className="text-amber-200 mt-2 flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
+            <p className="text-amber-200 mt-1 sm:mt-2 flex items-center gap-2 text-xs sm:text-sm">
+              <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
               {new Date().toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 
@@ -150,83 +150,83 @@ function DashboardPage() {
               })}
             </p>
           </div>
-          <div className="hidden lg:block">
-            <div className="p-4 bg-amber-400 rounded-2xl">
-              <Coffee className="w-12 h-12 text-white" />
+          <div className="hidden sm:block">
+            <div className="p-2 sm:p-3 lg:p-4 bg-amber-400 rounded-xl lg:rounded-2xl">
+              <Coffee className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 text-white" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
         {/* Today's Reservations */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-xl transition-all duration-300">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Today&apos;s Reservations</p>
-              <p className="text-4xl font-bold text-gray-900">{reservations.length}</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Today&apos;s Reservations</p>
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">{reservations.length}</p>
             </div>
-            <div className="p-3 bg-amber-100 rounded-xl">
-              <Calendar className="w-8 h-8 text-amber-600" />
+            <div className="p-2 sm:p-3 bg-amber-100 rounded-lg sm:rounded-xl">
+              <Calendar className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-amber-600" />
             </div>
           </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <TrendingUp className="w-4 h-4 mr-1" />
+          <div className="flex items-center text-xs sm:text-sm text-gray-500">
+            <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             <span>All confirmed for today</span>
           </div>
         </div>
 
         {/* Active Tables */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-xl transition-all duration-300">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Active Tables</p>
-              <p className="text-4xl font-bold text-gray-900">
-                {reservedTables}<span className="text-2xl text-gray-400">/{totalTables}</span>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Active Tables</p>
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+                {reservedTables}<span className="text-lg sm:text-xl lg:text-2xl text-gray-400">/{totalTables}</span>
               </p>
             </div>
-            <div className="p-3 bg-green-100 rounded-xl">
-              <Utensils className="w-8 h-8 text-green-600" />
+            <div className="p-2 sm:p-3 bg-green-100 rounded-lg sm:rounded-xl">
+              <Utensils className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-green-600" />
             </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
             <div 
-              className="bg-green-500 h-2 rounded-full transition-all duration-500"
+              className="bg-green-500 h-1.5 sm:h-2 rounded-full transition-all duration-500"
               style={{ width: `${occupancyRate}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-500 mt-2">{occupancyRate}% occupancy rate</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">{occupancyRate}% occupancy rate</p>
         </div>
 
         {/* Staff on Duty */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-xl transition-all duration-300">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Staff on Duty</p>
-              <p className="text-4xl font-bold text-gray-900">{staffCount}</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Staff on Duty</p>
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">{staffCount}</p>
             </div>
-            <div className="p-3 bg-blue-100 rounded-xl">
-              <Users className="w-8 h-8 text-blue-600" />
+            <div className="p-2 sm:p-3 bg-blue-100 rounded-lg sm:rounded-xl">
+              <Users className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-blue-600" />
             </div>
           </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <User className="w-4 h-4 mr-1" />
+          <div className="flex items-center text-xs sm:text-sm text-gray-500">
+            <User className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             <span>Active team members</span>
           </div>
         </div>
       </div>
 
       {/* Confirmed reservations for today */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Today&apos;s Schedule</h3>
-              <p className="text-gray-600 mt-1">Confirmed reservations for your shift</p>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Today&apos;s Schedule</h3>
+              <p className="text-gray-600 text-sm mt-1">Confirmed reservations for your shift</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
+              <span className="px-2 sm:px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs sm:text-sm font-medium">
                 {reservations.length} reservations
               </span>
             </div>
@@ -234,17 +234,17 @@ function DashboardPage() {
         </div>
 
         {reservations.length === 0 ? (
-          <div className="p-12 text-center">
+          <div className="p-6 sm:p-8 lg:p-12 text-center">
             <div className="max-w-md mx-auto">
-              <div className="p-4 bg-gray-100 rounded-2xl inline-block mb-4">
-                <Calendar className="w-12 h-12 text-gray-400" />
+              <div className="p-3 sm:p-4 bg-gray-100 rounded-xl sm:rounded-2xl inline-block mb-3 sm:mb-4">
+                <Calendar className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-gray-400" />
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">No reservations today</h4>
-              <p className="text-gray-500 mb-4">
+              <h4 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">No reservations today</h4>
+              <p className="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4">
                 All clear! There are no confirmed reservations scheduled for today.
               </p>
-              <div className="text-sm text-gray-400 bg-gray-50 rounded-lg p-3">
-                <Clock className="w-4 h-4 inline mr-1" />
+              <div className="text-xs sm:text-sm text-gray-400 bg-gray-50 rounded-lg p-2 sm:p-3">
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
                 Check back later for new reservations
               </div>
             </div>
@@ -254,16 +254,16 @@ function DashboardPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Guest
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Time
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Party Size
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
                 </tr>
@@ -271,41 +271,42 @@ function DashboardPage() {
               <tbody className="divide-y divide-gray-200">
                 {reservations.map((reservation) => (
                   <tr key={reservation.id} className="hover:bg-gray-50 transition-colors duration-150 group">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center">
-                          <span className="text-amber-800 font-medium text-sm">
+                    <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4">
+                      <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center">
+                          <span className="text-amber-800 font-medium text-xs sm:text-sm">
                             {reservation.name.split(' ').map(n => n[0]).join('')}
                           </span>
                         </div>
-                        <div>
-                          <div className="text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors truncate">
                             {reservation.name}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 truncate">
                             Reservation #{reservation.id.slice(-8)}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2 text-sm text-gray-900">
-                        <Clock className="w-4 h-4 text-gray-400" />
-                        <span className="font-medium">{reservation.time}</span>
+                    <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4">
+                      <div className="flex items-center space-x-1 sm:space-x-2 text-sm text-gray-900">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                        <span className="font-medium text-xs sm:text-sm">{reservation.time}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
-                        <Users className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm font-medium text-gray-900">
+                    <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <Users className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                        <span className="text-sm font-medium text-gray-900 text-xs sm:text-sm">
                           {reservation.guests} {reservation.guests === 1 ? 'guest' : 'guests'}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
-                        <CheckCircle className="w-3 h-3" />
-                        <span>Confirmed</span>
+                    <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4">
+                      <span className="inline-flex items-center space-x-1 px-2 sm:px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
+                        <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3" />
+                        <span className="hidden xs:inline">Confirmed</span>
+                        <span className="xs:hidden">Conf</span>
                       </span>
                     </td>
                   </tr>
@@ -315,8 +316,6 @@ function DashboardPage() {
           </div>
         )}
       </div>
-
-      
     </div>
   );
 }

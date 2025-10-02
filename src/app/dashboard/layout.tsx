@@ -1,7 +1,7 @@
 "use client";
 
-import { LogOut, Menu, X, Home, Calendar, Table, BarChart3, Users, Settings } from "lucide-react";
-import { useState, useEffect } from "react";
+import { LogOut, Menu, X, Home, Calendar, Table, BarChart3, Users, Settings, ChevronDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -11,8 +11,22 @@ function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [role, setRole] = useState<Role | null>(null);
   const [userName, setUserName] = useState<string>("");
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // ✅ Fetch current employee info
   useEffect(() => {
@@ -196,16 +210,7 @@ function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </nav>
 
-          {/* Logout button */}
-          <div className="p-4 border-t border-gray-200 bg-white/50">
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-3 w-full px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200 font-medium group"
-            >
-              <LogOut className="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors duration-200" />
-              <span>Logout</span>
-            </button>
-          </div>
+          {/* Removed logout button from sidebar */}
         </div>
       </aside>
 
@@ -237,8 +242,37 @@ function Layout({ children }: { children: React.ReactNode }) {
                   </span>
                 </div>
               </div>
-              <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-lg">
-                {userName.charAt(0).toUpperCase()}
+              
+              {/* Profile dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center space-x-2 bg-white border border-gray-200 rounded-xl px-3 py-2 hover:shadow-md transition-all duration-200"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-lg">
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
+                    profileDropdownOpen ? 'rotate-180' : ''
+                  }`} />
+                </button>
+
+                {/* Dropdown menu */}
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
+                      <p className="text-xs text-gray-500 capitalize">{role}</p>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-150 text-sm font-medium"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -35,10 +35,15 @@ export default function EmployeeLogin() {
     }
 
     // 2. Send magic link
+    const redirectUrl =
+      process.env.NEXT_PUBLIC_SITE_URL
+        ? `${process.env.NEXT_PUBLIC_SITE_URL}/employee-auth-callback`
+        : `${window.location.origin}/employee-auth-callback`;
+
     const { error: inviteError } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/employee-auth-callback`,
+        emailRedirectTo: redirectUrl,
       },
     });
 

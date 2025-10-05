@@ -106,7 +106,7 @@ function ReservationsPage({ role }: { role: string }) {
     );
     setActionModal({ type: null, reservation: null });
 
-    // Get reservation details (for email + table release)
+    // Get reservation details (for email + table release/occupy)
     const reservation = reservations.find((r) => r.id === id);
 
     if (!reservation) return;
@@ -123,10 +123,8 @@ function ReservationsPage({ role }: { role: string }) {
           t.id === reservation.table_id ? { ...t, status: "available" } : t
         )
       );
-    }
 
-    // If cancelled → send rejection email
-    if (status === "cancelled") {
+      // Send rejection email
       try {
         const response = await fetch("/api/send-rejection-email", {
           method: "POST",
@@ -149,7 +147,22 @@ function ReservationsPage({ role }: { role: string }) {
         alert("Reservation cancelled ❌ but email could not be sent.");
       }
     }
+
+    // If arrived → mark table as occupied
+    if (status === "arrived" && reservation.table_id) {
+      await supabase
+        .from("restaurant_tables")
+        .update({ status: "occupied" })
+        .eq("id", reservation.table_id);
+
+      setTables((prev) =>
+        prev.map((t) =>
+          t.id === reservation.table_id ? { ...t, status: "occupied" } : t
+        )
+      );
+    }
   };
+
 
 
   // Confirm reservation (only if table assigned)

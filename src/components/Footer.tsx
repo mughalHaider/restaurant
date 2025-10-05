@@ -5,7 +5,7 @@ import { MapPin, Mail, Phone, Clock, Calendar } from "lucide-react";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
-    
+
     return (
         <footer className="bg-gray-900 text-white py-10 sm:py-16">
             <div className="container mx-auto px-4 sm:px-6">
@@ -75,11 +75,25 @@ export default function Footer() {
                     </motion.div>
                 </div>
 
-                <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center">
-                    <p className="text-gray-400 text-sm sm:text-base">
-                        &copy; {currentYear} Madot Restaurant. All rights reserved.
-                    </p>
+                <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        {/* Left side: Logo */}
+                        <div className="flex items-center gap-2">
+                            {/* <img src="/logo.png" alt="Restaurant Logo" className="h-8 w-auto" /> */}
+                            <h2 className="text-xl text-amber-300 font-serif font-bold">Modat</h2>
+                        </div>
+
+                        {/* Center: Links */}
+                        <div className="flex flex-wrap justify-center gap-6 text-gray-400 text-sm sm:text-base">
+                            <a href="/impressum" className="hover:text-amber-300 transition-colors">Impressum</a>
+                            <a href="/datenschutz" className="hover:text-amber-300 transition-colors">Datenschutzerklärung</a>
+                            <a href="/haftungsausschluss" className="hover:text-amber-300 transition-colors">Haftungsausschluss (Disclaimer)</a>
+                            <a href="/kontakt" className="hover:text-amber-300 transition-colors">Kontakt</a>
+                            <a href="/cookies" className="hover:text-amber-300 transition-colors">Cookie-Richtlinie (EU)</a>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </footer>
     );

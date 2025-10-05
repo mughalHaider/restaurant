@@ -97,68 +97,116 @@ function ReservationsPage({ role }: { role: string }) {
 
   // Handle status updates
   const updateStatus = async (id: string, status: string) => {
+    // Update reservation status in DB
     await supabase.from("reservations").update({ status }).eq("id", id);
+
+    // Update local state
     setReservations((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status } : r))
     );
     setActionModal({ type: null, reservation: null });
+
+    // Get reservation details (for email + table release)
+    const reservation = reservations.find((r) => r.id === id);
+
+    if (!reservation) return;
+
+    // If cancelled → free the table
+    if (status === "cancelled" && reservation.table_id) {
+      await supabase
+        .from("restaurant_tables")
+        .update({ status: "available" })
+        .eq("id", reservation.table_id);
+
+      setTables((prev) =>
+        prev.map((t) =>
+          t.id === reservation.table_id ? { ...t, status: "available" } : t
+        )
+      );
+    }
+
+    // If cancelled → send rejection email
+    if (status === "cancelled") {
+      try {
+        const response = await fetch("/api/send-rejection-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: reservation.email,
+            name: reservation.name,
+            date: reservation.date,
+            time: reservation.time,
+          }),
+        });
+
+        const result = await response.json();
+        if (!result.success) {
+          console.error("Email failed:", result.error);
+          alert("Reservation cancelled ❌ but email could not be sent.");
+        }
+      } catch (err) {
+        console.error("Error sending rejection email:", err);
+        alert("Reservation cancelled ❌ but email could not be sent.");
+      }
+    }
   };
+
 
   // Confirm reservation (only if table assigned)
   const confirmReservation = async (reservation: Reservation) => {
-  if (!reservation.table_id) {
-    setErrorMessage("⚠️ Please assign a table before confirming.");
-    return;
-  }
+    if (!reservation.table_id) {
+      setErrorMessage("⚠️ Please assign a table before confirming.");
+      return;
+    }
 
-  await supabase
-    .from("reservations")
-    .update({ status: "accepted" })
-    .eq("id", reservation.id);
+    await supabase
+      .from("reservations")
+      .update({ status: "accepted" })
+      .eq("id", reservation.id);
 
-  // Update table status → reserved
-  await supabase
-    .from("restaurant_tables")
-    .update({ status: "reserved" })
-    .eq("id", reservation.table_id);
+    // Update table status → reserved
+    await supabase
+      .from("restaurant_tables")
+      .update({ status: "reserved" })
+      .eq("id", reservation.table_id);
 
-  setReservations((prev) =>
-    prev.map((r) =>
-      r.id === reservation.id ? { ...r, status: "accepted" } : r
-    )
-  );
-  setTables((prev) =>
-    prev.map((t) =>
-      t.id === reservation.table_id ? { ...t, status: "reserved" } : t
-    )
-  );
-  setActionModal({ type: null, reservation: null });
+    setReservations((prev) =>
+      prev.map((r) =>
+        r.id === reservation.id ? { ...r, status: "accepted" } : r
+      )
+    );
+    setTables((prev) =>
+      prev.map((t) =>
+        t.id === reservation.table_id ? { ...t, status: "reserved" } : t
+      )
+    );
+    setActionModal({ type: null, reservation: null });
 
-  // 🚀 Send confirmation email via Resend API
-  const table = tables.find((t) => t.id === reservation.table_id);
-  try {
-    const response = await fetch("/api/send-confirmation-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: reservation.email,
-        name: reservation.name,
-        date: reservation.date,
-        time: reservation.time,
-        table: table ? `Table ${table.number} (${table.capacity} seats)` : "N/A",
-      }),
-    });
+    // 🚀 Send confirmation email via Resend API
+    const table = tables.find((t) => t.id === reservation.table_id);
+    try {
+      const response = await fetch("/api/send-confirmation-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: reservation.email,
+          name: reservation.name,
+          date: reservation.date,
+          time: reservation.time,
+          table: table ? `Table ${table.number} (${table.capacity} seats)` : "N/A",
+        }),
+      });
 
-    const result = await response.json();
-    if (!result.success) {
-      console.error("Email failed:", result.error);
+      const result = await response.json();
+      if (!result.success) {
+        console.error("Email failed:", result.error);
+        alert("Reservation confirmed ✅ but email could not be sent.");
+      }
+    } catch (err) {
+      console.error("Error sending email:", err);
       alert("Reservation confirmed ✅ but email could not be sent.");
     }
-  } catch (err) {
-    console.error("Error sending email:", err);
-    alert("Reservation confirmed ✅ but email could not be sent.");
-  }
-};
+  };
 
 
   // Assign table for pending reservations

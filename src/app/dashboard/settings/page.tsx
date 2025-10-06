@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { withRole } from "@/lib/withRole";
-import { 
-  Save, 
-  Clock, 
-  Calendar, 
-  Plus, 
-  Trash2, 
+import {
+  Save,
+  Clock,
+  Calendar,
+  Plus,
+  Trash2,
   Settings as SettingsIcon,
   Building
 } from "lucide-react";
@@ -138,7 +138,9 @@ function SettingsPage() {
           </div>
           <div>
             <h2 className="text-xl font-semibold text-gray-900">Opening Hours</h2>
-            <p className="text-gray-600 text-sm">Set your restaurant's daily operating hours</p>
+            <p className="text-gray-600 text-sm">
+              {`Set your restaurant's daily operating hours`}
+            </p>
           </div>
         </div>
 

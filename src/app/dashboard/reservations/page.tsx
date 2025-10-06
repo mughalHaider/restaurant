@@ -111,7 +111,7 @@ function ReservationsPage({ role }: { role: string }) {
 
     if (!reservation) return;
 
-    // If cancelled → free the table
+    // If cancelled → free the table (only if assigned)
     if (status === "cancelled" && reservation.table_id) {
       await supabase
         .from("restaurant_tables")
@@ -123,8 +123,10 @@ function ReservationsPage({ role }: { role: string }) {
           t.id === reservation.table_id ? { ...t, status: "available" } : t
         )
       );
+    }
 
-      // Send rejection email
+    // If cancelled → send rejection email (always, even if no table assigned)
+    if (status === "cancelled") {
       try {
         const response = await fetch("/api/send-rejection-email", {
           method: "POST",
@@ -162,6 +164,7 @@ function ReservationsPage({ role }: { role: string }) {
       );
     }
   };
+
 
 
 

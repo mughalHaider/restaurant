@@ -16,23 +16,28 @@ export async function POST(req: Request) {
 
     if (error) throw error;
 
-    // ✅ Send confirmation email
+    // ✅ Send confirmation email (sandbox mode)
     await resend.emails.send({
-      from: "Restaurant <no-reply@yourdomain.com>",
-      to: email,
-      subject: "Reservation Request Received",
+      from: "Madot Restaurant <onboarding@resend.dev>", // sandbox sender
+      to: email, // ⚠️ must be your verified email in Resend sandbox
+      subject: "Reservation Request Received ✅",
       html: `
-        <p>Dear ${name},</p>
-        <p>Thank you for your reservation request.</p>
-        <p>Here are the details you submitted:</p>
-        <ul>
-          <li><b>Date:</b> ${date}</li>
-          <li><b>Time:</b> ${time}</li>
-          <li><b>Guests:</b> ${guests}</li>
-        </ul>
-        <p>We have received your request and will confirm shortly. ✅</p>
-        <p>Best regards,<br/>Restaurant Team</p>
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <h2>Reservation Request Received</h2>
+          <p>Dear <strong>${name}</strong>,</p>
+          <p>Thank you for your reservation request at <strong>Madot Restaurant</strong>.</p>
+          <p>Here are the details you submitted:</p>
+          <ul>
+            <li><b>Date:</b> ${new Date(date).toLocaleDateString()}</li>
+            <li><b>Time:</b> ${time}</li>
+            <li><b>Guests:</b> ${guests}</li>
+          </ul>
+          <p>We have received your request and will confirm shortly. ✅</p>
+          <p>Best regards,<br/>Madot Restaurant Team</p>
+          <p style="font-size: 12px; color: #888;">This is an automated email, please do not reply.</p>
+        </div>
       `,
+      text: `Dear ${name},\n\nThank you for your reservation request.\n\nDate: ${date}\nTime: ${time}\nGuests: ${guests}\n\nWe will confirm your booking shortly.\n\nMadot Restaurant Team`,
     });
 
     return NextResponse.json({ success: true, data });

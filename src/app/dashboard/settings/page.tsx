@@ -3,6 +3,15 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { withRole } from "@/lib/withRole";
+import { 
+  Save, 
+  Clock, 
+  Calendar, 
+  Plus, 
+  Trash2, 
+  Settings as SettingsIcon,
+  Building
+} from "lucide-react";
 
 function SettingsPage() {
   const [loading, setLoading] = useState(false);
@@ -86,7 +95,6 @@ function SettingsPage() {
     }
   };
 
-
   // ✅ Add or remove holidays
   const addHoliday = () => {
     if (!newHoliday) return;
@@ -99,87 +107,162 @@ function SettingsPage() {
     setClosedDates(closedDates.filter((d) => d !== date));
   };
 
+  // Format date for display
+  const formatDateDisplay = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Restaurant Settings</h1>
-      <p className="text-gray-600">Manage opening hours and holidays.</p>
+    <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Restaurant Settings</h1>
+          <p className="text-gray-600 mt-2">Manage opening hours, holidays, and restaurant configuration</p>
+        </div>
+        <div className="p-3 bg-amber-100 rounded-xl">
+          <SettingsIcon className="w-8 h-8 text-amber-600" />
+        </div>
+      </div>
 
       {/* Opening & Closing Time */}
-      <div className="bg-white p-4 shadow rounded-lg space-y-4">
-        <h2 className="text-lg font-semibold">Opening Hours</h2>
-
-        <div className="flex items-center gap-4">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Clock className="w-6 h-6 text-blue-600" />
+          </div>
           <div>
-            <label className="block text-sm text-gray-700">Opening Time</label>
-            <input
-              type="time"
-              value={openingTime}
-              onChange={(e) => setOpeningTime(e.target.value)}
-              className="border rounded-md p-2"
-            />
+            <h2 className="text-xl font-semibold text-gray-900">Opening Hours</h2>
+            <p className="text-gray-600 text-sm">Set your restaurant's daily operating hours</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-md">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">Opening Time</label>
+            <div className="relative">
+              <input
+                type="time"
+                value={openingTime}
+                onChange={(e) => setOpeningTime(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm text-gray-700">Closing Time</label>
-            <input
-              type="time"
-              value={closingTime}
-              onChange={(e) => setClosingTime(e.target.value)}
-              className="border rounded-md p-2"
-            />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">Closing Time</label>
+            <div className="relative">
+              <input
+                type="time"
+                value={closingTime}
+                onChange={(e) => setClosingTime(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
+              />
+            </div>
           </div>
+        </div>
+
+        <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200">
+          <p className="text-sm text-amber-800">
+            <strong>Current hours:</strong> {openingTime} - {closingTime}
+          </p>
         </div>
       </div>
 
       {/* Closed Dates (Holidays) */}
-      <div className="bg-white p-4 shadow rounded-lg space-y-4">
-        <h2 className="text-lg font-semibold">Holidays / Closed Dates</h2>
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-red-100 rounded-lg">
+            <Calendar className="w-6 h-6 text-red-600" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">Holidays & Closed Dates</h2>
+            <p className="text-gray-600 text-sm">Mark dates when the restaurant will be closed</p>
+          </div>
+        </div>
 
-        <div className="flex items-center gap-3">
-          <input
-            type="date"
-            value={newHoliday}
-            onChange={(e) => setNewHoliday(e.target.value)}
-            className="border rounded-md p-2"
-          />
+        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 mb-6">
+          <div className="flex-1 space-y-2">
+            <label className="block text-sm font-medium text-gray-700">Add Closed Date</label>
+            <input
+              type="date"
+              value={newHoliday}
+              onChange={(e) => setNewHoliday(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
+            />
+          </div>
           <button
             onClick={addHoliday}
-            className="bg-amber-600 text-white px-3 py-2 rounded-md hover:bg-amber-700"
+            className="flex items-center gap-2 bg-amber-600 text-white px-6 py-3 rounded-xl hover:bg-amber-700 transition-colors duration-200 font-medium"
           >
-            Add Holiday
+            <Plus className="w-4 h-4" />
+            Add Date
           </button>
         </div>
 
         {closedDates.length > 0 ? (
-          <ul className="mt-3 space-y-2">
-            {closedDates.map((date) => (
-              <li
-                key={date}
-                className="flex justify-between items-center border rounded-md p-2"
-              >
-                <span>{date}</span>
-                <button
-                  onClick={() => removeHoliday(date)}
-                  className="text-red-600 hover:text-red-800"
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium text-gray-900">Scheduled Closures ({closedDates.length})</h3>
+            <div className="grid gap-3">
+              {closedDates.map((date) => (
+                <div
+                  key={date}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                 >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span className="font-medium text-gray-900">{formatDateDisplay(date)}</span>
+                  </div>
+                  <button
+                    onClick={() => removeHoliday(date)}
+                    className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors duration-200 p-2 rounded-lg hover:bg-red-50"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span className="text-sm font-medium">Remove</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
-          <p className="text-gray-500 text-sm">No holidays added yet.</p>
+          <div className="text-center py-8">
+            <div className="p-4 bg-gray-100 rounded-2xl inline-block mb-4">
+              <Building className="w-12 h-12 text-gray-400" />
+            </div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">No holidays scheduled</h4>
+            <p className="text-gray-500 max-w-md mx-auto">
+              Add dates when the restaurant will be closed for holidays, maintenance, or special events.
+            </p>
+          </div>
         )}
       </div>
 
       {/* Save Button */}
-      <button
-        onClick={handleSave}
-        disabled={loading}
-        className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 disabled:opacity-50"
-      >
-        {loading ? "Saving..." : "Save Settings"}
-      </button>
+      <div className="flex justify-end">
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className="flex items-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4 rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg"
+        >
+          {loading ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <span>Saving Changes...</span>
+            </>
+          ) : (
+            <>
+              <Save className="w-5 h-5" />
+              <span>Save Settings</span>
+            </>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

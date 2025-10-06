@@ -75,6 +75,8 @@ export default function Footer() {
                     </motion.div>
                 </div>
 
+                <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center"> <p className="text-gray-400 text-sm sm:text-base"> &copy; {currentYear} Madot Restaurant. All rights reserved. </p> </div>
+
                 <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         {/* Left side: Logo */}

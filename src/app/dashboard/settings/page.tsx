@@ -37,25 +37,55 @@ function SettingsPage() {
   // ✅ Save updates to Supabase
   const handleSave = async () => {
     setLoading(true);
-    const { error } = await supabase
+
+    // Check if settings row exists
+    const { data: existing, error: fetchError } = await supabase
       .from("restaurant_settings")
-      .update({
-        opening_time: openingTime,
-        closing_time: closingTime,
-        closed_dates: closedDates,
-        updated_at: new Date(),
-      })
-      .eq("id", 1); // assuming you have only one row for global settings
+      .select("*")
+      .single();
+
+    if (fetchError && fetchError.code !== "PGRST116") {
+      // PGRST116 = no rows found (so we can ignore that)
+      console.error("Error checking settings:", fetchError);
+      alert("Failed to check settings ❌");
+      setLoading(false);
+      return;
+    }
+
+    let result;
+    if (existing) {
+      // ✅ Row exists → update it
+      result = await supabase
+        .from("restaurant_settings")
+        .update({
+          opening_time: openingTime,
+          closing_time: closingTime,
+          closed_dates: closedDates,
+          updated_at: new Date(),
+        })
+        .eq("id", existing.id);
+    } else {
+      // 🆕 No row → insert new one
+      result = await supabase.from("restaurant_settings").insert([
+        {
+          opening_time: openingTime,
+          closing_time: closingTime,
+          closed_dates: closedDates,
+          updated_at: new Date(),
+        },
+      ]);
+    }
 
     setLoading(false);
 
-    if (error) {
-      alert("Failed to update settings ❌");
-      console.error(error);
+    if (result.error) {
+      console.error("Save failed:", result.error);
+      alert("Failed to save settings ❌");
     } else {
-      alert("Settings updated successfully ✅");
+      alert("Settings saved successfully ✅");
     }
   };
+
 
   // ✅ Add or remove holidays
   const addHoliday = () => {

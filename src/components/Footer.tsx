@@ -1,15 +1,59 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Mail, Phone, Clock, Calendar } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+import gr from "../app/message/de.json";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
+    const [openingTime, setOpeningTime] = useState<string>("5:00 PM");
+    const [closingTime, setClosingTime] = useState<string>("10:00 PM");
+    const [loading, setLoading] = useState(true);
+
+    // ✅ Fetch opening & closing hours from Supabase
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("restaurant_settings")
+                    .select("opening_time, closing_time")
+                    .single();
+
+                if (error) {
+                    console.error("Error fetching settings:", error);
+                } else if (data) {
+                    // Convert 24h → 12h format
+                    const formatTime = (time: string) => {
+                        const [hour, minute] = time.split(":").map(Number);
+                        const date = new Date();
+                        date.setHours(hour, minute);
+                        return date.toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                        });
+                    };
+
+                    setOpeningTime(formatTime(data.opening_time || "17:00"));
+                    setClosingTime(formatTime(data.closing_time || "22:00"));
+                }
+            } catch (err) {
+                console.error("Unexpected error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSettings();
+    }, []);
 
     return (
         <footer className="bg-gray-900 text-white py-10 sm:py-16">
             <div className="container mx-auto px-4 sm:px-6">
                 <div className="grid md:grid-cols-3 gap-8 sm:gap-12">
+                    {/* 🔹 Restaurant Info */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -20,10 +64,12 @@ export default function Footer() {
                             Madot Restaurant
                         </h3>
                         <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                            Fine dining experience with exceptional cuisine and impeccable service since 2010.
+                            Fine dining experience with exceptional cuisine and impeccable
+                            service since 2010.
                         </p>
                     </motion.div>
 
+                    {/* 🔹 Contact Info */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -31,7 +77,9 @@ export default function Footer() {
                         transition={{ delay: 0.1 }}
                         className="text-center md:text-left"
                     >
-                        <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-5 text-amber-300">Contact Info</h4>
+                        <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-5 text-amber-300">
+                            {gr.ContactInfo}
+                        </h4>
                         <div className="space-y-3">
                             <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
                                 <MapPin className="w-4 h-4 text-amber-400 flex-shrink-0" />
@@ -39,19 +87,26 @@ export default function Footer() {
                             </div>
                             <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
                                 <Mail className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                                <a href="mailto:reservations@madotrestaurant.com" className="hover:text-amber-300 transition-colors cursor-pointer">
+                                <a
+                                    href="mailto:reservations@madotrestaurant.com"
+                                    className="hover:text-amber-300 transition-colors cursor-pointer"
+                                >
                                     reservations@madotrestaurant.com
                                 </a>
                             </div>
                             <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
                                 <Phone className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                                <a href="tel:+15551234567" className="hover:text-amber-300 transition-colors cursor-pointer">
+                                <a
+                                    href="tel:+15551234567"
+                                    className="hover:text-amber-300 transition-colors cursor-pointer"
+                                >
                                     +1 (555) 123-4567
                                 </a>
                             </div>
                         </div>
                     </motion.div>
 
+                    {/* 🔹 Opening Hours (Dynamic) */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -59,45 +114,82 @@ export default function Footer() {
                         transition={{ delay: 0.2 }}
                         className="text-center md:text-left"
                     >
-                        <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-5 text-amber-300">Opening Hours</h4>
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
-                                <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                                <span>Monday - Thursday</span>
+                        <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-5 text-amber-300">
+                            {gr.OpeningHours}
+                        </h4>
+
+                        {loading ? (
+                            <p className="text-gray-400 text-sm sm:text-base">Loading...</p>
+                        ) : (
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
+                                    <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                                    <span>Monday - Sunday</span>
+                                </div>
+                                <p className="text-gray-400 text-sm sm:text-base md:ml-7">
+                                    {openingTime} - {closingTime}
+                                </p>
                             </div>
-                            <p className="text-gray-400 text-sm sm:text-base md:ml-7">5:00 PM - 10:00 PM</p>
-                            <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base mt-3">
-                                <Calendar className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                                <span>Friday - Sunday</span>
-                            </div>
-                            <p className="text-gray-400 text-sm sm:text-base md:ml-7">5:00 PM - 11:00 PM</p>
-                        </div>
+                        )}
                     </motion.div>
                 </div>
+                <div className="mt-10 flex justify-center md:justify-start">
+                    <a
+                        href="/login"
+                        className="px-5 py-2 border border-amber-400 text-amber-300 rounded-full 
+               hover:bg-amber-400 hover:text-gray-900 transition-all duration-300 
+               text-sm sm:text-base font-medium shadow-md"
+                    >
+                        {gr.EmployeeLogin}
+                    </a>
+                </div>
 
-                
-
-                <div className=" border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8">
+                {/* 🔹 Bottom Links */}
+                <div className="border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        {/* Left side: Logo */}
                         <div className="flex items-center gap-2">
-                            {/* <img src="/logo.png" alt="Restaurant Logo" className="h-8 w-auto" /> */}
-                            <h2 className="text-xl text-amber-300 font-serif font-bold">Modat</h2>
+                            <h2 className="text-xl text-amber-300 font-serif font-bold">
+                                Madot
+                            </h2>
                         </div>
 
-                        {/* Center: Links */}
                         <div className="flex flex-wrap justify-center gap-6 text-gray-400 text-sm sm:text-base">
-                            <a href="/impressum" className="hover:text-amber-300 transition-colors">Impressum</a>
-                            <a href="/datenschutz" className="hover:text-amber-300 transition-colors">Datenschutzerklärung</a>
-                            <a href="/haftungsausschluss" className="hover:text-amber-300 transition-colors">Haftungsausschluss (Disclaimer)</a>
-                            <a href="/kontakt" className="hover:text-amber-300 transition-colors">Kontakt</a>
-                            <a href="/cookies" className="hover:text-amber-300 transition-colors">Cookie-Richtlinie (EU)</a>
+                            <a href="/impressum" className="hover:text-amber-300 transition-colors">
+                                Impressum
+                            </a>
+                            <a
+                                href="/datenschutz"
+                                className="hover:text-amber-300 transition-colors"
+                            >
+                                Datenschutzerklärung
+                            </a>
+                            <a
+                                href="/haftungsausschluss"
+                                className="hover:text-amber-300 transition-colors"
+                            >
+                                Haftungsausschluss (Disclaimer)
+                            </a>
+                            <a href="/kontakt" className="hover:text-amber-300 transition-colors">
+                                Kontakt
+                            </a>
+                            <a href="/cookies" className="hover:text-amber-300 transition-colors">
+                                Cookie-Richtlinie (EU)
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-4 text-center"> <p className="text-gray-400 text-sm sm:text-base"> &copy; {currentYear} Madot Restaurant. All rights reserved. </p> </div>
+                <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center">
+                    <div className="flex flex-col items-center space-y-4">
+                        {/* 🔹 Employee Login Button */}
 
+
+                        {/* 🔹 Copyright */}
+                        <p className="text-gray-400 text-sm sm:text-base">
+                            &copy; {new Date().getFullYear()} Madot Restaurant. {gr.AllRightsReserved}.
+                        </p>
+                    </div>
+                </div>
             </div>
         </footer>
     );

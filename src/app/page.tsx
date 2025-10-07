@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Phone, Mail, ChevronDown } from 'lucide-react';
+import gr from "./message/de.json";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -59,20 +60,14 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-2 sm:space-x-4"
             >
-              <Link 
-                href="/login" 
-                className="px-3 py-1.5 sm:px-6 sm:py-2 text-amber-800 border border-amber-800 rounded-full hover:bg-amber-50 transition-all duration-300 hover:scale-105 text-sm sm:text-base cursor-pointer"
-              >
-                <span className="hidden sm:inline">Employee Login</span>
-                <span className="sm:hidden">Login</span>
-              </Link>
+              
               
               <Link 
                 href="/reservation" 
                 className="px-3 py-1.5 sm:px-6 sm:py-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition-all duration-300 hover:scale-105 shadow-lg text-sm sm:text-base cursor-pointer"
               >
-                <span className="hidden sm:inline">Book a Table</span>
-                <span className="sm:hidden">Book</span>
+                <span className="hidden sm:inline">{gr.BookATable}</span>
+                <span className="sm:hidden">{gr.Book}</span>
               </Link>
             </motion.div>
           </div>
@@ -97,7 +92,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-serif mb-4 sm:mb-6"
           >
-            Welcome to
+            {gr.BannerTitle}
           </motion.h1>
           
           <motion.h2 
@@ -115,7 +110,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 max-w-2xl mx-auto font-light px-4"
           >
-            Experience culinary excellence in an atmosphere of refined elegance
+            {gr.BannerSubtitle}
           </motion.p>
 
           <motion.div 
@@ -128,13 +123,13 @@ export default function Home() {
               href="/reservation" 
               className="px-6 py-3 sm:px-8 sm:py-4 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition-all duration-300 hover:scale-105 text-base sm:text-lg font-semibold shadow-2xl w-full sm:w-auto text-center cursor-pointer"
             >
-              Reserve Your Table
+              {gr.ReserveYourTable}
             </Link>
             <a 
               href="#about" 
               className="px-6 py-3 sm:px-8 sm:py-4 border-2 border-white text-white rounded-full hover:bg-white hover:text-amber-800 transition-all duration-300 hover:scale-105 text-base sm:text-lg font-semibold w-full sm:w-auto text-center cursor-pointer"
             >
-              Discover More
+              {gr.DiscoverMore}
             </a>
           </motion.div>
         </div>
@@ -163,15 +158,13 @@ export default function Home() {
               className="order-2 lg:order-1"
             >
               <h2 className="text-3xl sm:text-5xl font-bold text-amber-800 font-serif mb-4 sm:mb-6 text-center lg:text-left">
-                Our Story
+                {gr.AboutTitle}
               </h2>
               <p className="text-base sm:text-lg text-gray-700 mb-4 sm:mb-6 leading-relaxed text-center lg:text-left">
-                Nestled in the heart of the city, Madot Restaurant has been serving exceptional cuisine since 2010. 
-                Our passion for culinary excellence and warm hospitality creates unforgettable dining experiences.
+                {gr.AboutSubtitle1}
               </p>
               <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 leading-relaxed text-center lg:text-left">
-                With carefully crafted menus featuring locally sourced ingredients and an extensive wine selection, 
-                we invite you to indulge in a journey of flavors that will delight your senses.
+                {gr.AboutSubtitle2}
               </p>
               <motion.div 
                 variants={staggerContainer}
@@ -182,15 +175,15 @@ export default function Home() {
               >
                 <motion.div variants={fadeInUp} className="bg-white rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow">
                   <div className="text-2xl sm:text-3xl font-bold text-amber-600 mb-1">12+</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium">Years Experience</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium">{gr.AboutItem1}</div>
                 </motion.div>
                 <motion.div variants={fadeInUp} className="bg-white rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow">
                   <div className="text-2xl sm:text-3xl font-bold text-amber-600 mb-1">50+</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium">Menu Items</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium">{gr.AboutItem2}</div>
                 </motion.div>
                 <motion.div variants={fadeInUp} className="bg-white rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow">
                   <div className="text-2xl sm:text-3xl font-bold text-amber-600 mb-1">12</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium">Elegant Tables</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium">{gr.AboutItem3}</div>
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -246,16 +239,16 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl sm:text-5xl font-bold font-serif mb-4 sm:mb-6">
-              Ready for an Unforgettable Experience?
+              {gr.ReadyTitle}
             </h2>
             <p className="text-lg sm:text-xl mb-6 sm:mb-10 max-w-2xl mx-auto px-4 leading-relaxed">
-              Book your table today and let us create a memorable dining experience for you and your loved ones.
+              {gr.ReadySubtitle}
             </p>
             <Link 
               href="/reservation" 
               className="inline-block px-6 py-3 sm:px-10 sm:py-4 bg-white text-amber-800 rounded-full hover:bg-amber-50 transition-all duration-300 hover:scale-105 text-base sm:text-lg font-semibold shadow-2xl w-full sm:w-auto cursor-pointer"
             >
-              Make a Reservation
+              {gr.BookATable}
             </Link>
           </motion.div>
         </div>

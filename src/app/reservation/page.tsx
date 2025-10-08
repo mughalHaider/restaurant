@@ -120,7 +120,7 @@ export default function Reservation() {
       setHolidayError("");
       return;
     }
-    
+
     const formatted = format(selectedDate, "yyyy-MM-dd");
     if (closedDates.includes(formatted)) {
       setHolidayError("❌ Sorry, the restaurant is closed on this date. Please choose another date.");
@@ -176,6 +176,7 @@ export default function Reservation() {
   }
 
   // ✅ Confirmation Page
+  // ✅ Confirmation Page
   if (isSubmitted && submittedData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center py-8 px-4">
@@ -195,7 +196,7 @@ export default function Reservation() {
           </motion.div>
 
           <h3 className="text-2xl font-bold text-gray-900 mb-3">
-            Reservation Confirmed!
+            Reservation Request Received!
           </h3>
           <p className="text-gray-600 mb-4">
             Thank you,{" "}
@@ -204,6 +205,26 @@ export default function Reservation() {
             </span>
             !
           </p>
+
+          {/* 🔹 New confirmation message */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">i</span>
+                </div>
+              </div>
+              <div className="text-left">
+                <p className="text-blue-800 font-medium text-sm mb-1">
+                  Your reservation will be confirmed shortly
+                </p>
+                <p className="text-blue-700 text-xs">
+                  Please check your email at <span className="font-semibold">{submittedData.email}</span> for confirmation details.
+                  If you don't see it, please check your spam folder.
+                </p>
+              </div>
+            </div>
+          </div>
 
           <div className="bg-amber-50 rounded-xl p-4 space-y-3 border border-amber-100 text-left">
             <p>
@@ -355,18 +376,16 @@ export default function Reservation() {
                     <PopoverTrigger asChild>
                       <button
                         type="button"
-                        className={`w-full border-2 rounded-lg px-4 py-3 text-left text-sm transition-colors flex items-center justify-between ${
-                          field.value && closedDates.includes(format(field.value, "yyyy-MM-dd"))
+                        className={`w-full border-2 rounded-lg px-4 py-3 text-left text-sm transition-colors flex items-center justify-between ${field.value && closedDates.includes(format(field.value, "yyyy-MM-dd"))
                             ? "border-red-300 bg-red-50 text-red-700"
                             : "border-gray-200 hover:border-amber-300 bg-white"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center">
-                          <CalendarIcon className={`w-4 h-4 mr-3 ${
-                            field.value && closedDates.includes(format(field.value, "yyyy-MM-dd"))
+                          <CalendarIcon className={`w-4 h-4 mr-3 ${field.value && closedDates.includes(format(field.value, "yyyy-MM-dd"))
                               ? "text-red-500"
                               : "text-amber-600"
-                          }`} />
+                            }`} />
                           {field.value
                             ? format(field.value, "EEEE, MMMM d, yyyy")
                             : "Select a date"}

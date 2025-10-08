@@ -78,12 +78,6 @@ function Layout({ children }: { children: React.ReactNode }) {
       roles: ["manager", "admin", "waiter"] 
     },
     { 
-      label: "Statistics", 
-      href: "/dashboard/stats", 
-      icon: BarChart3,
-      roles: ["manager", "admin"] 
-    },
-    { 
       label: "Employees", 
       href: "/dashboard/employees", 
       icon: Users,

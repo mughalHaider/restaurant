@@ -133,11 +133,19 @@ This is an automated email. Please do not reply to this message.
     await transporter.sendMail(mailOptions);
 
     return NextResponse.json({ success: true, message: "Email sent successfully!" });
-  } catch (error: any) {
+  } catch (error: unknown) {
+  if (error instanceof Error) {
     console.error("Email send error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Unknown error" },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }
+
+  console.error("Unknown error:", error);
+  return NextResponse.json(
+    { success: false, error: "Unknown error" },
+    { status: 500 }
+  );
+}
 }

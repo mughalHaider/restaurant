@@ -219,9 +219,9 @@ export default function Reservation() {
                   Your reservation will be confirmed shortly
                 </p>
                 <p className="text-blue-700 text-xs">
-                  Please check your email at <span className="font-semibold">{submittedData.email}</span> for confirmation details.
-                  If you don't see it, please check your spam folder.
-                </p>
+  Please check your email at <span className="font-semibold">{submittedData.email}</span> for confirmation details.
+  If you don&apos;t see it, please check your spam folder.
+</p>
               </div>
             </div>
           </div>

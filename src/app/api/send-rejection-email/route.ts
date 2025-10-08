@@ -29,12 +29,7 @@ export async function POST(req: Request) {
 
           <!-- Content -->
           <div style="padding: 40px 30px; background: #fff; border: 1px solid #e5e5e5; border-top: none;">
-            <!-- Warning Icon -->
-            <div style="text-align: center; margin-bottom: 30px;">
-              <div style="background-color: #ef4444; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
-                <span style="color: white; font-size: 36px; font-weight: bold; line-height: 1; display: block;">✕</span>
-              </div>
-            </div>
+            
 
             <!-- Title -->
             <h2 style="color: #1f2937; text-align: center; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">

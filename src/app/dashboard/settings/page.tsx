@@ -12,6 +12,7 @@ import {
   Settings as SettingsIcon,
   Building
 } from "lucide-react";
+import AlertModal from "@/components/AlertModal";
 
 function SettingsPage() {
   const [loading, setLoading] = useState(false);
@@ -19,6 +20,11 @@ function SettingsPage() {
   const [closingTime, setClosingTime] = useState("22:00");
   const [closedDates, setClosedDates] = useState<string[]>([]);
   const [newHoliday, setNewHoliday] = useState("");
+
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState("success");
+  const [alertMessage, setAlertMessage] = useState("");
 
   // ✅ Load settings from Supabase
   useEffect(() => {
@@ -56,7 +62,9 @@ function SettingsPage() {
     if (fetchError && fetchError.code !== "PGRST116") {
       // PGRST116 = no rows found (so we can ignore that)
       console.error("Error checking settings:", fetchError);
-      alert("Failed to check settings ❌");
+      setAlertType("error");
+      setAlertMessage("Failed to check settings ❌");
+      setShowAlert(true);
       setLoading(false);
       return;
     }
@@ -89,9 +97,11 @@ function SettingsPage() {
 
     if (result.error) {
       console.error("Save failed:", result.error);
-      alert("Failed to save settings ❌");
+      setAlertType("error");
+      setAlertMessage("Failed to save settings ❌");
     } else {
-      alert("Settings saved successfully ✅");
+      setAlertType("success");
+      setAlertMessage("Settings saved successfully ✅");
     }
   };
 
@@ -129,6 +139,14 @@ function SettingsPage() {
           <SettingsIcon className="w-8 h-8 text-amber-600" />
         </div>
       </div>
+
+       {showAlert && (
+        <AlertModal
+          type={alertType}
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
 
       {/* Opening & Closing Time */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">

@@ -55,6 +55,7 @@ function ReservationsPage({ role }: { role: string }) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [remarkModal, setRemarkModal] = useState<{ open: boolean; remark: string }>({ open: false, remark: "" });
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -678,12 +679,39 @@ function ReservationsPage({ role }: { role: string }) {
                             {res.first_name} {res.last_name}
                           </div>
                           {res.remark && (
-                            <div className="flex items-center text-xs text-gray-500 mt-1">
+                            <button
+                              type="button"
+                              className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none"
+                              onClick={() => setRemarkModal({ open: true, remark: res.remark! })}
+                              title="View Remark"
+                            >
                               <MessageCircle className="w-3 h-3 mr-1" />
                               Has remarks
-                            </div>
+                            </button>
                           )}
                         </div>
+
+                        {remarkModal.open && (
+                          <Modal
+                            isOpen={remarkModal.open}
+                            onClose={() => setRemarkModal({ open: false, remark: "" })}
+                            title="Reservation Remark"
+                            description=""
+                          >
+                            <div className="p-4">
+                              <p className="text-gray-800 text-sm whitespace-pre-line">{remarkModal.remark}</p>
+                              <div className="mt-4 flex justify-end">
+                                <button
+                                  onClick={() => setRemarkModal({ open: false, remark: "" })}
+                                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                                >
+                                  Close
+                                </button>
+                              </div>
+                            </div>
+                          </Modal>
+                        )}
+
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-900">

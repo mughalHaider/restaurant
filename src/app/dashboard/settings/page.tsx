@@ -99,9 +99,11 @@ function SettingsPage() {
       console.error("Save failed:", result.error);
       setAlertType("error");
       setAlertMessage("Failed to save settings ❌");
+      setShowAlert(true);
     } else {
       setAlertType("success");
       setAlertMessage("Settings saved successfully ✅");
+      setShowAlert(true);
     }
   };
 

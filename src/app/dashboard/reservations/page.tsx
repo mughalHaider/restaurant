@@ -139,7 +139,8 @@ function ReservationsPage({ role }: { role: string }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             to: reservation.email,
-            name: `${reservation.first_name} ${reservation.last_name}`,
+            first_name: reservation.first_name,  // Send first_name separately
+            last_name: reservation.last_name,    // Send last_name separately
             date: reservation.date,
             time: reservation.time,
           }),
@@ -209,7 +210,8 @@ function ReservationsPage({ role }: { role: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to: reservation.email,
-          name: `${reservation.first_name} ${reservation.last_name}`,
+          first_name: reservation.first_name,  // Send first_name separately
+          last_name: reservation.last_name,    // Send last_name separately
           date: reservation.date,
           time: reservation.time,
           table: table ? `Table ${table.number} (${table.capacity} seats)` : "N/A",
@@ -681,7 +683,7 @@ function ReservationsPage({ role }: { role: string }) {
                           {res.remark && (
                             <button
                               type="button"
-                              className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none"
+                              className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none cursor-pointer"
                               onClick={() => setRemarkModal({ open: true, remark: res.remark! })}
                               title="View Remark"
                             >
@@ -861,7 +863,7 @@ function ReservationsPage({ role }: { role: string }) {
                           {res.remark && (
                             <button
                               type="button"
-                              className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none"
+                              className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none cursor-pointer"
                               onClick={() => setRemarkModal({ open: true, remark: res.remark! })}
                               title="View Remark"
                             >

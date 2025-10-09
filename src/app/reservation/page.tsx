@@ -110,12 +110,12 @@ export default function Reservation() {
     reset,
   } = useForm<ReservationFormData>({
     resolver: zodResolver(reservationSchema),
-    defaultValues: { 
-      first_name: "", 
-      last_name: "", 
-      email: "", 
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
       telephone: "",
-      time: "", 
+      time: "",
       guests: "2",
       remark: "",
       date: undefined,
@@ -478,14 +478,14 @@ export default function Reservation() {
                       <button
                         type="button"
                         className={`w-full border-2 rounded-lg px-4 py-3 text-left text-sm transition-colors flex items-center justify-between ${field.value && closedDates.includes(format(field.value, "yyyy-MM-dd"))
-                            ? "border-red-300 bg-red-50 text-red-700"
-                            : "border-gray-200 hover:border-amber-300 bg-white"
+                          ? "border-red-300 bg-red-50 text-red-700"
+                          : "border-gray-200 hover:border-amber-300 bg-white"
                           }`}
                       >
                         <div className="flex items-center">
                           <CalendarIcon className={`w-4 h-4 mr-3 ${field.value && closedDates.includes(format(field.value, "yyyy-MM-dd"))
-                              ? "text-red-500"
-                              : "text-amber-600"
+                            ? "text-red-500"
+                            : "text-amber-600"
                             }`} />
                           {field.value
                             ? format(field.value, "EEEE, MMMM d, yyyy")
@@ -616,6 +616,9 @@ export default function Reservation() {
                 "Confirm Reservation"
               )}
             </motion.button>
+            <p className="text-xs text-gray-500 text-center mt-4">
+              Mit deiner Reservierung bestätigst du, dass du die AGB und die Datenschutzerklärung der Website gelesen und akzeptiert hast
+            </p>
           </form>
         </motion.div>
       </div>

@@ -17,7 +17,8 @@ type Role = "waiter" | "manager" | "admin";
 
 type Reservation = {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   time: string;
   guests: number;
   status: string;
@@ -61,7 +62,7 @@ function DashboardPage() {
         // ✅ Fetch confirmed reservations for today
         const { data: allReservations } = await supabase
           .from("reservations")
-          .select("id, name, time, guests, status, date")
+          .select("id, first_name, last_name, time, guests, status, date")
           .order("time", { ascending: true });
 
         if (allReservations) {
@@ -127,6 +128,11 @@ function DashboardPage() {
   }
 
   const occupancyRate = totalTables > 0 ? Math.round((reservedTables / totalTables) * 100) : 0;
+
+  // Helper function to get initials from first and last name
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 space-y-6">
@@ -269,12 +275,12 @@ function DashboardPage() {
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center">
                           <span className="text-amber-800 font-medium text-sm">
-                            {reservation.name.split(' ').map(n => n[0]).join('')}
+                            {getInitials(reservation.first_name, reservation.last_name)}
                           </span>
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors">
-                            {reservation.name}
+                            {reservation.first_name} {reservation.last_name}
                           </div>
                           <div className="text-xs text-gray-500">
                             Reservation #{reservation.id.slice(-8)}

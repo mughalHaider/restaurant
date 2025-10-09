@@ -5,14 +5,27 @@ import nodemailer from "nodemailer";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, date, time, guests } = body;
+    const { first_name, last_name, email, telephone, date, time, guests, remark } = body;
 
-    // ✅ 1. Save reservation in Supabase
+    // ✅ 1. Save reservation in Supabase with new field names
     const { data, error } = await supabase.from("reservations").insert([
-      { name, email, date, time, guests, status: "pending" },
+      { 
+        first_name, 
+        last_name, 
+        email, 
+        telephone, 
+        date, 
+        time, 
+        guests, 
+        remark: remark || "",
+        status: "pending" 
+      },
     ]);
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error:", error);
+      throw error;
+    }
 
     // ✅ 2. Setup Nodemailer Transporter
     const transporter = nodemailer.createTransport({
@@ -22,6 +35,8 @@ export async function POST(req: Request) {
         pass: process.env.EMAIL_PASS,
       },
     });
+
+    const fullName = `${first_name} ${last_name}`;
 
     // ✅ 3. Create Styled Email Content
     const mailOptions = {
@@ -54,7 +69,7 @@ export async function POST(req: Request) {
 
                     <!-- Greeting -->
                     <p style="color: #6b7280; text-align: center; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
-                        Dear <strong style="color: #d97706;">${name}</strong>,<br>
+                        Dear <strong style="color: #d97706;">${fullName}</strong>,<br>
                         Thank you for choosing Madot Restaurant. Your reservation request has been received and is being processed.
                     </p>
 
@@ -66,6 +81,16 @@ export async function POST(req: Request) {
                         
                         <div style="display: grid; gap: 15px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
+                                <span style="color: #78350f; font-weight: 500;">Name:</span>
+                                <span style="color: #1f2937; font-weight: 600;">${fullName}</span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
+                                <span style="color: #78350f; font-weight: 500;">Phone:</span>
+                                <span style="color: #1f2937; font-weight: 600;">${telephone}</span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
                                 <span style="color: #78350f; font-weight: 500;">Date:</span>
                                 <span style="color: #1f2937; font-weight: 600;">${new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                             </div>
@@ -75,10 +100,17 @@ export async function POST(req: Request) {
                                 <span style="color: #1f2937; font-weight: 600;">${time}</span>
                             </div>
                             
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0${remark ? '; border-bottom: 1px solid #fed7aa;' : ''}">
                                 <span style="color: #78350f; font-weight: 500;">Number of Guests:</span>
                                 <span style="color: #1f2937; font-weight: 600;">${guests} ${guests === '1' ? 'guest' : 'guests'}</span>
                             </div>
+                            
+                            ${remark ? `
+                            <div style="padding: 12px 0;">
+                                <span style="color: #78350f; font-weight: 500; display: block; margin-bottom: 8px;">Special Requests:</span>
+                                <span style="color: #1f2937; font-weight: 400; font-style: italic;">${remark}</span>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
 
@@ -107,7 +139,7 @@ export async function POST(req: Request) {
                             Contact us at: 
                             <a href="mailto:info@madotrestaurant.com" style="color: #d97706; text-decoration: none; font-weight: 500;">
                                 info@madotrestaurant.com
-                            </a>
+                            </a> or call <strong>${telephone}</strong>
                         </p>
                     </div>
                 </div>
@@ -129,20 +161,23 @@ export async function POST(req: Request) {
         </html>
       `,
       text: `
-MADOT RESTAURATION - RESERVATION REQUEST RECEIVED
+MADOT RESTAURANT - RESERVATION REQUEST RECEIVED
 
-Dear ${name},
+Dear ${fullName},
 
 Thank you for your reservation request at Madot Restaurant.
 
 RESERVATION DETAILS:
+• Name: ${fullName}
+• Phone: ${telephone}
 • Date: ${new Date(date).toLocaleDateString()}
 • Time: ${time}
 • Guests: ${guests}
+${remark ? `• Special Requests: ${remark}` : ''}
 
 Your reservation will be confirmed shortly. We are processing your request and will send you a final confirmation email soon.
 
-If you need to make any changes, please contact us at info@madotrestaurant.com.
+If you need to make any changes, please contact us at info@madotrestaurant.com or call ${telephone}.
 
 Best regards,
 Madot Restaurant Team

@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
-    const { to, name, date, time } = await req.json();
+    const { to, first_name, last_name, date, time } = await req.json();
 
     // 🟢 1. Setup Nodemailer transporter
     const transporter = nodemailer.createTransport({
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
             <!-- Greeting -->
             <p style="color: #6b7280; text-align: center; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
-              Hi <strong style="color: #d97706;">${name}</strong>,<br>
+              Hi <strong style="color: #d97706;">${first_name} ${last_name}</strong>,<br>
               We regret to inform you that your reservation request could not be confirmed.
             </p>
 
@@ -120,7 +120,7 @@ export async function POST(req: Request) {
       text: `
 MADOT RESTAURANT - RESERVATION UPDATE
 
-Hi ${name},
+Hi ${first_name} ${last_name},
 
 We regret to inform you that your reservation request could not be confirmed.
 

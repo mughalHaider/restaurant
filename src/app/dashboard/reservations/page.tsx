@@ -15,6 +15,8 @@ import {
   Edit,
   Save,
   X,
+  Phone,
+  MessageCircle,
 } from "lucide-react";
 import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
@@ -22,13 +24,16 @@ import { Pagination } from "@/components/ui/pagination";
 
 type Reservation = {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
+  telephone: string;
   date: string;
   time: string;
   guests: number;
   status: string;
   table_id: string | null;
+  remark: string | null;
 };
 
 type Table = {
@@ -133,7 +138,7 @@ function ReservationsPage({ role }: { role: string }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             to: reservation.email,
-            name: reservation.name,
+            name: `${reservation.first_name} ${reservation.last_name}`,
             date: reservation.date,
             time: reservation.time,
           }),
@@ -164,9 +169,6 @@ function ReservationsPage({ role }: { role: string }) {
       );
     }
   };
-
-
-
 
   // Confirm reservation (only if table assigned)
   const confirmReservation = async (reservation: Reservation) => {
@@ -206,7 +208,7 @@ function ReservationsPage({ role }: { role: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to: reservation.email,
-          name: reservation.name,
+          name: `${reservation.first_name} ${reservation.last_name}`,
           date: reservation.date,
           time: reservation.time,
           table: table ? `Table ${table.number} (${table.capacity} seats)` : "N/A",
@@ -223,7 +225,6 @@ function ReservationsPage({ role }: { role: string }) {
       alert("Reservation confirmed ✅ but email could not be sent.");
     }
   };
-
 
   // Assign table for pending reservations
   const assignTable = async (reservationId: string, tableId: string) => {
@@ -375,9 +376,11 @@ function ReservationsPage({ role }: { role: string }) {
 
   // Filter reservations
   const filteredReservations = reservations.filter((r) => {
+    const fullName = `${r.first_name} ${r.last_name}`.toLowerCase();
     const matchesSearch =
-      r.name.toLowerCase().includes(search.toLowerCase()) ||
-      r.email.toLowerCase().includes(search.toLowerCase());
+      fullName.includes(search.toLowerCase()) ||
+      r.email.toLowerCase().includes(search.toLowerCase()) ||
+      r.telephone.includes(search);
     const matchesStatus = statusFilter === "all" || r.status === statusFilter;
     return matchesSearch && matchesStatus && r.status !== "accepted" && r.status !== "arrived"; // exclude confirmed
   });
@@ -481,7 +484,19 @@ function ReservationsPage({ role }: { role: string }) {
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Guest:</span>
               <span className="font-medium text-gray-900">
-                {reservation.name}
+                {reservation.first_name} {reservation.last_name}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Email:</span>
+              <span className="font-medium text-gray-900">
+                {reservation.email}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Telephone:</span>
+              <span className="font-medium text-gray-900">
+                {reservation.telephone}
               </span>
             </div>
             <div className="flex justify-between text-sm">
@@ -502,6 +517,14 @@ function ReservationsPage({ role }: { role: string }) {
                 {reservation.guests} guests
               </span>
             </div>
+            {reservation.remark && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Remarks:</span>
+                <span className="font-medium text-gray-900">
+                  {reservation.remark}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Table Assigned:</span>
               <span className="font-medium text-gray-900">
@@ -576,7 +599,7 @@ function ReservationsPage({ role }: { role: string }) {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search by name or email..."
+              placeholder="Search by name, email, or phone..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
@@ -605,7 +628,7 @@ function ReservationsPage({ role }: { role: string }) {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b">
           <h3 className="text-lg font-semibold text-gray-900">
-            Pending Reqests ({filteredReservations.length})
+            Pending Requests ({filteredReservations.length})
           </h3>
         </div>
 
@@ -615,7 +638,7 @@ function ReservationsPage({ role }: { role: string }) {
           </div>
         ) : paginatedReservations.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-gray-500">No Pending reservations found</p>
+            <p className="text-gray-500">No pending reservations found</p>
           </div>
         ) : (
           <>
@@ -625,6 +648,9 @@ function ReservationsPage({ role }: { role: string }) {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Guest
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Contact
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Date & Time
@@ -649,11 +675,23 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {res.name}
+                            {res.first_name} {res.last_name}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {res.email}
-                          </div>
+                          {res.remark && (
+                            <div className="flex items-center text-xs text-gray-500 mt-1">
+                              <MessageCircle className="w-3 h-3 mr-1" />
+                              Has remarks
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {res.email}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500 mt-1">
+                          <Phone className="w-3 h-3 mr-1" />
+                          {res.telephone}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -759,6 +797,9 @@ function ReservationsPage({ role }: { role: string }) {
                     Guest
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Contact
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Date & Time
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -786,8 +827,24 @@ function ReservationsPage({ role }: { role: string }) {
                     <tr key={res.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{res.name}</div>
-                          <div className="text-sm text-gray-500">{res.email}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {res.first_name} {res.last_name}
+                          </div>
+                          {res.remark && (
+                            <div className="flex items-center text-xs text-gray-500 mt-1">
+                              <MessageCircle className="w-3 h-3 mr-1" />
+                              Has remarks
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {res.email}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500 mt-1">
+                          <Phone className="w-3 h-3 mr-1" />
+                          {res.telephone}
                         </div>
                       </td>
 
@@ -917,7 +974,6 @@ function ReservationsPage({ role }: { role: string }) {
                     </tr>
                   );
                 })}
-
               </tbody>
             </table>
           </div>

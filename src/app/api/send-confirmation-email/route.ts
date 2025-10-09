@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
-    const { to, name, date, time, table } = await req.json();
+    const { to, first_name, last_name, date, time, table } = await req.json();
 
     // 🟢 1. Create a Nodemailer transporter
     const transporter = nodemailer.createTransport({
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
             <!-- Greeting -->
             <p style="color: #6b7280; text-align: center; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
-              Hi <strong style="color: #d97706;">${name}</strong>,<br>
+              Hi <strong style="color: #d97706;">${first_name} ${last_name}</strong>,<br>
               Your reservation at Madot Restaurant has been confirmed. We're excited to welcome you!
             </p>
 
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       text: `
 MADOT RESTAURANT - RESERVATION CONFIRMED
 
-Hi ${name},
+Hi ${first_name} ${last_name},
 
 Your reservation at Madot Restaurant has been confirmed!
 
@@ -129,18 +129,18 @@ This is an automated email. Please do not reply to this message.
 
     return NextResponse.json({ success: true, message: "Email sent successfully!" });
   } catch (error: unknown) {
-  if (error instanceof Error) {
-    console.error("Email send error:", error);
+    if (error instanceof Error) {
+      console.error("Email send error:", error);
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
+    }
+
+    console.error("Unknown error:", error);
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: "Unknown error" },
       { status: 500 }
     );
   }
-
-  console.error("Unknown error:", error);
-  return NextResponse.json(
-    { success: false, error: "Unknown error" },
-    { status: 500 }
-  );
-}
 }

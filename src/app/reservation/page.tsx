@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ArrowLeft, CheckCircle2, Loader2, CalendarIcon, Clock, Users } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, CalendarIcon, Clock, Users, Phone, MessageSquare } from "lucide-react";
 import { Select } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -17,13 +17,16 @@ import {
 import { format } from "date-fns";
 import { supabase } from "@/lib/supabaseClient";
 
-// ✅ Validation Schema
+// ✅ Updated Validation Schema
 const reservationSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").max(50),
+  first_name: z.string().min(2, "First name must be at least 2 characters").max(50),
+  last_name: z.string().min(2, "Last name must be at least 2 characters").max(50),
   email: z.string().email("Invalid email address"),
+  telephone: z.string().min(10, "Please enter a valid phone number").max(20),
   date: z.date({ error: "Please select a date" }),
   time: z.string().min(1, "Please select a time"),
   guests: z.string().min(1, "Please select number of guests"),
+  remark: z.string().optional(),
 });
 
 type ReservationFormData = z.infer<typeof reservationSchema>;
@@ -67,8 +70,6 @@ export default function Reservation() {
   );
   const [closedDates, setClosedDates] = useState<string[]>([]);
   const [loadingSettings, setLoadingSettings] = useState(true);
-
-  // 🔹 New error message for holidays
   const [holidayError, setHolidayError] = useState<string>("");
 
   // ✅ Load settings from Supabase
@@ -109,7 +110,16 @@ export default function Reservation() {
     reset,
   } = useForm<ReservationFormData>({
     resolver: zodResolver(reservationSchema),
-    defaultValues: { name: "", email: "", time: "", guests: "2" },
+    defaultValues: { 
+      first_name: "", 
+      last_name: "", 
+      email: "", 
+      telephone: "",
+      time: "", 
+      guests: "2",
+      remark: "",
+      date: undefined,
+    },
   });
 
   // 🔹 Watch selected date to trigger holiday check dynamically
@@ -140,23 +150,49 @@ export default function Reservation() {
     }
 
     try {
+      const payload = {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        telephone: data.telephone,
+        date: formatted,
+        time: data.time,
+        guests: data.guests,
+        remark: data.remark || "",
+      };
+
+      console.log("📤 Sending reservation data:", payload);
+
       const response = await fetch("/api/reservations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          date: formatted,
-        }),
+        body: JSON.stringify(payload),
       });
+
+      console.log("📥 Response status:", response.status);
+      console.log("📥 Response ok:", response.ok);
+
+      let result;
+      try {
+        result = await response.json();
+        console.log("📥 API Response:", result);
+      } catch (parseError) {
+        console.error("❌ Failed to parse JSON response:", parseError);
+        alert("Server returned invalid response. Please contact support.");
+        return;
+      }
 
       if (response.ok) {
         setSubmittedData(data);
         setIsSubmitted(true);
       } else {
-        console.error("Reservation failed:", await response.json());
+        console.error("❌ Reservation failed:", result);
+        const errorMsg = result.error || result.message || result.details || JSON.stringify(result);
+        alert(`Reservation failed: ${errorMsg}`);
       }
     } catch (error) {
-      console.error("Error submitting reservation:", error);
+      console.error("❌ Network error submitting reservation:", error);
+      alert(`Network error: ${error instanceof Error ? error.message : "Please check your connection and try again."}`);
     }
   };
 
@@ -175,7 +211,6 @@ export default function Reservation() {
     );
   }
 
-  // ✅ Confirmation Page
   // ✅ Confirmation Page
   if (isSubmitted && submittedData) {
     return (
@@ -201,12 +236,12 @@ export default function Reservation() {
           <p className="text-gray-600 mb-4">
             Thank you,{" "}
             <span className="font-semibold text-amber-700">
-              {submittedData.name}
+              {submittedData.first_name} {submittedData.last_name}
             </span>
             !
           </p>
 
-          {/* 🔹 New confirmation message */}
+          {/* 🔹 Confirmation message */}
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">
@@ -219,14 +254,24 @@ export default function Reservation() {
                   Your reservation will be confirmed shortly
                 </p>
                 <p className="text-blue-700 text-xs">
-  Please check your email at <span className="font-semibold">{submittedData.email}</span> for confirmation details.
-  If you don&apos;t see it, please check your spam folder.
-</p>
+                  Please check your email at <span className="font-semibold">{submittedData.email}</span> for confirmation details.
+                  If you don&apos;t see it, please check your spam folder.
+                </p>
               </div>
             </div>
           </div>
 
           <div className="bg-amber-50 rounded-xl p-4 space-y-3 border border-amber-100 text-left">
+            <p>
+              <span className="text-xs text-gray-500">Name: </span>
+              <span className="font-semibold">
+                {submittedData.first_name} {submittedData.last_name}
+              </span>
+            </p>
+            <p>
+              <span className="text-xs text-gray-500">Phone: </span>
+              <span className="font-semibold">{submittedData.telephone}</span>
+            </p>
             <p>
               <span className="text-xs text-gray-500">Date: </span>
               <span className="font-semibold">
@@ -241,6 +286,12 @@ export default function Reservation() {
               <span className="text-xs text-gray-500">Guests: </span>
               <span className="font-semibold">{submittedData.guests}</span>
             </p>
+            {submittedData.remark && (
+              <p>
+                <span className="text-xs text-gray-500">Special Requests: </span>
+                <span className="font-semibold">{submittedData.remark}</span>
+              </p>
+            )}
           </div>
 
           <p className="text-xs text-gray-500 mt-4">
@@ -280,7 +331,7 @@ export default function Reservation() {
           <span className="font-medium">Back to Home</span>
         </Link>
 
-        {/* Page Title - Moved outside white background */}
+        {/* Page Title */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-amber-800 mb-3">
             Reserve Your Table
@@ -313,31 +364,57 @@ export default function Reservation() {
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            {/* Name & Email */}
+            {/* First Name & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Controller
-                name="name"
+                name="first_name"
                 control={control}
                 render={({ field }) => (
                   <div className="space-y-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Full Name *
+                      First Name *
                     </label>
                     <input
                       {...field}
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="John"
                       className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
                     />
-                    {errors.name && (
+                    {errors.first_name && (
                       <p className="text-xs text-red-600 mt-1">
-                        {errors.name.message}
+                        {errors.first_name.message}
                       </p>
                     )}
                   </div>
                 )}
               />
 
+              <Controller
+                name="last_name"
+                control={control}
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Last Name *
+                    </label>
+                    <input
+                      {...field}
+                      type="text"
+                      placeholder="Doe"
+                      className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                    />
+                    {errors.last_name && (
+                      <p className="text-xs text-red-600 mt-1">
+                        {errors.last_name.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
+            </div>
+
+            {/* Email & Telephone */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Controller
                 name="email"
                 control={control}
@@ -355,6 +432,30 @@ export default function Reservation() {
                     {errors.email && (
                       <p className="text-xs text-red-600 mt-1">
                         {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
+
+              <Controller
+                name="telephone"
+                control={control}
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                      <Phone className="w-4 h-4 mr-2 text-amber-600" />
+                      Phone Number *
+                    </label>
+                    <input
+                      {...field}
+                      type="tel"
+                      placeholder="+1 234 567 8900"
+                      className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                    />
+                    {errors.telephone && (
+                      <p className="text-xs text-red-600 mt-1">
+                        {errors.telephone.message}
                       </p>
                     )}
                   </div>
@@ -478,6 +579,26 @@ export default function Reservation() {
                 )}
               />
             </div>
+
+            {/* Remark (Optional) */}
+            <Controller
+              name="remark"
+              control={control}
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                    <MessageSquare className="w-4 h-4 mr-2 text-amber-600" />
+                    Special Requests <span className="text-gray-400 ml-1">(Optional)</span>
+                  </label>
+                  <textarea
+                    {...field}
+                    rows={4}
+                    placeholder="Any dietary restrictions, allergies, or special occasions we should know about..."
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors resize-none"
+                  />
+                </div>
+              )}
+            />
 
             {/* Submit Button */}
             <motion.button

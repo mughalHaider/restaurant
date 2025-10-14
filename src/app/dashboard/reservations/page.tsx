@@ -21,6 +21,8 @@ import {
 import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
 import { Pagination } from "@/components/ui/pagination";
+import AlertModal from "@/components/AlertModal";
+
 
 type Reservation = {
   id: string;
@@ -56,6 +58,9 @@ function ReservationsPage({ role }: { role: string }) {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [remarkModal, setRemarkModal] = useState<{ open: boolean; remark: string }>({ open: false, remark: "" });
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState<"success" | "error" | "warning" | "info">("success");
+  const [alertMessage, setAlertMessage] = useState("");
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -149,11 +154,15 @@ function ReservationsPage({ role }: { role: string }) {
         const result = await response.json();
         if (!result.success) {
           console.error("Email failed:", result.error);
-          alert("Reservation cancelled ❌ but email could not be sent.");
+          setAlertType("error");
+          setAlertMessage("Reservation Cancelled");
+          setShowAlert(true);
         }
       } catch (err) {
         console.error("Error sending rejection email:", err);
-        alert("Reservation cancelled ❌ but email could not be sent.");
+        setAlertType("error");
+        setAlertMessage("Reservation Cancelled");
+        setShowAlert(true);
       }
     }
 
@@ -221,11 +230,15 @@ function ReservationsPage({ role }: { role: string }) {
       const result = await response.json();
       if (!result.success) {
         console.error("Email failed:", result.error);
-        alert("Reservation confirmed ✅ but email could not be sent.");
+        setAlertType("error");
+        setAlertMessage("Reservation Confirmed but email could not sent");
+        setShowAlert(true);
       }
     } catch (err) {
       console.error("Error sending email:", err);
-      alert("Reservation confirmed ✅ but email could not be sent.");
+      setAlertType("error");
+      setAlertMessage("Reservation Confirmed but email could not sen");
+      setShowAlert(true);
     }
   };
 
@@ -370,10 +383,14 @@ function ReservationsPage({ role }: { role: string }) {
       );
 
       cancelEditing();
-      alert("Reservation updated successfully!");
+      setAlertType("success");
+      setAlertMessage("Reservation Updated Successfully!");
+      setShowAlert(true);
     } catch (error) {
       console.error("Error saving reservation edit:", error);
-      alert("Error updating reservation");
+      setAlertType("error");
+      setAlertMessage("Error Updating Reservation");
+      setShowAlert(true);
     }
   };
 

@@ -178,7 +178,6 @@ export default function Reservation() {
         console.log("📥 API Response:", result);
       } catch (parseError) {
         console.error("❌ Failed to parse JSON response:", parseError);
-        alert("Server returned invalid response. Please contact support.");
         return;
       }
 
@@ -188,11 +187,10 @@ export default function Reservation() {
       } else {
         console.error("❌ Reservation failed:", result);
         const errorMsg = result.error || result.message || result.details || JSON.stringify(result);
-        alert(`Reservation failed: ${errorMsg}`);
       }
     } catch (error) {
       console.error("❌ Network error submitting reservation:", error);
-      alert(`Network error: ${error instanceof Error ? error.message : "Please check your connection and try again."}`);
+      
     }
   };
 

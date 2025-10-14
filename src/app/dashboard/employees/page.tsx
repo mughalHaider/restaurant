@@ -17,6 +17,7 @@ import {
   Filter,
   MoreVertical
 } from "lucide-react";
+import AlertModal from "@/components/AlertModal";
 
 type Employee = {
   id: string;
@@ -46,6 +47,12 @@ function EmployeesPage() {
   const [editRole, setEditRole] = useState<"waiter" | "manager">("waiter");
   const [editStatus, setEditStatus] = useState<"pending" | "active" | "inactive">("pending");
 
+  // alert states
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState<"success" | "error" | "warning" | "info">("success");
+  const [alertMessage, setAlertMessage] = useState("");
+
+
   // ✅ Fetch employees (excluding admins)
   const fetchEmployees = async () => {
     const { data, error } = await supabase
@@ -68,7 +75,9 @@ function EmployeesPage() {
   // ✅ Add employee → status = pending + send magic link
   const addEmployee = async () => {
     if (!name || !email) {
-      alert("Please fill all fields");
+      setAlertType("warning");
+      setAlertMessage("Please fill all fields");
+      setShowAlert(true);
       return;
     }
 
@@ -83,7 +92,9 @@ function EmployeesPage() {
 
     if (insertError) {
       console.error("Error adding employee:", insertError);
-      alert("Error adding employee");
+      setAlertType("error");
+      setAlertMessage("Error adding employee");
+      setShowAlert(true);
       return;
     }
 
@@ -97,9 +108,13 @@ function EmployeesPage() {
 
     if (inviteError) {
       console.error("Error sending magic link:", inviteError);
-      alert("Employee added but magic link not sent");
+      setAlertType("error");
+      setAlertMessage("Employee added but magic link not sent");
+      setShowAlert(true);
     } else {
-      alert("Employee added and magic link sent to email!");
+      setAlertType("success");
+      setAlertMessage("Employee added and magic link sent to email!");
+      setShowAlert(true);
     }
 
     setName("");
@@ -117,7 +132,6 @@ function EmployeesPage() {
 
     if (error) {
       console.error("Error deleting employee:", error);
-      alert("Error deleting employee");
     } else {
       setEmployees((prev) => prev.filter((emp) => emp.id !== id));
     }
@@ -163,7 +177,9 @@ function EmployeesPage() {
 
     if (error) {
       console.error("Error updating employee:", error);
-      alert("Error updating employee");
+      setAlertType("error");
+      setAlertMessage("Error Updating Employee");
+      setShowAlert(true);
     } else {
       fetchEmployees();
       cancelEditing();
@@ -390,6 +406,14 @@ function EmployeesPage() {
         </div>
       )}
 
+      {showAlert && (
+        <AlertModal
+          type={alertType}
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
+
       {/* Employees Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-6 border-b border-gray-200">
@@ -522,14 +546,14 @@ function EmployeesPage() {
                                 className="flex items-center space-x-1 px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
                               >
                                 <Edit className="w-4 h-4" />
-                       
+
                               </button>
                               <button
                                 onClick={() => deleteEmployee(emp.id)}
                                 className="flex items-center space-x-1 px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
                               >
                                 <Trash2 className="w-4 h-4" />
-                      
+
                               </button>
                             </>
                           )}

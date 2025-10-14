@@ -17,8 +17,8 @@ import {
   Filter,
   MoreVertical
 } from "lucide-react";
+import ConfirmModal from "@/components/ConfirmModal";
 import AlertModal from "@/components/AlertModal";
-
 type Employee = {
   id: string;
   name: string;
@@ -51,6 +51,8 @@ function EmployeesPage() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState<"success" | "error" | "warning" | "info">("success");
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
 
   // ✅ Fetch employees (excluding admins)
@@ -183,6 +185,9 @@ function EmployeesPage() {
     } else {
       fetchEmployees();
       cancelEditing();
+      setAlertType("success");
+      setAlertMessage("Employee Updated Successfully!");
+      setShowAlert(true);
     }
   };
 
@@ -406,6 +411,27 @@ function EmployeesPage() {
         </div>
       )}
 
+      {deleteId && (
+        <ConfirmModal
+          message="Are you sure you want to delete this employee?"
+          onCancel={() => setDeleteId(null)}
+          onConfirm={async () => {
+            const { error } = await supabase.from("employees").delete().eq("id", deleteId);
+            setDeleteId(null);
+            if (error) {
+              setAlertType("error");
+              setAlertMessage("Error deleting employee");
+              setShowAlert(true);
+            } else {
+              setEmployees((prev) => prev.filter((emp) => emp.id !== deleteId));
+              setAlertType("success");
+              setAlertMessage("Employee deleted successfully");
+              setShowAlert(true);
+            }
+          }}
+        />
+      )}
+
       {showAlert && (
         <AlertModal
           type={alertType}
@@ -549,11 +575,10 @@ function EmployeesPage() {
 
                               </button>
                               <button
-                                onClick={() => deleteEmployee(emp.id)}
+                                onClick={() => setDeleteId(emp.id)}
                                 className="flex items-center space-x-1 px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
                               >
                                 <Trash2 className="w-4 h-4" />
-
                               </button>
                             </>
                           )}

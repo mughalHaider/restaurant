@@ -351,7 +351,9 @@ function ReservationsPage({ role }: { role: string }) {
 
       if (error) {
         console.error("Error updating reservation:", error);
-        alert("Error updating reservation");
+        setAlertType("error");
+        setAlertMessage("Reservation not Updated");
+        setShowAlert(true);
         return;
       }
 
@@ -643,6 +645,14 @@ function ReservationsPage({ role }: { role: string }) {
           </div>
         </div>
       </div>
+
+      {showAlert && (
+        <AlertModal
+          type={alertType}
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
 
       {/* All Reservations Table */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">

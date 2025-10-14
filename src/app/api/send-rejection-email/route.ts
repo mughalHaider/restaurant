@@ -97,8 +97,7 @@ export async function POST(req: Request) {
                 <a href="mailto:info@madotrestaurant.com" style="color: #d97706; text-decoration: none; font-weight: 500;">
                   info@madotrestaurant.com
                 </a>
-                <br>
-                <span style="font-size: 13px;">(555) 123-4567</span>
+                or call <strong>004915213878030</strong>
               </p>
             </div>
           </div>

@@ -10,8 +10,8 @@ import { withRole } from "@/lib/withRole";
 
 type Table = {
   id: string;
-  number: number;
-  capacity: number;
+  nummer: number;
+  kapazitaet: number;
   status: string;
 };
 
@@ -32,12 +32,12 @@ function TablesPage({ role }: { role: string }) {
   const [modal, setModal] = useState<ModalData>({ type: null, table: null });
 
   // Form state
-  const [formData, setFormData] = useState({ number: "", capacity: "", status: "available" });
+  const [formData, setFormData] = useState({ nummer: "", kapazitaet: "", status: "available" });
 
   // Fetch tables function
   const fetchTables = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("restaurant_tables").select("*").order("number", { ascending: true });
+    const { data, error } = await supabase.from("restaurant_tables").select("*").order("nummer", { ascending: true });
     if (!error && data) setTables(data);
     setLoading(false);
   };
@@ -49,10 +49,10 @@ function TablesPage({ role }: { role: string }) {
 
   // Add new table
   const addTable = async () => {
-    if (!formData.number || !formData.capacity) return alert("Enter number & capacity");
-    const { error } = await supabase.from("restaurant_tables").insert([{ number: Number(formData.number), capacity: Number(formData.capacity), status: formData.status }]);
+    if (!formData.nummer || !formData.kapazitaet) return alert("Enter number & capacity");
+    const { error } = await supabase.from("restaurant_tables").insert([{ nummer: Number(formData.nummer), kapazitaet: Number(formData.kapazitaet), status: formData.status }]);
     if (!error) {
-      setFormData({ number: "", capacity: "", status: "available" });
+      setFormData({ nummer: "", kapazitaet: "", status: "available" });
       setModal({ type: null, table: null });
       fetchTables();
     }
@@ -60,8 +60,8 @@ function TablesPage({ role }: { role: string }) {
 
   // Update table
   const updateTable = async () => {
-    if (!modal.table || !formData.capacity) return;
-    const { error } = await supabase.from("restaurant_tables").update({ capacity: Number(formData.capacity), status: formData.status }).eq("id", modal.table.id);
+    if (!modal.table || !formData.kapazitaet) return;
+    const { error } = await supabase.from("restaurant_tables").update({ kapazitaet: Number(formData.kapazitaet), status: formData.status }).eq("id", modal.table.id);
     if (!error) {
       setModal({ type: null, table: null });
       fetchTables();
@@ -80,12 +80,12 @@ function TablesPage({ role }: { role: string }) {
 
   // Open modals
   const openAddModal = () => {
-    setFormData({ number: "", capacity: "", status: "available" });
+    setFormData({ nummer: "", kapazitaet: "", status: "available" });
     setModal({ type: "add", table: null });
   };
 
   const openEditModal = (table: Table) => {
-    setFormData({ number: table.number.toString(), capacity: table.capacity.toString(), status: table.status });
+    setFormData({ nummer: table.nummer.toString(), kapazitaet: table.kapazitaet.toString(), status: table.status });
     setModal({ type: "edit", table });
   };
 
@@ -101,7 +101,7 @@ function TablesPage({ role }: { role: string }) {
   const totalTables = tables.length;
   const availableTables = tables.filter(t => t.status === "available").length;
   const occupiedTables = tables.filter(t => t.status === "occupied").length;
-  const totalCapacity = tables.reduce((sum, t) => sum + t.capacity, 0);
+  const totalCapacity = tables.reduce((sum, t) => sum + t.kapazitaet, 0);
 
   // Get status color
   const getStatusColor = (status: string) => {
@@ -129,11 +129,11 @@ function TablesPage({ role }: { role: string }) {
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                  <span className="text-red-700 font-bold text-lg">{modal.table.number}</span>
+                  <span className="text-red-700 font-bold text-lg">{modal.table.nummer}</span>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Table {modal.table.number}</p>
-                  <p className="text-sm text-gray-600">Capacity: {modal.table.capacity} guests</p>
+                  <p className="font-medium text-gray-900">Table {modal.table.nummer}</p>
+                  <p className="text-sm text-gray-600">Capacity: {modal.table.kapazitaet} guests</p>
                 </div>
               </div>
             </div>
@@ -176,8 +176,8 @@ function TablesPage({ role }: { role: string }) {
             <input
               type="number"
               placeholder="e.g., 1"
-              value={formData.number}
-              onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+              value={formData.nummer}
+              onChange={(e) => setFormData({ ...formData, nummer: e.target.value })}
               disabled={isEdit}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
@@ -190,8 +190,8 @@ function TablesPage({ role }: { role: string }) {
             <input
               type="number"
               placeholder="e.g., 4"
-              value={formData.capacity}
-              onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+              value={formData.kapazitaet}
+              onChange={(e) => setFormData({ ...formData, kapazitaet: e.target.value })}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
             />
           </div>
@@ -316,15 +316,15 @@ function TablesPage({ role }: { role: string }) {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
-                            <span className="text-amber-700 font-bold">{table.number}</span>
+                            <span className="text-amber-700 font-bold">{table.nummer}</span>
                           </div>
-                          <span className="text-sm font-medium text-gray-900">Table {table.number}</span>
+                          <span className="text-sm font-medium text-gray-900">Table {table.nummer}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900">
                           <Users className="w-4 h-4 mr-2 text-gray-400" />
-                          {table.capacity} guests
+                          {table.kapazitaet} guests
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

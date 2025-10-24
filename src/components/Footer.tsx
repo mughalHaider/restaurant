@@ -18,7 +18,7 @@ export default function Footer() {
             try {
                 const { data, error } = await supabase
                     .from("restaurant_settings")
-                    .select("opening_time, closing_time")
+                    .select("oeffnungszeit, schliesszeit")
                     .single();
 
                 if (error) {
@@ -36,8 +36,8 @@ export default function Footer() {
                         });
                     };
 
-                    setOpeningTime(formatTime(data.opening_time || "17:00"));
-                    setClosingTime(formatTime(data.closing_time || "22:00"));
+                    setOpeningTime(formatTime(data.oeffnungszeit || "17:00"));
+                    setClosingTime(formatTime(data.schliesszeit || "22:00"));
                 }
             } catch (err) {
                 console.error("Unexpected error:", err);

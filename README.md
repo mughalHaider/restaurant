@@ -129,42 +129,45 @@ restaurant-reservation/
    Create the following tables in your Supabase database:
 
    ```sql
-   -- Reservations table
+   -- Reservations table (reservierungen)
    CREATE TABLE reservations (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-     first_name TEXT NOT NULL,
-     last_name TEXT NOT NULL,
+     vorname TEXT NOT NULL,
+     nachname TEXT NOT NULL,
      email TEXT NOT NULL,
-     telephone TEXT NOT NULL,
-     date DATE NOT NULL,
-     time TEXT NOT NULL,
-     guests INT NOT NULL,
-     remark TEXT,
-     status TEXT DEFAULT 'pending'
+     telefon TEXT NOT NULL,
+      datum DATE NOT NULL,
+      uhrzeit TEXT NOT NULL,
+     gaeste INT NOT NULL,
+     bemerkung TEXT,
+     status TEXT DEFAULT 'pending',
+     tisch_id UUID REFERENCES restaurant_tables(id)
    );
 
-   -- Employees table
+   -- Employees table (mitarbeiter)
    CREATE TABLE employees (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
      email TEXT UNIQUE NOT NULL,
-     role TEXT CHECK (role IN ('waiter', 'manager', 'admin')) NOT NULL
+     rolle TEXT CHECK (rolle IN ('waiter', 'manager', 'admin')) NOT NULL,
+     name TEXT,
+     status TEXT DEFAULT 'active'
    );
 
-   -- Restaurant tables
+   -- Restaurant tables (tische)
    CREATE TABLE restaurant_tables (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-     number INT UNIQUE NOT NULL,
-     capacity INT NOT NULL,
-     status TEXT DEFAULT 'free'
+     nummer INT UNIQUE NOT NULL,
+     kapazitaet INT NOT NULL,
+     status TEXT DEFAULT 'available'
    );
 
-   -- Restaurant settings (additional table for configuration)
+   -- Restaurant settings (restaurant_einstellungen)
    CREATE TABLE restaurant_settings (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-     opening_time TIME NOT NULL DEFAULT '10:00',
-     closing_time TIME NOT NULL DEFAULT '22:00',
-     closed_dates TEXT[],
-     updated_at TIMESTAMP DEFAULT NOW()
+     oeffnungszeit TIME NOT NULL DEFAULT '10:00',
+     schliesszeit TIME NOT NULL DEFAULT '22:00',
+     schliesstage TEXT[],
+     aktualisiert_am TIMESTAMP DEFAULT NOW()
    );
    ```
 

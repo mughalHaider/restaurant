@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
-    const { to, first_name, last_name, date, time, table } = await req.json();
+    const { to, vorname, nachname, datum, uhrzeit, table } = await req.json();
 
     // 🟢 1. Create a Nodemailer transporter
     const transporter = nodemailer.createTransport({
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
             <!-- Greeting -->
             <p style="color: #6b7280; text-align: center; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
-              Hi <strong style="color: #d97706;">${first_name} ${last_name}</strong>,<br>
+              Hi <strong style="color: #d97706;">${vorname} ${nachname}</strong>,<br>
               Your reservation at Madot Restaurant has been confirmed. We're excited to welcome you!
             </p>
 
@@ -51,12 +51,12 @@ export async function POST(req: Request) {
               <div style="display: grid; gap: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
                   <span style="color: #78350f; font-weight: 500;">Date:</span>
-                  <span style="color: #1f2937; font-weight: 600;">${new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  <span style="color: #1f2937; font-weight: 600;">${new Date(datum).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
                   <span style="color: #78350f; font-weight: 500;">Time:</span>
-                  <span style="color: #1f2937; font-weight: 600;">${time}</span>
+                  <span style="color: #1f2937; font-weight: 600;">${uhrzeit}</span>
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
@@ -102,13 +102,13 @@ export async function POST(req: Request) {
       text: `
 MADOT RESTAURANT - RESERVATION CONFIRMED
 
-Hi ${first_name} ${last_name},
+Hi ${vorname} ${nachname},
 
 Your reservation at Madot Restaurant has been confirmed!
 
 RESERVATION DETAILS:
-• Date: ${new Date(date).toLocaleDateString()}
-• Time: ${time}
+        • Date: ${new Date(datum).toLocaleDateString()}
+        • Time: ${uhrzeit}
 • Table: ${table}
 
 We look forward to serving you! 🍽️

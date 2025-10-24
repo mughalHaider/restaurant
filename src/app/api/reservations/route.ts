@@ -5,20 +5,20 @@ import nodemailer from "nodemailer";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { first_name, last_name, email, telephone, date, time, guests, remark } = body;
+    const { vorname, nachname, email, telefon, datum, uhrzeit, gaeste, bemerkung } = body;
 
     // ✅ 1. Save reservation in Supabase with new field names
     const { data, error } = await supabase.from("reservations").insert([
       { 
-        first_name, 
-        last_name, 
-        email, 
-        telephone, 
-        date, 
-        time, 
-        guests, 
-        remark: remark || "",
-        status: "pending" 
+        vorname,
+        nachname,
+        email,
+        telefon,
+        datum,
+        uhrzeit,
+        gaeste,
+        bemerkung: bemerkung || "",
+        status: "pending"
       },
     ]);
 
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const fullName = `${first_name} ${last_name}`;
+    const fullName = `${vorname} ${nachname}`;
 
     // ✅ 3. Create Styled Email Content
     const mailOptions = {
@@ -87,28 +87,28 @@ export async function POST(req: Request) {
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
                                 <span style="color: #78350f; font-weight: 500;">Phone:</span>
-                                <span style="color: #1f2937; font-weight: 600;">${telephone}</span>
+                                <span style="color: #1f2937; font-weight: 600;">${telefon}</span>
                             </div>
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
                                 <span style="color: #78350f; font-weight: 500;">Date:</span>
-                                <span style="color: #1f2937; font-weight: 600;">${new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                <span style="color: #1f2937; font-weight: 600;">${new Date(datum).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                             </div>
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
                                 <span style="color: #78350f; font-weight: 500;">Time:</span>
-                                <span style="color: #1f2937; font-weight: 600;">${time}</span>
+                                <span style="color: #1f2937; font-weight: 600;">${uhrzeit}</span>
                             </div>
                             
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0${remark ? '; border-bottom: 1px solid #fed7aa;' : ''}">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0${bemerkung ? '; border-bottom: 1px solid #fed7aa;' : ''}">
                                 <span style="color: #78350f; font-weight: 500;">Number of Guests:</span>
-                                <span style="color: #1f2937; font-weight: 600;">${guests} ${guests === '1' ? 'guest' : 'guests'}</span>
+                                <span style="color: #1f2937; font-weight: 600;">${gaeste} ${gaeste === '1' ? 'guest' : 'guests'}</span>
                             </div>
                             
-                            ${remark ? `
+                            ${bemerkung ? `
                             <div style="padding: 12px 0;">
                                 <span style="color: #78350f; font-weight: 500; display: block; margin-bottom: 8px;">Special Requests:</span>
-                                <span style="color: #1f2937; font-weight: 400; font-style: italic;">${remark}</span>
+                                <span style="color: #1f2937; font-weight: 400; font-style: italic;">${bemerkung}</span>
                             </div>
                             ` : ''}
                         </div>
@@ -169,15 +169,15 @@ Thank you for your reservation request at Madot Restaurant.
 
 RESERVATION DETAILS:
 • Name: ${fullName}
-• Phone: ${telephone}
-• Date: ${new Date(date).toLocaleDateString()}
-• Time: ${time}
-• Guests: ${guests}
-${remark ? `• Special Requests: ${remark}` : ''}
+• Phone: ${telefon}
+• Date: ${new Date(datum).toLocaleDateString()}
+• Time: ${uhrzeit}
+• Guests: ${gaeste}
+${bemerkung ? `• Special Requests: ${bemerkung}` : ''}
 
 Your reservation will be confirmed shortly. We are processing your request and will send you a final confirmation email soon.
 
-If you need to make any changes, please contact us at info@madotrestaurant.com or call ${telephone}.
+If you need to make any changes, please contact us at info@madotrestaurant.com or call ${telefon}.
 
 Best regards,
 Madot Restaurant Team

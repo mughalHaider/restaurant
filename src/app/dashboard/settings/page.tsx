@@ -40,9 +40,9 @@ function SettingsPage() {
       }
 
       if (data) {
-        setOpeningTime(data.opening_time || "10:00");
-        setClosingTime(data.closing_time || "22:00");
-        setClosedDates(data.closed_dates || []);
+        setOpeningTime(data.oeffnungszeit || "10:00");
+        setClosingTime(data.schliesszeit || "22:00");
+        setClosedDates(data.schliesstage || []);
       }
     };
 
@@ -75,20 +75,20 @@ function SettingsPage() {
       result = await supabase
         .from("restaurant_settings")
         .update({
-          opening_time: openingTime,
-          closing_time: closingTime,
-          closed_dates: closedDates,
-          updated_at: new Date(),
+          oeffnungszeit: openingTime,
+          schliesszeit: closingTime,
+          schliesstage: closedDates,
+          aktualisiert_am: new Date(),
         })
         .eq("id", existing.id);
     } else {
       // 🆕 No row → insert new one
       result = await supabase.from("restaurant_settings").insert([
         {
-          opening_time: openingTime,
-          closing_time: closingTime,
-          closed_dates: closedDates,
-          updated_at: new Date(),
+          oeffnungszeit: openingTime,
+          schliesszeit: closingTime,
+          schliesstage: closedDates,
+          aktualisiert_am: new Date(),
         },
       ]);
     }

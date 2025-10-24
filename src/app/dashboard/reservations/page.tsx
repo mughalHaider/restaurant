@@ -26,16 +26,16 @@ import AlertModal from "@/components/AlertModal";
 
 type Reservation = {
   id: string;
-  first_name: string;
-  last_name: string;
+  vorname: string;
+  nachname: string;
   email: string;
-  telephone: string;
-  date: string;
-  time: string;
-  guests: number;
+  telefon: string;
+  datum: string;
+  uhrzeit: string;
+  gaeste: number;
   status: string;
-  table_id: string | null;
-  remark: string | null;
+  tisch_id: string | null;
+  bemerkung: string | null;
 };
 
 type Table = {
@@ -57,7 +57,7 @@ function ReservationsPage({ role }: { role: string }) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [remarkModal, setRemarkModal] = useState<{ open: boolean; remark: string }>({ open: false, remark: "" });
+  const [remarkModal, setRemarkModal] = useState<{ open: boolean; bemerkung: string }>({ open: false, bemerkung: "" });
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState<"success" | "error" | "warning" | "info">("success");
   const [alertMessage, setAlertMessage] = useState("");
@@ -75,10 +75,10 @@ function ReservationsPage({ role }: { role: string }) {
   // Edit state for confirmed reservations
   const [editingReservationId, setEditingReservationId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({
-    date: "",
-    time: "",
-    guests: 0,
-    table_id: "",
+    datum: "",
+    uhrzeit: "",
+    gaeste: 0,
+    tisch_id: "",
   });
 
   // Fetch data
@@ -89,10 +89,10 @@ function ReservationsPage({ role }: { role: string }) {
         .from("reservations")
         .select(`
           *,
-          restaurant_tables ( number, capacity )
+          restaurant_tables ( nummer, kapazitaet )
         `)
-        .order("date", { ascending: true })
-        .order("time", { ascending: true });
+        .order("datum", { ascending: true })
+        .order("uhrzeit", { ascending: true });
 
       const { data: tableData } = await supabase
         .from("restaurant_tables")
@@ -123,15 +123,15 @@ function ReservationsPage({ role }: { role: string }) {
     if (!reservation) return;
 
     // If cancelled → free the table (only if assigned)
-    if (status === "cancelled" && reservation.table_id) {
+    if (status === "cancelled" && reservation.tisch_id) {
       await supabase
         .from("restaurant_tables")
         .update({ status: "available" })
-        .eq("id", reservation.table_id);
+        .eq("id", reservation.tisch_id);
 
       setTables((prev) =>
         prev.map((t) =>
-          t.id === reservation.table_id ? { ...t, status: "available" } : t
+          t.id === reservation.tisch_id ? { ...t, status: "available" } : t
         )
       );
     }
@@ -144,10 +144,10 @@ function ReservationsPage({ role }: { role: string }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             to: reservation.email,
-            first_name: reservation.first_name,  // Send first_name separately
-            last_name: reservation.last_name,    // Send last_name separately
-            date: reservation.date,
-            time: reservation.time,
+            vorname: reservation.vorname,  // Send vorname separately
+            nachname: reservation.nachname,    // Send nachname separately
+            datum: reservation.datum,
+            uhrzeit: reservation.uhrzeit,
           }),
         });
 
@@ -167,15 +167,15 @@ function ReservationsPage({ role }: { role: string }) {
     }
 
     // If arrived → mark table as occupied
-    if (status === "arrived" && reservation.table_id) {
+    if (status === "arrived" && reservation.tisch_id) {
       await supabase
         .from("restaurant_tables")
         .update({ status: "occupied" })
-        .eq("id", reservation.table_id);
+        .eq("id", reservation.tisch_id);
 
       setTables((prev) =>
         prev.map((t) =>
-          t.id === reservation.table_id ? { ...t, status: "occupied" } : t
+          t.id === reservation.tisch_id ? { ...t, status: "occupied" } : t
         )
       );
     }
@@ -183,7 +183,7 @@ function ReservationsPage({ role }: { role: string }) {
 
   // Confirm reservation (only if table assigned)
   const confirmReservation = async (reservation: Reservation) => {
-    if (!reservation.table_id) {
+    if (!reservation.tisch_id) {
       setErrorMessage("⚠️ Please assign a table before confirming.");
       return;
     }
@@ -197,7 +197,7 @@ function ReservationsPage({ role }: { role: string }) {
     await supabase
       .from("restaurant_tables")
       .update({ status: "reserved" })
-      .eq("id", reservation.table_id);
+      .eq("id", reservation.tisch_id);
 
     setReservations((prev) =>
       prev.map((r) =>
@@ -206,23 +206,23 @@ function ReservationsPage({ role }: { role: string }) {
     );
     setTables((prev) =>
       prev.map((t) =>
-        t.id === reservation.table_id ? { ...t, status: "reserved" } : t
+        t.id === reservation.tisch_id ? { ...t, status: "reserved" } : t
       )
     );
     setActionModal({ type: null, reservation: null });
 
     // 🚀 Send confirmation email via Resend API
-    const table = tables.find((t) => t.id === reservation.table_id);
+    const table = tables.find((t) => t.id === reservation.tisch_id);
     try {
       const response = await fetch("/api/send-confirmation-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to: reservation.email,
-          first_name: reservation.first_name,  // Send first_name separately
-          last_name: reservation.last_name,    // Send last_name separately
-          date: reservation.date,
-          time: reservation.time,
+          vorname: reservation.vorname,  // Send vorname separately
+          nachname: reservation.nachname,    // Send nachname separately
+          datum: reservation.datum,
+          uhrzeit: reservation.uhrzeit,
           table: table ? `Table ${table.number} (${table.capacity} seats)` : "N/A",
         }),
       });
@@ -245,7 +245,7 @@ function ReservationsPage({ role }: { role: string }) {
   // Assign table for pending reservations
   const assignTable = async (reservationId: string, tableId: string) => {
     const reservation = reservations.find(r => r.id === reservationId);
-    const previousTableId = reservation?.table_id;
+    const previousTableId = reservation?.tisch_id;
 
     // If changing from one table to another, update previous table status
     if (previousTableId && previousTableId !== tableId) {
@@ -264,12 +264,12 @@ function ReservationsPage({ role }: { role: string }) {
     // Update reservation with new table
     await supabase
       .from("reservations")
-      .update({ table_id: tableId })
+      .update({ tisch_id: tableId })
       .eq("id", reservationId);
 
     setReservations((prev) =>
       prev.map((r) =>
-        r.id === reservationId ? { ...r, table_id: tableId } : r
+        r.id === reservationId ? { ...r, tisch_id: tableId } : r
       )
     );
 
@@ -290,10 +290,10 @@ function ReservationsPage({ role }: { role: string }) {
   const startEditing = (reservation: Reservation) => {
     setEditingReservationId(reservation.id);
     setEditForm({
-      date: reservation.date,
-      time: reservation.time,
-      guests: reservation.guests,
-      table_id: reservation.table_id || "",
+      datum: reservation.datum,
+      uhrzeit: reservation.uhrzeit,
+      gaeste: reservation.gaeste,
+      tisch_id: reservation.tisch_id || "",
     });
   };
 
@@ -301,10 +301,10 @@ function ReservationsPage({ role }: { role: string }) {
   const cancelEditing = () => {
     setEditingReservationId(null);
     setEditForm({
-      date: "",
-      time: "",
-      guests: 0,
-      table_id: "",
+      datum: "",
+      uhrzeit: "",
+      gaeste: 0,
+      tisch_id: "",
     });
   };
 
@@ -315,8 +315,8 @@ function ReservationsPage({ role }: { role: string }) {
     const reservation = reservations.find(r => r.id === editingReservationId);
     if (!reservation) return;
 
-    const previousTableId = reservation.table_id;
-    const newTableId = editForm.table_id;
+    const previousTableId = reservation.tisch_id;
+    const newTableId = editForm.tisch_id;
 
     try {
       // If table is being changed, update table statuses
@@ -342,10 +342,10 @@ function ReservationsPage({ role }: { role: string }) {
       const { error } = await supabase
         .from("reservations")
         .update({
-          date: editForm.date,
-          time: editForm.time,
-          guests: editForm.guests,
-          table_id: newTableId || null,
+          datum: editForm.datum,
+          uhrzeit: editForm.uhrzeit,
+          gaeste: editForm.gaeste,
+          tisch_id: newTableId || null,
         })
         .eq("id", editingReservationId);
 
@@ -363,10 +363,10 @@ function ReservationsPage({ role }: { role: string }) {
           r.id === editingReservationId
             ? {
               ...r,
-              date: editForm.date,
-              time: editForm.time,
-              guests: editForm.guests,
-              table_id: newTableId || null,
+              datum: editForm.datum,
+              uhrzeit: editForm.uhrzeit,
+              gaeste: editForm.gaeste,
+              tisch_id: newTableId || null,
             }
             : r
         )
@@ -398,11 +398,11 @@ function ReservationsPage({ role }: { role: string }) {
 
   // Filter reservations
   const filteredReservations = reservations.filter((r) => {
-    const fullName = `${r.first_name} ${r.last_name}`.toLowerCase();
+    const fullName = `${r.vorname} ${r.nachname}`.toLowerCase();
     const matchesSearch =
       fullName.includes(search.toLowerCase()) ||
       r.email.toLowerCase().includes(search.toLowerCase()) ||
-      r.telephone.includes(search);
+      r.telefon.includes(search);
     const matchesStatus = statusFilter === "all" || r.status === statusFilter;
     return matchesSearch && matchesStatus && r.status !== "accepted" && r.status !== "arrived"; // exclude confirmed
   });
@@ -421,7 +421,7 @@ function ReservationsPage({ role }: { role: string }) {
 
   // Stats
   const todayReservations = reservations.filter(
-    (r) => new Date(r.date).toDateString() === new Date().toDateString()
+    (r) => new Date(r.datum).toDateString() === new Date().toDateString()
   ).length;
   const pendingCount = reservations.filter(
     (r) => r.status === "pending"
@@ -506,7 +506,7 @@ function ReservationsPage({ role }: { role: string }) {
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Guest:</span>
               <span className="font-medium text-gray-900">
-                {reservation.first_name} {reservation.last_name}
+                {reservation.vorname} {reservation.nachname}
               </span>
             </div>
             <div className="flex justify-between text-sm">
@@ -518,39 +518,39 @@ function ReservationsPage({ role }: { role: string }) {
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Telephone:</span>
               <span className="font-medium text-gray-900">
-                {reservation.telephone}
+                {reservation.telefon}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Date:</span>
               <span className="font-medium text-gray-900">
-                {new Date(reservation.date).toLocaleDateString()}
+                {new Date(reservation.datum).toLocaleDateString()}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Time:</span>
               <span className="font-medium text-gray-900">
-                {reservation.time}
+                {reservation.uhrzeit}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Party Size:</span>
               <span className="font-medium text-gray-900">
-                {reservation.guests} guests
+                {reservation.gaeste} guests
               </span>
             </div>
-            {reservation.remark && (
+            {reservation.bemerkung && (
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Remarks:</span>
                 <span className="font-medium text-gray-900">
-                  {reservation.remark}
+                  {reservation.bemerkung}
                 </span>
               </div>
             )}
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Table Assigned:</span>
               <span className="font-medium text-gray-900">
-                {reservation.table_id ? `Table ${tables.find(t => t.id === reservation.table_id)?.number}` : "None"}
+                {reservation.tisch_id ? `Table ${tables.find(t => t.id === reservation.tisch_id)?.number}` : "None"}
               </span>
             </div>
           </div>
@@ -705,13 +705,13 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {res.first_name} {res.last_name}
+                            {res.vorname} {res.nachname}
                           </div>
-                          {res.remark && (
+                          {res.bemerkung && (
                             <button
                               type="button"
                               className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none cursor-pointer"
-                              onClick={() => setRemarkModal({ open: true, remark: res.remark! })}
+                              onClick={() => setRemarkModal({ open: true, bemerkung: res.bemerkung! })}
                               title="View Remark"
                             >
                               <MessageCircle className="w-3 h-3 mr-1" />
@@ -723,15 +723,15 @@ function ReservationsPage({ role }: { role: string }) {
                         {remarkModal.open && (
                           <Modal
                             isOpen={remarkModal.open}
-                            onClose={() => setRemarkModal({ open: false, remark: "" })}
+                            onClose={() => setRemarkModal({ open: false, bemerkung: "" })}
                             title="Reservation Remark"
                             description=""
                           >
                             <div className="p-4">
-                              <p className="text-gray-800 text-sm whitespace-pre-line">{remarkModal.remark}</p>
+                              <p className="text-gray-800 text-sm whitespace-pre-line">{remarkModal.bemerkung}</p>
                               <div className="mt-4 flex justify-end">
                                 <button
-                                  onClick={() => setRemarkModal({ open: false, remark: "" })}
+                                  onClick={() => setRemarkModal({ open: false, bemerkung: "" })}
                                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                                 >
                                   Close
@@ -748,7 +748,7 @@ function ReservationsPage({ role }: { role: string }) {
                         </div>
                         <div className="flex items-center text-sm text-gray-500 mt-1">
                           <Phone className="w-3 h-3 mr-1" />
-                          {res.telephone}
+                          {res.telefon}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -764,14 +764,14 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm text-gray-900">
                           <Users className="w-4 h-4 mr-2 text-gray-400" />
-                          {res.guests} guests
+                          {res.gaeste} guests
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <Select
-                          value={res.table_id || ""}
+                          value={res.tisch_id || ""}
                           onValueChange={(value) => assignTable(res.id, value)}
-                          options={getAvailableTables(res.table_id).map((t) => ({
+                          options={getAvailableTables(res.tisch_id).map((t) => ({
                             value: t.id,
                             label: `Table ${t.number} (${t.capacity} seats)`,
                           }))}
@@ -875,7 +875,7 @@ function ReservationsPage({ role }: { role: string }) {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {confirmedReservations.map((res) => {
-                  const table = tables.find((t) => t.id === res.table_id);
+                  const table = tables.find((t) => t.id === res.tisch_id);
 
                   // Prevent editing UI for arrived reservations
                   const isEditing = editingReservationId === res.id && res.status !== "arrived";
@@ -885,13 +885,13 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {res.first_name} {res.last_name}
+                            {res.vorname} {res.nachname}
                           </div>
-                          {res.remark && (
+                          {res.bemerkung && (
                             <button
                               type="button"
                               className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none cursor-pointer"
-                              onClick={() => setRemarkModal({ open: true, remark: res.remark! })}
+                              onClick={() => setRemarkModal({ open: true, bemerkung: res.bemerkung! })}
                               title="View Remark"
                             >
                               <MessageCircle className="w-3 h-3 mr-1" />
@@ -902,15 +902,15 @@ function ReservationsPage({ role }: { role: string }) {
                         {remarkModal.open && (
                           <Modal
                             isOpen={remarkModal.open}
-                            onClose={() => setRemarkModal({ open: false, remark: "" })}
+                            onClose={() => setRemarkModal({ open: false, bemerkung: "" })}
                             title="Reservation Remark"
                             description=""
                           >
                             <div className="p-4">
-                              <p className="text-gray-800 text-sm whitespace-pre-line">{remarkModal.remark}</p>
+                              <p className="text-gray-800 text-sm whitespace-pre-line">{remarkModal.bemerkung}</p>
                               <div className="mt-4 flex justify-end">
                                 <button
-                                  onClick={() => setRemarkModal({ open: false, remark: "" })}
+                                  onClick={() => setRemarkModal({ open: false, bemerkung: "" })}
                                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                                 >
                                   Close
@@ -927,7 +927,7 @@ function ReservationsPage({ role }: { role: string }) {
                         </div>
                         <div className="flex items-center text-sm text-gray-500 mt-1">
                           <Phone className="w-3 h-3 mr-1" />
-                          {res.telephone}
+                          {res.telefon}
                         </div>
                       </td>
 
@@ -936,14 +936,14 @@ function ReservationsPage({ role }: { role: string }) {
                           <div className="space-y-2">
                             <input
                               type="date"
-                              value={editForm.date}
-                              onChange={(e) => setEditForm((prev) => ({ ...prev, date: e.target.value }))}
+                              value={editForm.datum}
+                              onChange={(e) => setEditForm((prev) => ({ ...prev, datum: e.target.value }))}
                               className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                             />
                             <input
                               type="time"
-                              value={editForm.time}
-                              onChange={(e) => setEditForm((prev) => ({ ...prev, time: e.target.value }))}
+                              value={editForm.uhrzeit}
+                              onChange={(e) => setEditForm((prev) => ({ ...prev, uhrzeit: e.target.value }))}
                               className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                             />
                           </div>
@@ -951,11 +951,11 @@ function ReservationsPage({ role }: { role: string }) {
                           <div>
                             <div className="flex items-center space-x-2 text-sm text-gray-900">
                               <Calendar className="w-4 h-4 text-gray-400" />
-                              <span>{new Date(res.date).toLocaleDateString()}</span>
+                              <span>{new Date(res.datum).toLocaleDateString()}</span>
                             </div>
                             <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
                               <Clock className="w-4 h-4 text-gray-400" />
-                              <span>{res.time}</span>
+                              <span>{res.uhrzeit}</span>
                             </div>
                           </div>
                         )}
@@ -966,14 +966,14 @@ function ReservationsPage({ role }: { role: string }) {
                           <input
                             type="number"
                             min="1"
-                            value={editForm.guests}
-                            onChange={(e) => setEditForm((prev) => ({ ...prev, guests: parseInt(e.target.value) || 1 }))}
+                            value={editForm.gaeste}
+                            onChange={(e) => setEditForm((prev) => ({ ...prev, gaeste: parseInt(e.target.value) || 1 }))}
                             className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
                           />
                         ) : (
                           <div className="flex items-center text-sm text-gray-900">
                             <Users className="w-4 h-4 mr-2 text-gray-400" />
-                            {res.guests} guests
+                            {res.gaeste} guests
                           </div>
                         )}
                       </td>
@@ -981,9 +981,9 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         {isEditing ? (
                           <Select
-                            value={editForm.table_id}
-                            onValueChange={(value) => setEditForm((prev) => ({ ...prev, table_id: value }))}
-                            options={getAvailableTables(res.table_id).map((t) => ({
+                            value={editForm.tisch_id}
+                            onValueChange={(value) => setEditForm((prev) => ({ ...prev, tisch_id: value }))}
+                            options={getAvailableTables(res.tisch_id).map((t) => ({
                               value: t.id,
                               label: `Table ${t.number} (${t.capacity} seats)`,
                             }))}

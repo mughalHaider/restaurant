@@ -17,12 +17,12 @@ type Role = "waiter" | "manager" | "admin";
 
 type Reservation = {
   id: string;
-  first_name: string;
-  last_name: string;
-  time: string;
-  guests: number;
+  vorname: string;
+  nachname: string;
+  uhrzeit: string;
+  gaeste: number;
   status: string;
-  date: string;
+  datum: string;
 };
 
 function DashboardPage() {
@@ -43,12 +43,12 @@ function DashboardPage() {
       if (session?.user?.email) {
         const { data: employee } = await supabase
           .from("employees")
-          .select("name, role")
+          .select("name, rolle")
           .eq("email", session.user.email)
           .single();
 
         if (employee) {
-          setRole(employee.role as Role);
+          setRole(employee.rolle as Role);
           setUserName(employee.name);
         }
       }
@@ -62,13 +62,13 @@ function DashboardPage() {
         // ✅ Fetch confirmed reservations for today
         const { data: allReservations } = await supabase
           .from("reservations")
-          .select("id, first_name, last_name, time, guests, status, date")
-          .order("time", { ascending: true });
+          .select("id, vorname, nachname, uhrzeit, gaeste, status, datum")
+          .order("uhrzeit", { ascending: true });
 
         if (allReservations) {
           // ✅ Use the same date filtering method that works
           const todayReservations = allReservations.filter(
-            (r) => new Date(r.date).toDateString() === new Date().toDateString()
+            (r) => new Date(r.datum).toDateString() === new Date().toDateString()
           );
 
           // ✅ Filter for "accepted" status only
@@ -90,9 +90,9 @@ function DashboardPage() {
         // ✅ Fetch staff except admins
         const { data: empData } = await supabase
           .from("employees")
-          .select("id, role")
+          .select("id, rolle")
           .eq("status", "active")
-          .neq("role", "admin");
+          .neq("rolle", "admin");
 
         if (empData) setStaffCount(empData.length);
       } catch (error) {
@@ -130,8 +130,8 @@ function DashboardPage() {
   const occupancyRate = totalTables > 0 ? Math.round((reservedTables / totalTables) * 100) : 0;
 
   // Helper function to get initials from first and last name
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
+  const getInitials = (vorname: string, nachname: string) => {
+    return `${vorname[0] || ''}${nachname[0] || ''}`.toUpperCase();
   };
 
   return (
@@ -275,12 +275,12 @@ function DashboardPage() {
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center">
                           <span className="text-amber-800 font-medium text-sm">
-                            {getInitials(reservation.first_name, reservation.last_name)}
+                            {getInitials(reservation.vorname, reservation.nachname)}
                           </span>
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors">
-                            {reservation.first_name} {reservation.last_name}
+                            {reservation.vorname} {reservation.nachname}
                           </div>
                           <div className="text-xs text-gray-500">
                             Reservation #{reservation.id.slice(-8)}
@@ -291,14 +291,14 @@ function DashboardPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2 text-sm text-gray-900">
                         <Clock className="w-4 h-4 text-gray-400" />
-                        <span className="font-medium">{reservation.time}</span>
+                        <span className="font-medium">{reservation.uhrzeit}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <Users className="w-4 h-4 text-gray-400" />
                         <span className="text-sm font-medium text-gray-900">
-                          {reservation.guests} {reservation.guests === 1 ? 'guest' : 'guests'}
+                          {reservation.gaeste} {reservation.gaeste === 1 ? 'guest' : 'guests'}
                         </span>
                       </div>
                     </td>

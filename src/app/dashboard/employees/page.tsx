@@ -23,7 +23,7 @@ type Employee = {
   id: string;
   name: string;
   email: string;
-  role: "waiter" | "manager" | "admin";
+  rolle: "waiter" | "manager" | "admin";
   status: "pending" | "active" | "inactive";
 };
 
@@ -65,7 +65,7 @@ function EmployeesPage() {
     if (error) {
       console.error("Error fetching employees:", error);
     } else {
-      setEmployees((data || []).filter((emp) => emp.role !== "admin"));
+      setEmployees((data || []).filter((emp) => emp.rolle !== "admin"));
     }
     setLoading(false);
   };
@@ -87,7 +87,7 @@ function EmployeesPage() {
       {
         name,
         email,
-        role,
+        rolle,
         status: "pending",
       },
     ]);
@@ -144,7 +144,7 @@ function EmployeesPage() {
     setEditingId(emp.id);
     setEditName(emp.name);
     setEditEmail(emp.email);
-    setEditRole(emp.role as "waiter" | "manager");
+    setEditRole(emp.rolle as "waiter" | "manager");
     setEditStatus(emp.status);
   };
 
@@ -164,7 +164,7 @@ function EmployeesPage() {
     const updateData: Partial<Employee> = {
       name: editName,
       email: editEmail,
-      role: editRole,
+      rolle: editRole,
     };
 
     // Only allow updating status if not pending
@@ -197,15 +197,15 @@ function EmployeesPage() {
       employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       employee.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesRole = roleFilter === 'all' || employee.role === roleFilter;
+    const matchesRole = roleFilter === 'all' || employee.rolle === roleFilter;
     const matchesStatus = statusFilter === 'all' || employee.status === statusFilter;
 
     return matchesSearch && matchesRole && matchesStatus;
   });
 
   // Get role info for styling
-  const getRoleInfo = (role: string) => {
-    switch (role) {
+  const getRoleInfo = (rolle: string) => {
+    switch (rolle) {
       case 'manager':
         return { color: 'bg-blue-100 text-blue-800 border-blue-200', label: 'Manager' };
       case 'waiter':
@@ -274,13 +274,13 @@ function EmployeesPage() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <p className="text-sm font-medium text-gray-600">Waiters</p>
           <p className="text-2xl font-bold text-green-600 mt-2">
-            {employees.filter(e => e.role === 'waiter').length}
+            {employees.filter(e => e.rolle === 'waiter').length}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <p className="text-sm font-medium text-gray-600">Managers</p>
           <p className="text-2xl font-bold text-blue-600 mt-2">
-            {employees.filter(e => e.role === 'manager').length}
+            {employees.filter(e => e.rolle === 'manager').length}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -467,7 +467,7 @@ function EmployeesPage() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredEmployees.map((emp) => {
-                  const roleInfo = getRoleInfo(emp.role);
+                  const roleInfo = getRoleInfo(emp.rolle);
                   const statusInfo = getStatusInfo(emp.status);
 
                   return (

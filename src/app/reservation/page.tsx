@@ -19,14 +19,14 @@ import { supabase } from "@/lib/supabaseClient";
 
 // ✅ Updated Validation Schema
 const reservationSchema = z.object({
-  first_name: z.string().min(2, "First name must be at least 2 characters").max(50),
-  last_name: z.string().min(2, "Last name must be at least 2 characters").max(50),
+  vorname: z.string().min(2, "First name must be at least 2 characters").max(50),
+  nachname: z.string().min(2, "Last name must be at least 2 characters").max(50),
   email: z.string().email("Invalid email address"),
-  telephone: z.string().min(10, "Please enter a valid phone number").max(20),
-  date: z.date({ error: "Please select a date" }),
-  time: z.string().min(1, "Please select a time"),
-  guests: z.string().min(1, "Please select number of guests"),
-  remark: z.string().optional(),
+  telefon: z.string().min(10, "Please enter a valid phone number").max(20),
+  datum: z.date({ error: "Please select a date" }),
+  uhrzeit: z.string().min(1, "Please select a time"),
+  gaeste: z.string().min(1, "Please select number of guests"),
+  bemerkung: z.string().optional(),
 });
 
 type ReservationFormData = z.infer<typeof reservationSchema>;
@@ -87,9 +87,9 @@ export default function Reservation() {
       }
 
       if (data) {
-        const opening = data.opening_time || "10:00";
-        const closing = data.closing_time || "22:00";
-        const holidays = data.closed_dates || [];
+        const opening = data.oeffnungszeit || "10:00";
+        const closing = data.schliesszeit || "22:00";
+        const holidays = data.schliesstage || [];
 
         setTimeSlots(generateTimeSlots(opening, closing));
         setClosedDates(holidays);
@@ -111,19 +111,19 @@ export default function Reservation() {
   } = useForm<ReservationFormData>({
     resolver: zodResolver(reservationSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
+      vorname: "",
+      nachname: "",
       email: "",
-      telephone: "",
-      time: "",
-      guests: "2",
-      remark: "",
-      date: undefined,
+      telefon: "",
+      uhrzeit: "",
+      gaeste: "2",
+      bemerkung: "",
+      datum: undefined,
     },
   });
 
   // 🔹 Watch selected date to trigger holiday check dynamically
-  const selectedDate = watch("date");
+  const selectedDate = watch("datum");
 
   useEffect(() => {
     if (!selectedDate) {
@@ -141,7 +141,7 @@ export default function Reservation() {
 
   // ✅ Submit handler
   const onSubmit = async (data: ReservationFormData) => {
-    const formatted = format(data.date, "yyyy-MM-dd");
+    const formatted = format(data.datum, "yyyy-MM-dd");
 
     // 🔹 Prevent submission if it's a holiday
     if (closedDates.includes(formatted)) {
@@ -151,14 +151,14 @@ export default function Reservation() {
 
     try {
       const payload = {
-        first_name: data.first_name,
-        last_name: data.last_name,
+        vorname: data.vorname,
+        nachname: data.nachname,
         email: data.email,
-        telephone: data.telephone,
-        date: formatted,
-        time: data.time,
-        guests: data.guests,
-        remark: data.remark || "",
+        telefon: data.telefon,
+        datum: formatted,
+        uhrzeit: data.uhrzeit,
+        gaeste: data.gaeste,
+        bemerkung: data.bemerkung || "",
       };
 
       console.log("📤 Sending reservation data:", payload);
@@ -234,7 +234,7 @@ export default function Reservation() {
           <p className="text-gray-600 mb-4">
             Thank you,{" "}
             <span className="font-semibold text-amber-700">
-              {submittedData.first_name} {submittedData.last_name}
+              {submittedData.vorname} {submittedData.nachname}
             </span>
             !
           </p>
@@ -263,12 +263,12 @@ export default function Reservation() {
             <p>
               <span className="text-xs text-gray-500">Name: </span>
               <span className="font-semibold">
-                {submittedData.first_name} {submittedData.last_name}
+                {submittedData.vorname} {submittedData.nachname}
               </span>
             </p>
             <p>
               <span className="text-xs text-gray-500">Phone: </span>
-              <span className="font-semibold">{submittedData.telephone}</span>
+              <span className="font-semibold">{submittedData.telefon}</span>
             </p>
             <p>
               <span className="text-xs text-gray-500">Date: </span>
@@ -282,12 +282,12 @@ export default function Reservation() {
             </p>
             <p>
               <span className="text-xs text-gray-500">Guests: </span>
-              <span className="font-semibold">{submittedData.guests}</span>
+              <span className="font-semibold">{submittedData.gaeste}</span>
             </p>
-            {submittedData.remark && (
+            {submittedData.bemerkung && (
               <p>
                 <span className="text-xs text-gray-500">Special Requests: </span>
-                <span className="font-semibold">{submittedData.remark}</span>
+                <span className="font-semibold">{submittedData.bemerkung}</span>
               </p>
             )}
           </div>
@@ -365,7 +365,7 @@ export default function Reservation() {
             {/* First Name & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Controller
-                name="first_name"
+                name="vorname"
                 control={control}
                 render={({ field }) => (
                   <div className="space-y-2">
@@ -378,9 +378,9 @@ export default function Reservation() {
                       placeholder="John"
                       className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
                     />
-                    {errors.first_name && (
+                    {errors.vorname && (
                       <p className="text-xs text-red-600 mt-1">
-                        {errors.first_name.message}
+                        {errors.vorname.message}
                       </p>
                     )}
                   </div>
@@ -388,7 +388,7 @@ export default function Reservation() {
               />
 
               <Controller
-                name="last_name"
+                name="nachname"
                 control={control}
                 render={({ field }) => (
                   <div className="space-y-2">
@@ -401,9 +401,9 @@ export default function Reservation() {
                       placeholder="Doe"
                       className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
                     />
-                    {errors.last_name && (
+                    {errors.nachname && (
                       <p className="text-xs text-red-600 mt-1">
-                        {errors.last_name.message}
+                        {errors.nachname.message}
                       </p>
                     )}
                   </div>
@@ -437,7 +437,7 @@ export default function Reservation() {
               />
 
               <Controller
-                name="telephone"
+                name="telefon"
                 control={control}
                 render={({ field }) => (
                   <div className="space-y-2">
@@ -451,9 +451,9 @@ export default function Reservation() {
                       placeholder="+1 234 567 8900"
                       className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
                     />
-                    {errors.telephone && (
+                    {errors.telefon && (
                       <p className="text-xs text-red-600 mt-1">
-                        {errors.telephone.message}
+                        {errors.telefon.message}
                       </p>
                     )}
                   </div>
@@ -558,7 +558,7 @@ export default function Reservation() {
               />
 
               <Controller
-                name="guests"
+                name="gaeste"
                 control={control}
                 render={({ field }) => (
                   <div className="space-y-2">
@@ -580,7 +580,7 @@ export default function Reservation() {
 
             {/* Remark (Optional) */}
             <Controller
-              name="remark"
+              name="bemerkung"
               control={control}
               render={({ field }) => (
                 <div className="space-y-2">

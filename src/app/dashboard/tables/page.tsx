@@ -297,10 +297,10 @@ function TablesPage({ role }: { role: string }) {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Table Number
+                      Tisch Nummer
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Capacity
+                      Kapazitaet
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
@@ -318,13 +318,13 @@ function TablesPage({ role }: { role: string }) {
                           <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
                             <span className="text-amber-700 font-bold">{table.nummer}</span>
                           </div>
-                          <span className="text-sm font-medium text-gray-900">Table {table.nummer}</span>
+                          <span className="text-sm font-medium text-gray-900">Tisch {table.nummer}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900">
                           <Users className="w-4 h-4 mr-2 text-gray-400" />
-                          {table.kapazitaet} guests
+                          {table.kapazitaet} gaeste
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

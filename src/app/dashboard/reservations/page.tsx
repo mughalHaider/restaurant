@@ -677,19 +677,19 @@ function ReservationsPage({ role }: { role: string }) {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Guest
+                      Name
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Contact
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Date & Time
+                      Datum & Uhrzeit
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Party Size
+                      Gaeste
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Table
+                      Tisch
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Status
@@ -715,7 +715,7 @@ function ReservationsPage({ role }: { role: string }) {
                               title="View Remark"
                             >
                               <MessageCircle className="w-3 h-3 mr-1" />
-                              Has remarks
+                              Has Bemerkung
                             </button>
                           )}
                         </div>
@@ -764,7 +764,7 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm text-gray-900">
                           <Users className="w-4 h-4 mr-2 text-gray-400" />
-                          {res.gaeste} guests
+                          {res.gaeste} gaeste
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -851,19 +851,19 @@ function ReservationsPage({ role }: { role: string }) {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Guest
+                    Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Contact
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Date & Time
+                    Datum & Uhrzeit
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Party Size
+                    Gaeste
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Table
+                    Tisch
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Status
@@ -895,7 +895,7 @@ function ReservationsPage({ role }: { role: string }) {
                               title="View Remark"
                             >
                               <MessageCircle className="w-3 h-3 mr-1" />
-                              Has remarks
+                              Has Bemerkung
                             </button>
                           )}
                         </div>

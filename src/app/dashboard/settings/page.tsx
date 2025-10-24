@@ -157,7 +157,7 @@ function SettingsPage() {
             <Clock className="w-6 h-6 text-blue-600" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Opening Hours</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Oeffnungszeiten</h2>
             <p className="text-gray-600 text-sm">
               {`Set your restaurant's daily operating hours`}
             </p>
@@ -166,7 +166,7 @@ function SettingsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-md">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Opening Time</label>
+            <label className="block text-sm font-medium text-gray-700">Oeffnungszeit</label>
             <div className="relative">
               <input
                 type="time"
@@ -178,7 +178,7 @@ function SettingsPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Closing Time</label>
+            <label className="block text-sm font-medium text-gray-700">Schliesszeit</label>
             <div className="relative">
               <input
                 type="time"
@@ -204,14 +204,14 @@ function SettingsPage() {
             <Calendar className="w-6 h-6 text-red-600" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Holidays & Closed Dates</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Feiertage & Schliesstage</h2>
             <p className="text-gray-600 text-sm">Mark dates when the restaurant will be closed</p>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 mb-6">
           <div className="flex-1 space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Add Closed Date</label>
+            <label className="block text-sm font-medium text-gray-700">Add Schliesstag</label>
             <input
               type="date"
               value={newHoliday}
@@ -224,7 +224,7 @@ function SettingsPage() {
             className="flex items-center gap-2 bg-amber-600 text-white px-6 py-3 rounded-xl hover:bg-amber-700 transition-colors duration-200 font-medium"
           >
             <Plus className="w-4 h-4" />
-            Add Date
+            Add Datum
           </button>
         </div>
 

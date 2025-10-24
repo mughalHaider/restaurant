@@ -314,7 +314,7 @@ function EmployeesPage() {
               onChange={(e) => setRoleFilter(e.target.value as "all" | "waiter" | "manager")}
               className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
             >
-              <option value="all">All Roles</option>
+              <option value="all">All Rollen</option>
               <option value="waiter">Waiter</option>
               <option value="manager">Manager</option>
             </select>
@@ -460,7 +460,7 @@ function EmployeesPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Employee</th>
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Role</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Rolle</th>
                   <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Status</th>
                   <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Actions</th>
                 </tr>

@@ -754,11 +754,11 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-2 text-sm text-gray-900">
                           <Calendar className="w-4 h-4 text-gray-400" />
-                          <span>{new Date(res.date).toLocaleDateString()}</span>
+                          <span>{new Date(res.datum).toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
                           <Clock className="w-4 h-4 text-gray-400" />
-                          <span>{res.time}</span>
+                          <span>{res.uhrzeit}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">

@@ -41,7 +41,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
       const { data: employee, error } = await supabase
         .from("employees")
-        .select("name, role")
+        .select("name, rolle")
         .eq("email", email)
         .single();
 
@@ -52,7 +52,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       }
 
       setUserName(employee.name);
-      setRole(employee.role as Role);
+      setRole(employee.rolle as Role);
     };
 
     loadEmployee();

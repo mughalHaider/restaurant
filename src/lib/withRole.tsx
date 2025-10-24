@@ -27,16 +27,16 @@ export function withRole<T extends object>(
 
         const { data: employee } = await supabase
           .from("employees")
-          .select("role")
+          .select("rolle")
           .eq("email", email)
           .single();
 
-        if (!employee || !allowedRoles.includes(employee.role)) {
+        if (!employee || !allowedRoles.includes(employee.rolle)) {
           router.replace("/dashboard");
           return;
         }
 
-        setRole(employee.role);
+        setRole(employee.rolle);
         setAuthorized(true);
         setLoading(false);
       };

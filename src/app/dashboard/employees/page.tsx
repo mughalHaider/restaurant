@@ -37,14 +37,14 @@ function EmployeesPage() {
   // form state
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"waiter" | "manager">("waiter");
+  const [rolle, setRolle] = useState<"waiter" | "manager">("waiter");
   const [showAddForm, setShowAddForm] = useState(false);
 
   // edit state
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editEmail, setEditEmail] = useState("");
-  const [editRole, setEditRole] = useState<"waiter" | "manager">("waiter");
+  const [editRolle, setEditRolle] = useState<"waiter" | "manager">("waiter");
   const [editStatus, setEditStatus] = useState<"pending" | "active" | "inactive">("pending");
 
   // alert states
@@ -87,7 +87,7 @@ function EmployeesPage() {
       {
         name,
         email,
-        rolle: role,
+        rolle,
         status: "pending",
       },
     ]);
@@ -121,7 +121,7 @@ function EmployeesPage() {
 
     setName("");
     setEmail("");
-    setRole("waiter");
+    setRolle("waiter");
     setShowAddForm(false);
     fetchEmployees();
   };
@@ -144,7 +144,7 @@ function EmployeesPage() {
     setEditingId(emp.id);
     setEditName(emp.name);
     setEditEmail(emp.email);
-    setEditRole(emp.rolle as "waiter" | "manager");
+    setEditRolle(emp.rolle as "waiter" | "manager");
     setEditStatus(emp.status);
   };
 
@@ -153,7 +153,7 @@ function EmployeesPage() {
     setEditingId(null);
     setEditName("");
     setEditEmail("");
-    setEditRole("waiter");
+    setEditRolle("waiter");
     setEditStatus("pending");
   };
 
@@ -164,7 +164,7 @@ function EmployeesPage() {
     const updateData: Partial<Employee> = {
       name: editName,
       email: editEmail,
-      rolle: editRole,
+      rolle: editRolle,
     };
 
     // Only allow updating status if not pending
@@ -383,8 +383,8 @@ function EmployeesPage() {
                   Role *
                 </label>
                 <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as "waiter" | "manager")}
+                  value={rolle}
+                  onChange={(e) => setRolle(e.target.value as "waiter" | "manager")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
                 >
                   <option value="waiter">Waiter</option>
@@ -511,8 +511,8 @@ function EmployeesPage() {
                       <td className="px-6 py-4">
                         {editingId === emp.id ? (
                           <select
-                            value={editRole}
-                            onChange={(e) => setEditRole(e.target.value as "waiter" | "manager")}
+                            value={editRolle}
+                            onChange={(e) => setEditRolle(e.target.value as "waiter" | "manager")}
                             className="border border-gray-300 px-2 py-1 rounded focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                           >
                             <option value="waiter">Waiter</option>

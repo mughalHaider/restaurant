@@ -22,10 +22,10 @@ const reservationSchema = z.object({
   vorname: z.string().min(2, "First name must be at least 2 characters").max(50),
   nachname: z.string().min(2, "Last name must be at least 2 characters").max(50),
   email: z.string().email("Invalid email address"),
-  telefon: z.string().min(10, "Please enter a valid phone number").max(20),
-  datum: z.date({ error: "Please select a date" }),
-  uhrzeit: z.string().min(1, "Please select a time"),
-  gaeste: z.string().min(1, "Please select number of guests"),
+  telefon: z.string().min(10, "Please enter a valid telefon number").max(20),
+  datum: z.date({ error: "Please select a datum" }),
+  uhrzeit: z.string().min(1, "Please select a uhrzeit"),
+  gaeste: z.string().min(1, "Please select number of gaeste"),
   bemerkung: z.string().optional(),
 });
 
@@ -58,7 +58,7 @@ const generateTimeSlots = (opening: string, closing: string) => {
 
 const guestOptions = Array.from({ length: 10 }, (_, i) => ({
   value: String(i + 1),
-  label: `${i + 1} ${i === 0 ? "guest" : "guests"}`,
+  label: `${i + 1} ${i === 0 ? "gaeste" : "gaeste"}`,
 }));
 
 export default function Reservation() {
@@ -267,21 +267,21 @@ export default function Reservation() {
               </span>
             </p>
             <p>
-              <span className="text-xs text-gray-500">Phone: </span>
+              <span className="text-xs text-gray-500">Telefon: </span>
               <span className="font-semibold">{submittedData.telefon}</span>
             </p>
             <p>
-              <span className="text-xs text-gray-500">Date: </span>
+              <span className="text-xs text-gray-500">Datum: </span>
               <span className="font-semibold">
                 {format(submittedData.datum, "EEEE, MMMM d, yyyy")}
               </span>
             </p>
             <p>
-              <span className="text-xs text-gray-500">Time: </span>
+              <span className="text-xs text-gray-500">Uhrzeit: </span>
               <span className="font-semibold">{submittedData.uhrzeit}</span>
             </p>
             <p>
-              <span className="text-xs text-gray-500">Guests: </span>
+              <span className="text-xs text-gray-500">Gaeste: </span>
               <span className="font-semibold">{submittedData.gaeste}</span>
             </p>
             {submittedData.bemerkung && (
@@ -348,7 +348,7 @@ export default function Reservation() {
             <div className="mb-6 bg-red-50 border border-red-200 p-4 rounded-xl">
               <h2 className="font-semibold text-red-700 mb-2 flex items-center">
                 <CalendarIcon className="w-4 h-4 mr-2" />
-                Closed Dates
+                Schliesstage
               </h2>
               <ul className="text-red-600 text-sm space-y-1">
                 {closedDates.map((d) => (
@@ -370,7 +370,7 @@ export default function Reservation() {
                 render={({ field }) => (
                   <div className="space-y-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      First Name *
+                      Vorname *
                     </label>
                     <input
                       {...field}
@@ -393,7 +393,7 @@ export default function Reservation() {
                 render={({ field }) => (
                   <div className="space-y-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Last Name *
+                      Nachname *
                     </label>
                     <input
                       {...field}
@@ -443,7 +443,7 @@ export default function Reservation() {
                   <div className="space-y-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                       <Phone className="w-4 h-4 mr-2 text-amber-600" />
-                      Phone Number *
+                      Telefon *
                     </label>
                     <input
                       {...field}
@@ -465,7 +465,7 @@ export default function Reservation() {
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                 <CalendarIcon className="w-4 h-4 mr-2 text-amber-600" />
-                Reservation Date *
+                Reservation Datum *
               </label>
               <Controller
                 name="datum"
@@ -487,7 +487,7 @@ export default function Reservation() {
                             }`} />
                           {field.value
                             ? format(field.value, "EEEE, MMMM d, yyyy")
-                            : "Select a date"}
+                            : "Select datum"}
                         </div>
                       </button>
                     </PopoverTrigger>
@@ -539,13 +539,13 @@ export default function Reservation() {
                   <div className="space-y-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                       <Clock className="w-4 h-4 mr-2 text-amber-600" />
-                      Preferred Time *
+                      Preferred Uhrzeit *
                     </label>
                     <Select
                       value={field.value}
                       onValueChange={field.onChange}
                       options={timeSlots}
-                      placeholder="Select time"
+                      placeholder="Select uhrzeit"
                       className="border-2 border-gray-200 rounded-lg px-10 hover:border-amber-300 transition-colors"
                     />
                     {errors.uhrzeit && (
@@ -564,13 +564,13 @@ export default function Reservation() {
                   <div className="space-y-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                       <Users className="w-4 h-4 mr-2 text-amber-600" />
-                      Guests *
+                      Gaeste *
                     </label>
                     <Select
                       value={field.value}
                       onValueChange={field.onChange}
                       options={guestOptions}
-                      placeholder="Select guests"
+                      placeholder="Select gaeste"
                       className="border-2 border-gray-200 px-10 rounded-lg hover:border-amber-300 transition-colors"
                     />
                   </div>

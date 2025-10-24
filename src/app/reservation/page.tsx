@@ -273,12 +273,12 @@ export default function Reservation() {
             <p>
               <span className="text-xs text-gray-500">Date: </span>
               <span className="font-semibold">
-                {format(submittedData.date, "EEEE, MMMM d, yyyy")}
+                {format(submittedData.datum, "EEEE, MMMM d, yyyy")}
               </span>
             </p>
             <p>
               <span className="text-xs text-gray-500">Time: </span>
-              <span className="font-semibold">{submittedData.time}</span>
+              <span className="font-semibold">{submittedData.uhrzeit}</span>
             </p>
             <p>
               <span className="text-xs text-gray-500">Guests: </span>
@@ -468,7 +468,7 @@ export default function Reservation() {
                 Reservation Date *
               </label>
               <Controller
-                name="date"
+                name="datum"
                 control={control}
                 render={({ field }) => (
                   <Popover>
@@ -513,9 +513,9 @@ export default function Reservation() {
                   </Popover>
                 )}
               />
-              {errors.date && (
+              {errors.datum && (
                 <p className="text-xs text-red-600 mt-1">
-                  {errors.date.message}
+                  {errors.datum.message}
                 </p>
               )}
             </div>
@@ -533,7 +533,7 @@ export default function Reservation() {
             {/* Time & Guests */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Controller
-                name="time"
+                name="uhrzeit"
                 control={control}
                 render={({ field }) => (
                   <div className="space-y-2">
@@ -548,9 +548,9 @@ export default function Reservation() {
                       placeholder="Select time"
                       className="border-2 border-gray-200 rounded-lg px-10 hover:border-amber-300 transition-colors"
                     />
-                    {errors.time && (
+                    {errors.uhrzeit && (
                       <p className="text-xs text-red-600 mt-1">
-                        {errors.time.message}
+                        {errors.uhrzeit.message}
                       </p>
                     )}
                   </div>

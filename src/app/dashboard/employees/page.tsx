@@ -87,7 +87,7 @@ function EmployeesPage() {
       {
         name,
         email,
-        rolle,
+        rolle: role,
         status: "pending",
       },
     ]);

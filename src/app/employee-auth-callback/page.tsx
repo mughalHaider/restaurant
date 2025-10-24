@@ -32,7 +32,7 @@ export default function EmployeeAuthCallback() {
       // 2. Verify employee
       const { data: emp, error: empError } = await supabase
         .from("employees")
-        .select("id, role, status")
+        .select("id, rolle, status")
         .eq("email", email)
         .single();
 
@@ -51,9 +51,9 @@ export default function EmployeeAuthCallback() {
       }
 
       // 5. Redirect based on role
-      if (emp.role === "manager") {
+      if (emp.rolle === "manager") {
         router.replace("/dashboard/");
-      } else if (emp.role === "waiter") {
+      } else if (emp.rolle === "waiter") {
         router.replace("/dashboard/");
       } else {
         router.replace("/dashboard"); // fallback for admin or unknown

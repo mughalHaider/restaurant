@@ -17,7 +17,7 @@ export default function Footer() {
         const fetchSettings = async () => {
             try {
                 const { data, error } = await supabase
-                    .from("restaurant_settings")
+                    .from("restaurant_einstellungen")
                     .select("oeffnungszeit, schliesszeit")
                     .single();
 

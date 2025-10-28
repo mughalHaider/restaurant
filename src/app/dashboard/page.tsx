@@ -42,7 +42,7 @@ function DashboardPage() {
 
       if (session?.user?.email) {
         const { data: employee } = await supabase
-          .from("employees")
+          .from("mitarbeiter")
           .select("name, rolle")
           .eq("email", session.user.email)
           .single();
@@ -61,7 +61,7 @@ function DashboardPage() {
 
         // ✅ Fetch confirmed reservations for today
         const { data: allReservations } = await supabase
-          .from("reservations")
+          .from("reservierungen")
           .select("id, vorname, nachname, uhrzeit, gaeste, status, datum")
           .order("uhrzeit", { ascending: true });
 
@@ -79,7 +79,7 @@ function DashboardPage() {
 
         // ✅ Fetch tables (reserved vs total)
         const { data: tableData } = await supabase
-          .from("restaurant_tables")
+          .from("tische")
           .select("id, status");
 
         if (tableData) {
@@ -89,7 +89,7 @@ function DashboardPage() {
 
         // ✅ Fetch staff except admins
         const { data: empData } = await supabase
-          .from("employees")
+          .from("mitarbeiter")
           .select("id, rolle")
           .eq("status", "active")
           .neq("rolle", "admin");

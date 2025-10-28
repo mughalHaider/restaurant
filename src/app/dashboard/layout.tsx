@@ -40,7 +40,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       }
 
       const { data: employee, error } = await supabase
-        .from("employees")
+        .from("mitarbeiter")
         .select("name, rolle")
         .eq("email", email)
         .single();

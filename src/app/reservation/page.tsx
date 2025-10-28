@@ -76,7 +76,7 @@ export default function Reservation() {
   useEffect(() => {
     const fetchSettings = async () => {
       const { data, error } = await supabase
-        .from("restaurant_settings")
+        .from("restaurant_einstellungen")
         .select("*")
         .single();
 

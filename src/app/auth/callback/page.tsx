@@ -20,7 +20,7 @@ export default function AuthCallback() {
       if (session?.user?.email) {
         // update employee status → active
         await supabase
-          .from("employees")
+          .from("mitarbeiter")
           .update({ status: "active" })
           .eq("email", session.user.email);
       }

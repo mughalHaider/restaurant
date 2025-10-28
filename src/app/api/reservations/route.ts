@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     const { vorname, nachname, email, telefon, datum, uhrzeit, gaeste, bemerkung } = body;
 
     // ✅ 1. Save reservation in Supabase with new field names
-    const { data, error } = await supabase.from("reservations").insert([
+    const { data, error } = await supabase.from("reservierungen").insert([
       { 
         vorname,
         nachname,

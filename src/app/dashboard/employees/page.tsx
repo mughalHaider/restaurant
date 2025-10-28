@@ -58,7 +58,7 @@ function EmployeesPage() {
   // ✅ Fetch employees (excluding admins)
   const fetchEmployees = async () => {
     const { data, error } = await supabase
-      .from("employees")
+      .from("mitarbeiter")
       .select("*")
       .order("id", { ascending: false }); // fallback
 
@@ -83,7 +83,7 @@ function EmployeesPage() {
       return;
     }
 
-    const { error: insertError } = await supabase.from("employees").insert([
+    const { error: insertError } = await supabase.from("mitarbeiter").insert([
       {
         name,
         email,
@@ -130,7 +130,7 @@ function EmployeesPage() {
   const deleteEmployee = async (id: string) => {
     if (!confirm("Are you sure you want to delete this employee?")) return;
 
-    const { error } = await supabase.from("employees").delete().eq("id", id);
+    const { error } = await supabase.from("mitarbeiter").delete().eq("id", id);
 
     if (error) {
       console.error("Error deleting employee:", error);
@@ -173,7 +173,7 @@ function EmployeesPage() {
     }
 
     const { error } = await supabase
-      .from("employees")
+      .from("mitarbeiter")
       .update(updateData)
       .eq("id", editingId);
 
@@ -416,7 +416,7 @@ function EmployeesPage() {
           message="Are you sure you want to delete this employee?"
           onCancel={() => setDeleteId(null)}
           onConfirm={async () => {
-            const { error } = await supabase.from("employees").delete().eq("id", deleteId);
+            const { error } = await supabase.from("mitarbeiter").delete().eq("id", deleteId);
             setDeleteId(null);
             if (error) {
               setAlertType("error");

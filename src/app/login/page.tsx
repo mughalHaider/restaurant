@@ -21,7 +21,7 @@ export default function EmployeeLogin() {
 
     // 1. Check employee in DB
     const { data: employees, error } = await supabase
-      .from("employees")
+      .from("mitarbeiter")
       .select("*")
       .eq("email", email)
       .single();

@@ -130,7 +130,7 @@ restaurant-reservation/
 
    ```sql
    -- Reservations table (reservierungen)
-   CREATE TABLE reservations (
+   CREATE TABLE reservierungen (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
      vorname TEXT NOT NULL,
      nachname TEXT NOT NULL,
@@ -141,11 +141,11 @@ restaurant-reservation/
      gaeste INT NOT NULL,
      bemerkung TEXT,
      status TEXT DEFAULT 'pending',
-     tisch_id UUID REFERENCES restaurant_tables(id)
+     tisch_id UUID REFERENCES tische(id)
    );
 
    -- Employees table (mitarbeiter)
-   CREATE TABLE employees (
+   CREATE TABLE mitarbeiter (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
      email TEXT UNIQUE NOT NULL,
      rolle TEXT CHECK (rolle IN ('waiter', 'manager', 'admin')) NOT NULL,
@@ -154,7 +154,7 @@ restaurant-reservation/
    );
 
    -- Restaurant tables (tische)
-   CREATE TABLE restaurant_tables (
+   CREATE TABLE tische (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
      nummer INT UNIQUE NOT NULL,
      kapazitaet INT NOT NULL,
@@ -162,7 +162,7 @@ restaurant-reservation/
    );
 
    -- Restaurant settings (restaurant_einstellungen)
-   CREATE TABLE restaurant_settings (
+   CREATE TABLE restaurant_einstellungen (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
      oeffnungszeit TIME NOT NULL DEFAULT '10:00',
      schliesszeit TIME NOT NULL DEFAULT '22:00',

@@ -57,7 +57,7 @@ function StatsPage() {
 
       // Fetch reservations within range
       const { data, error } = await supabase
-        .from("reservations")
+        .from("reservierungen")
         .select("date, id, status")
         .gte("date", startDate.toISOString().split('T')[0])
         .lte("date", endDate.toISOString().split('T')[0]);

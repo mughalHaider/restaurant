@@ -37,7 +37,7 @@ function TablesPage({ role }: { role: string }) {
   // Fetch tables function
   const fetchTables = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("restaurant_tables").select("*").order("nummer", { ascending: true });
+    const { data, error } = await supabase.from("tische").select("*").order("nummer", { ascending: true });
     if (!error && data) setTables(data);
     setLoading(false);
   };
@@ -50,7 +50,7 @@ function TablesPage({ role }: { role: string }) {
   // Add new table
   const addTable = async () => {
     if (!formData.nummer || !formData.kapazitaet) return alert("Enter number & capacity");
-    const { error } = await supabase.from("restaurant_tables").insert([{ nummer: Number(formData.nummer), kapazitaet: Number(formData.kapazitaet), status: formData.status }]);
+    const { error } = await supabase.from("tische").insert([{ nummer: Number(formData.nummer), kapazitaet: Number(formData.kapazitaet), status: formData.status }]);
     if (!error) {
       setFormData({ nummer: "", kapazitaet: "", status: "available" });
       setModal({ type: null, table: null });
@@ -61,7 +61,7 @@ function TablesPage({ role }: { role: string }) {
   // Update table
   const updateTable = async () => {
     if (!modal.table || !formData.kapazitaet) return;
-    const { error } = await supabase.from("restaurant_tables").update({ kapazitaet: Number(formData.kapazitaet), status: formData.status }).eq("id", modal.table.id);
+    const { error } = await supabase.from("tische").update({ kapazitaet: Number(formData.kapazitaet), status: formData.status }).eq("id", modal.table.id);
     if (!error) {
       setModal({ type: null, table: null });
       fetchTables();
@@ -71,7 +71,7 @@ function TablesPage({ role }: { role: string }) {
   // Delete table
   const deleteTable = async () => {
     if (!modal.table) return;
-    const { error } = await supabase.from("restaurant_tables").delete().eq("id", modal.table.id);
+    const { error } = await supabase.from("tische").delete().eq("id", modal.table.id);
     if (!error) {
       setModal({ type: null, table: null });
       fetchTables();

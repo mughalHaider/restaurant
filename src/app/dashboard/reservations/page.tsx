@@ -86,16 +86,16 @@ function ReservationsPage({ role }: { role: string }) {
     const fetchData = async () => {
       setLoading(true);
       const { data: resData } = await supabase
-        .from("reservations")
+        .from("reservierungen")
         .select(`
           *,
-          restaurant_tables ( nummer, kapazitaet )
+          tische ( nummer, kapazitaet )
         `)
         .order("datum", { ascending: true })
         .order("uhrzeit", { ascending: true });
 
       const { data: tableData } = await supabase
-        .from("restaurant_tables")
+        .from("tische")
         .select("*")
         .order("number", { ascending: true });
 
@@ -109,7 +109,7 @@ function ReservationsPage({ role }: { role: string }) {
   // Handle status updates
   const updateStatus = async (id: string, status: string) => {
     // Update reservation status in DB
-    await supabase.from("reservations").update({ status }).eq("id", id);
+    await supabase.from("reservierungen").update({ status }).eq("id", id);
 
     // Update local state
     setReservations((prev) =>
@@ -125,7 +125,7 @@ function ReservationsPage({ role }: { role: string }) {
     // If cancelled → free the table (only if assigned)
     if (status === "cancelled" && reservation.tisch_id) {
       await supabase
-        .from("restaurant_tables")
+        .from("tische")
         .update({ status: "available" })
         .eq("id", reservation.tisch_id);
 
@@ -169,7 +169,7 @@ function ReservationsPage({ role }: { role: string }) {
     // If arrived → mark table as occupied
     if (status === "arrived" && reservation.tisch_id) {
       await supabase
-        .from("restaurant_tables")
+        .from("tische")
         .update({ status: "occupied" })
         .eq("id", reservation.tisch_id);
 
@@ -189,13 +189,13 @@ function ReservationsPage({ role }: { role: string }) {
     }
 
     await supabase
-      .from("reservations")
+      .from("reservierungen")
       .update({ status: "accepted" })
       .eq("id", reservation.id);
 
     // Update table status → reserved
     await supabase
-      .from("restaurant_tables")
+      .from("tische")
       .update({ status: "reserved" })
       .eq("id", reservation.tisch_id);
 
@@ -250,20 +250,20 @@ function ReservationsPage({ role }: { role: string }) {
     // If changing from one table to another, update previous table status
     if (previousTableId && previousTableId !== tableId) {
       await supabase
-        .from("restaurant_tables")
+        .from("tische")
         .update({ status: "available" })
         .eq("id", previousTableId);
     }
 
     // Update new table status to reserved
     await supabase
-      .from("restaurant_tables")
+      .from("tische")
       .update({ status: "reserved" })
       .eq("id", tableId);
 
     // Update reservation with new table
     await supabase
-      .from("reservations")
+      .from("reservierungen")
       .update({ tisch_id: tableId })
       .eq("id", reservationId);
 
@@ -324,7 +324,7 @@ function ReservationsPage({ role }: { role: string }) {
         // Free up the previous table
         if (previousTableId) {
           await supabase
-            .from("restaurant_tables")
+            .from("tische")
             .update({ status: "available" })
             .eq("id", previousTableId);
         }
@@ -332,7 +332,7 @@ function ReservationsPage({ role }: { role: string }) {
         // Reserve the new table
         if (newTableId) {
           await supabase
-            .from("restaurant_tables")
+            .from("tische")
             .update({ status: "reserved" })
             .eq("id", newTableId);
         }
@@ -340,7 +340,7 @@ function ReservationsPage({ role }: { role: string }) {
 
       // Update reservation details
       const { error } = await supabase
-        .from("reservations")
+        .from("reservierungen")
         .update({
           datum: editForm.datum,
           uhrzeit: editForm.uhrzeit,

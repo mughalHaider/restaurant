@@ -26,7 +26,7 @@ export function withRole<T extends object>(
         }
 
         const { data: employee } = await supabase
-          .from("employees")
+          .from("mitarbeiter")
           .select("rolle")
           .eq("email", email)
           .single();

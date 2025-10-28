@@ -31,7 +31,7 @@ export default function EmployeeAuthCallback() {
 
       // 2. Verify employee
       const { data: emp, error: empError } = await supabase
-        .from("employees")
+        .from("mitarbeiter")
         .select("id, rolle, status")
         .eq("email", email)
         .single();

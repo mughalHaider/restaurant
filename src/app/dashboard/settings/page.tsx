@@ -30,7 +30,7 @@ function SettingsPage() {
   useEffect(() => {
     const fetchSettings = async () => {
       const { data, error } = await supabase
-        .from("restaurant_settings")
+        .from("restaurant_einstellungen")
         .select("*")
         .single();
 
@@ -55,7 +55,7 @@ function SettingsPage() {
 
     // Check if settings row exists
     const { data: existing, error: fetchError } = await supabase
-      .from("restaurant_settings")
+      .from("restaurant_einstellungen")
       .select("*")
       .single();
 
@@ -73,7 +73,7 @@ function SettingsPage() {
     if (existing) {
       // ✅ Row exists → update it
       result = await supabase
-        .from("restaurant_settings")
+        .from("restaurant_einstellungen")
         .update({
           oeffnungszeit: openingTime,
           schliesszeit: closingTime,
@@ -83,7 +83,7 @@ function SettingsPage() {
         .eq("id", existing.id);
     } else {
       // 🆕 No row → insert new one
-      result = await supabase.from("restaurant_settings").insert([
+      result = await supabase.from("restaurant_einstellungen").insert([
         {
           oeffnungszeit: openingTime,
           schliesszeit: closingTime,

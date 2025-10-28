@@ -773,9 +773,9 @@ function ReservationsPage({ role }: { role: string }) {
                           onValueChange={(value) => assignTable(res.id, value)}
                           options={getAvailableTables(res.tisch_id).map((t) => ({
                             value: t.id,
-                            label: `Table ${t.nummer} (${t.kapazitaet} seats)`,
+                            label: `Tisch ${t.nummer} (${t.kapazitaet} seats)`,
                           }))}
-                          placeholder="Assign Table"
+                          placeholder="Assign Tisch"
                           className="min-w-[150px]"
                         />
                       </td>
@@ -985,14 +985,14 @@ function ReservationsPage({ role }: { role: string }) {
                             onValueChange={(value) => setEditForm((prev) => ({ ...prev, tisch_id: value }))}
                             options={getAvailableTables(res.tisch_id).map((t) => ({
                               value: t.id,
-                              label: `Table ${t.nummer} (${t.kapazitaet} seats)`,
+                              label: `Tisch ${t.nummer} (${t.kapazitaet} seats)`,
                             }))}
-                            placeholder="Select Table"
+                            placeholder="Select Tisch"
                             className="min-w-[150px]"
                           />
                         ) : (
                           <span className="text-sm text-gray-600">
-                            {table ? `Table ${table.nummer} (${table.kapazitaet})` : "—"}
+                            {table ? `Tisch ${table.nummer} (${table.kapazitaet})` : "—"}
                           </span>
                         )}
                       </td>

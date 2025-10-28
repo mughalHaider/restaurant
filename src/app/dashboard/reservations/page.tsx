@@ -40,8 +40,8 @@ type Reservation = {
 
 type Table = {
   id: string;
-  number: number;
-  capacity: number;
+  nummer: number;
+  kapazitaet: number;
   status: "available" | "reserved" | "occupied";
 };
 
@@ -97,7 +97,7 @@ function ReservationsPage({ role }: { role: string }) {
       const { data: tableData } = await supabase
         .from("tische")
         .select("*")
-        .order("number", { ascending: true });
+        .order("nummer", { ascending: true });
 
       setReservations(resData || []);
       setTables(tableData || []);
@@ -223,7 +223,7 @@ function ReservationsPage({ role }: { role: string }) {
           nachname: reservation.nachname,    // Send nachname separately
           datum: reservation.datum,
           uhrzeit: reservation.uhrzeit,
-          table: table ? `Table ${table.number} (${table.capacity} seats)` : "N/A",
+          table: table ? `Table ${table.nummer} (${table.kapazitaet} seats)` : "N/A",
         }),
       });
 
@@ -550,7 +550,7 @@ function ReservationsPage({ role }: { role: string }) {
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Table Assigned:</span>
               <span className="font-medium text-gray-900">
-                {reservation.tisch_id ? `Table ${tables.find(t => t.id === reservation.tisch_id)?.number}` : "None"}
+                {reservation.tisch_id ? `Table ${tables.find(t => t.id === reservation.tisch_id)?.nummer}` : "None"}
               </span>
             </div>
           </div>
@@ -773,7 +773,7 @@ function ReservationsPage({ role }: { role: string }) {
                           onValueChange={(value) => assignTable(res.id, value)}
                           options={getAvailableTables(res.tisch_id).map((t) => ({
                             value: t.id,
-                            label: `Table ${t.number} (${t.capacity} seats)`,
+                            label: `Table ${t.nummer} (${t.kapazitaet} seats)`,
                           }))}
                           placeholder="Assign Table"
                           className="min-w-[150px]"
@@ -985,14 +985,14 @@ function ReservationsPage({ role }: { role: string }) {
                             onValueChange={(value) => setEditForm((prev) => ({ ...prev, tisch_id: value }))}
                             options={getAvailableTables(res.tisch_id).map((t) => ({
                               value: t.id,
-                              label: `Table ${t.number} (${t.capacity} seats)`,
+                              label: `Table ${t.nummer} (${t.kapazitaet} seats)`,
                             }))}
                             placeholder="Select Table"
                             className="min-w-[150px]"
                           />
                         ) : (
                           <span className="text-sm text-gray-600">
-                            {table ? `Table ${table.number} (${table.capacity})` : "—"}
+                            {table ? `Table ${table.nummer} (${table.kapazitaet})` : "—"}
                           </span>
                         )}
                       </td>

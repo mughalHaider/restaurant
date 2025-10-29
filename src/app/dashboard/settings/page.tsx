@@ -119,9 +119,9 @@ function SettingsPage() {
     setClosedDates(closedDates.filter((d) => d !== date));
   };
 
-  // Format date for display
+  // Format date for display (German locale)
   const formatDateDisplay = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('de-DE', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -172,6 +172,7 @@ function SettingsPage() {
                 type="time"
                 value={openingTime}
                 onChange={(e) => setOpeningTime(e.target.value)}
+                lang="de-DE"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
               />
             </div>
@@ -184,6 +185,7 @@ function SettingsPage() {
                 type="time"
                 value={closingTime}
                 onChange={(e) => setClosingTime(e.target.value)}
+                lang="de-DE"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
               />
             </div>

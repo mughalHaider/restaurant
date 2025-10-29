@@ -8,8 +8,8 @@ import gr from "../app/message/de.json";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
-    const [openingTime, setOpeningTime] = useState<string>("5:00 PM");
-    const [closingTime, setClosingTime] = useState<string>("10:00 PM");
+    const [openingTime, setOpeningTime] = useState<string>("17:00");
+    const [closingTime, setClosingTime] = useState<string>("22:00");
     const [loading, setLoading] = useState(true);
 
     // ✅ Fetch opening & closing hours from Supabase
@@ -24,15 +24,15 @@ export default function Footer() {
                 if (error) {
                     console.error("Error fetching settings:", error);
                 } else if (data) {
-                    // Convert 24h → 12h format
+                    // Format to German 24-hour (Uhr) format
                     const formatTime = (time: string) => {
                         const [hour, minute] = time.split(":").map(Number);
                         const date = new Date();
                         date.setHours(hour, minute);
-                        return date.toLocaleTimeString("en-US", {
-                            hour: "numeric",
+                        return date.toLocaleTimeString("de-DE", {
+                            hour: "2-digit",
                             minute: "2-digit",
-                            hour12: true,
+                            hour12: false,
                         });
                     };
 

@@ -44,10 +44,10 @@ const generateTimeSlots = (opening: string, closing: string) => {
 
   while (start <= end) {
     const value = start.toTimeString().slice(0, 5);
-    const label = start.toLocaleTimeString("en-US", {
-      hour: "numeric",
+    const label = start.toLocaleTimeString("de-DE", {
+      hour: "2-digit",
       minute: "2-digit",
-      hour12: true,
+      hour12: false,
     });
     slots.push({ value, label });
     start.setMinutes(start.getMinutes() + 30);

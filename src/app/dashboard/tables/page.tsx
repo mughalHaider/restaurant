@@ -113,6 +113,22 @@ function TablesPage({ role }: { role: string }) {
     }
   };
 
+  // Get localized (German) status label
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "available":
+        return "Verfügbar";
+      case "occupied":
+        return "Belegt";
+      case "reserved":
+        return "Reserviert";
+      case "pending":
+        return "Ausstehend";
+      default:
+        return status;
+    }
+  };
+
   // Render modals
   const renderModal = () => {
     if (!modal.type) return null;
@@ -323,7 +339,7 @@ function TablesPage({ role }: { role: string }) {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(table.status)}`}>
-                          {table.status.charAt(0).toUpperCase() + table.status.slice(1)}
+                          {getStatusLabel(table.status)}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">

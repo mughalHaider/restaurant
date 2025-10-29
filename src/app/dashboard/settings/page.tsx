@@ -112,11 +112,11 @@ function SettingsPage() {
     if (result.error) {
       console.error("Save failed:", result.error);
       setAlertType("error");
-      setAlertMessage("Failed to save settings ❌");
+      setAlertMessage("Fehler beim Speichern der Einstellungen ❌");
       setShowAlert(true);
     } else {
       setAlertType("success");
-      setAlertMessage("Settings saved successfully ✅");
+      setAlertMessage("Einstellungen erfolgreich gespeichert ✅");
       setShowAlert(true);
     }
   };
@@ -124,7 +124,7 @@ function SettingsPage() {
   // ✅ Add or remove holidays
   const addHoliday = () => {
     if (!newHoliday) return;
-    if (closedDates.includes(newHoliday)) return alert("Already added ❗");
+    if (closedDates.includes(newHoliday)) return alert("Bereits hinzugefügt ❗");
     setClosedDates([...closedDates, newHoliday]);
     setNewHoliday("");
   };

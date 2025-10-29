@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     const mailOptions = {
       from: `"Madot Restaurant" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "🍽️ Reservation Request Received - Madot Restaurant",
+      subject: "🍽️ Reservierungsanfrage eingegangen – Madot Restaurant",
       html: `
         <!DOCTYPE html>
         <html>
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
                 <!-- Header -->
                 <div style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); padding: 40px 30px; text-align: center;">
                     <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Madot Restaurant</h1>
-                    <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Fine Dining Experience</p>
+                    <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Feines kulinarisches Erlebnis</p>
                 </div>
 
                 <!-- Main Content -->
@@ -64,19 +64,19 @@ export async function POST(req: Request) {
 
                     <!-- Title -->
                     <h2 style="color: #1f2937; text-align: center; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
-                        Reservation Request Received
+                        Reservierungsanfrage eingegangen
                     </h2>
 
                     <!-- Greeting -->
                     <p style="color: #6b7280; text-align: center; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
-                        Dear <strong style="color: #d97706;">${fullName}</strong>,<br>
-                        Thank you for choosing Madot Restaurant. Your reservation request has been received and is being processed.
+                        Sehr geehrte/r <strong style="color: #d97706;">${fullName}</strong>,<br>
+                        vielen Dank für Ihre Anfrage beim Madot Restaurant. Ihre Reservierungsanfrage ist bei uns eingegangen und wird derzeit bearbeitet.
                     </p>
 
                     <!-- Reservation Details Card -->
                     <div style="background-color: #fffbeb; border: 2px solid #fef3c7; border-radius: 12px; padding: 25px; margin: 30px 0;">
                         <h3 style="color: #92400e; margin: 0 0 20px 0; font-size: 18px; font-weight: 600; text-align: center;">
-                            📅 Reservation Details
+                            📅 Reservierungsdetails
                         </h3>
                         
                         <div style="display: grid; gap: 15px;">
@@ -86,28 +86,28 @@ export async function POST(req: Request) {
                             </div>
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
-                                <span style="color: #78350f; font-weight: 500;">Phone:</span>
+                                <span style="color: #78350f; font-weight: 500;">Telefon:</span>
                                 <span style="color: #1f2937; font-weight: 600;">${telefon}</span>
                             </div>
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
-                                <span style="color: #78350f; font-weight: 500;">Date:</span>
-                                <span style="color: #1f2937; font-weight: 600;">${new Date(datum).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                <span style="color: #78350f; font-weight: 500;">Datum:</span>
+                                <span style="color: #1f2937; font-weight: 600;">${new Date(datum).toLocaleDateString('de-DE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                             </div>
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
-                                <span style="color: #78350f; font-weight: 500;">Time:</span>
+                                <span style="color: #78350f; font-weight: 500;">Uhrzeit:</span>
                                 <span style="color: #1f2937; font-weight: 600;">${uhrzeit}</span>
                             </div>
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0${bemerkung ? '; border-bottom: 1px solid #fed7aa;' : ''}">
-                                <span style="color: #78350f; font-weight: 500;">Number of Guests:</span>
-                                <span style="color: #1f2937; font-weight: 600;">${gaeste} ${gaeste === '1' ? 'guest' : 'guests'}</span>
+                                <span style="color: #78350f; font-weight: 500;">Anzahl der Gäste:</span>
+                                <span style="color: #1f2937; font-weight: 600;">${gaeste} ${gaeste === '1' ? 'Gast' : 'Gäste'}</span>
                             </div>
                             
                             ${bemerkung ? `
                             <div style="padding: 12px 0;">
-                                <span style="color: #78350f; font-weight: 500; display: block; margin-bottom: 8px;">Special Requests:</span>
+                                <span style="color: #78350f; font-weight: 500; display: block; margin-bottom: 8px;">Besondere Wünsche:</span>
                                 <span style="color: #1f2937; font-weight: 400; font-style: italic;">${bemerkung}</span>
                             </div>
                             ` : ''}
@@ -122,11 +122,11 @@ export async function POST(req: Request) {
                             </div>
                             <div>
                                 <h4 style="color: #1e40af; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">
-                                    Your reservation will be confirmed shortly
+                                    Ihre Reservierung wird in Kürze bestätigt
                                 </h4>
                                 <p style="color: #374151; margin: 0; font-size: 14px; line-height: 1.5;">
-                                    We are processing your request and will send you a final confirmation email soon. 
-                                    Please check your spam folder if you don't see our emails.
+                                    Wir bearbeiten Ihre Anfrage und senden Ihnen in Kürze eine finale Bestätigung per E‑Mail. 
+                                    Bitte prüfen Sie auch Ihren Spam-Ordner, falls Sie keine E‑Mail erhalten.
                                 </p>
                             </div>
                         </div>
@@ -135,11 +135,11 @@ export async function POST(req: Request) {
                     <!-- Contact Info -->
                     <div style="text-align: center; margin: 30px 0 20px 0; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
                         <p style="color: #6b7280; margin: 0; font-size: 14px;">
-                            Need to make changes?<br>
-                            Contact us at: 
+                            Müssen Sie Änderungen vornehmen?<br>
+                            Kontaktieren Sie uns unter: 
                             <a href="mailto:info@madotrestaurant.com" style="color: #d97706; text-decoration: none; font-weight: 500;">
                                 info@madotrestaurant.com
-                            </a> or call <strong>004915213878030</strong>
+                            </a> oder rufen Sie an unter <strong>004915213878030</strong>
                         </p>
                     </div>
                 </div>
@@ -150,10 +150,10 @@ export async function POST(req: Request) {
                         Madot Restaurant &copy; ${new Date().getFullYear()}
                     </p>
                     <p style="color: #6b7280; margin: 0; font-size: 12px;">
-                        123 Gourmet Street, Food City • (555) 123-4567
+                        123 Gourmet Straße, Foodstadt • (555) 123-4567
                     </p>
                     <p style="color: #6b7280; margin: 15px 0 0 0; font-size: 11px;">
-                        This is an automated email. Please do not reply to this message.
+                        Dies ist eine automatisch generierte E‑Mail. Bitte antworten Sie nicht auf diese Nachricht.
                     </p>
                 </div>
             </div>
@@ -161,30 +161,30 @@ export async function POST(req: Request) {
         </html>
       `,
       text: `
-MADOT RESTAURANT - RESERVATION REQUEST RECEIVED
+MADOT RESTAURANT – RESERVIERUNGSANFRAGE EINGEGANGEN
 
-Dear ${fullName},
+Sehr geehrte/r ${fullName},
 
-Thank you for your reservation request at Madot Restaurant.
+vielen Dank für Ihre Reservierungsanfrage im Madot Restaurant.
 
-RESERVATION DETAILS:
+RESERVIERUNGSDETAILS:
 • Name: ${fullName}
-• Phone: ${telefon}
-• Date: ${new Date(datum).toLocaleDateString()}
-• Time: ${uhrzeit}
-• Guests: ${gaeste}
-${bemerkung ? `• Special Requests: ${bemerkung}` : ''}
+• Telefon: ${telefon}
+• Datum: ${new Date(datum).toLocaleDateString('de-DE')}
+• Uhrzeit: ${uhrzeit}
+• Gäste: ${gaeste}
+${bemerkung ? `• Besondere Wünsche: ${bemerkung}` : ''}
 
-Your reservation will be confirmed shortly. We are processing your request and will send you a final confirmation email soon.
+Ihre Reservierung wird in Kürze bestätigt. Wir bearbeiten Ihre Anfrage und senden Ihnen bald eine finale Bestätigung per E‑Mail.
 
-If you need to make any changes, please contact us at info@madotrestaurant.com or call ${telefon}.
+Für Änderungen kontaktieren Sie uns bitte unter info@madotrestaurant.com oder rufen Sie ${telefon} an.
 
-Best regards,
-Madot Restaurant Team
-123 Gourmet Street, Food City
+Mit freundlichen Grüßen
+Ihr Madot Restaurant Team
+123 Gourmet Straße, Foodstadt
 (555) 123-4567
 
-This is an automated email. Please do not reply to this message.
+Dies ist eine automatisch generierte E‑Mail. Bitte nicht antworten.
       `,
     };
 

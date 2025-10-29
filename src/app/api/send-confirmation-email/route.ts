@@ -18,13 +18,13 @@ export async function POST(req: Request) {
     const mailOptions = {
       from: `"Madot Restaurant" <${process.env.EMAIL_USER}>`,
       to,
-      subject: "🎉 Your Reservation is Confirmed - Madot Restaurant",
+      subject: "🎉 Ihre Reservierung ist bestätigt – Madot Restaurant",
       html: `
         <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
           <!-- Header -->
           <div style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Madot Restaurant</h1>
-            <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Fine Dining Experience</p>
+            <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Feines kulinarisches Erlebnis</p>
           </div>
 
           <!-- Content -->
@@ -33,34 +33,34 @@ export async function POST(req: Request) {
 
             <!-- Title -->
             <h2 style="color: #1f2937; text-align: center; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
-              Reservation Confirmed!
+              Reservierung bestätigt!
             </h2>
 
             <!-- Greeting -->
             <p style="color: #6b7280; text-align: center; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
-              Hi <strong style="color: #d97706;">${vorname} ${nachname}</strong>,<br>
-              Your reservation at Madot Restaurant has been confirmed. We're excited to welcome you!
+              Hallo <strong style="color: #d97706;">${vorname} ${nachname}</strong>,<br>
+              Ihre Reservierung im Madot Restaurant wurde bestätigt. Wir freuen uns auf Ihren Besuch!
             </p>
 
             <!-- Reservation Details Card -->
             <div style="background-color: #fffbeb; border: 2px solid #fef3c7; border-radius: 12px; padding: 25px; margin: 30px 0;">
               <h3 style="color: #92400e; margin: 0 0 20px 0; font-size: 18px; font-weight: 600; text-align: center;">
-                📅 Your Reservation Details
+                📅 Ihre Reservierungsdetails
               </h3>
               
               <div style="display: grid; gap: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
-                  <span style="color: #78350f; font-weight: 500;">Date:</span>
-                  <span style="color: #1f2937; font-weight: 600;">${new Date(datum).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  <span style="color: #78350f; font-weight: 500;">Datum:</span>
+                  <span style="color: #1f2937; font-weight: 600;">${new Date(datum).toLocaleDateString('de-DE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fed7aa;">
-                  <span style="color: #78350f; font-weight: 500;">Time:</span>
+                  <span style="color: #78350f; font-weight: 500;">Uhrzeit:</span>
                   <span style="color: #1f2937; font-weight: 600;">${uhrzeit}</span>
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
-                  <span style="color: #78350f; font-weight: 500;">Table:</span>
+                  <span style="color: #78350f; font-weight: 500;">Tisch:</span>
                   <span style="color: #1f2937; font-weight: 600;">${table}</span>
                 </div>
               </div>
@@ -69,18 +69,18 @@ export async function POST(req: Request) {
             <!-- Welcome Message -->
             <div style="background-color: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 12px; padding: 20px; margin: 25px 0; text-align: center;">
               <p style="color: #166534; margin: 0; font-size: 16px; font-weight: 600;">
-                🍽️ We look forward to serving you!
+                🍽️ Wir freuen uns, Sie begrüßen zu dürfen!
               </p>
             </div>
 
             <!-- Contact Info -->
             <div style="text-align: center; margin: 30px 0 20px 0; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
               <p style="color: #6b7280; margin: 0; font-size: 14px;">
-                Need to make changes?<br>
-                Contact us at: 
+                Müssen Sie Änderungen vornehmen?<br>
+                Kontaktieren Sie uns unter: 
                 <a href="mailto:info@madotrestaurant.com" style="color: #d97706; text-decoration: none; font-weight: 500;">
                   info@madotrestaurant.com
-                </a> or call <strong>004915213878030</strong>
+                </a> oder rufen Sie an unter <strong>004915213878030</strong>
               </p>
             </div>
           </div>
@@ -91,36 +91,36 @@ export async function POST(req: Request) {
               Madot Restaurant &copy; ${new Date().getFullYear()}
             </p>
             <p style="color: #6b7280; margin: 0; font-size: 12px;">
-              123 Gourmet Street, Food City • (555) 123-4567
+              123 Gourmet Straße, Foodstadt • (555) 123-4567
             </p>
             <p style="color: #6b7280; margin: 15px 0 0 0; font-size: 11px;">
-              This is an automated email. Please do not reply to this message.
+              Dies ist eine automatisch generierte E‑Mail. Bitte antworten Sie nicht auf diese Nachricht.
             </p>
           </div>
         </div>
       `,
       text: `
-MADOT RESTAURANT - RESERVATION CONFIRMED
+MADOT RESTAURANT – RESERVIERUNG BESTÄTIGT
 
-Hi ${vorname} ${nachname},
+Hallo ${vorname} ${nachname},
 
-Your reservation at Madot Restaurant has been confirmed!
+Ihre Reservierung im Madot Restaurant wurde bestätigt!
 
-RESERVATION DETAILS:
-        • Date: ${new Date(datum).toLocaleDateString()}
-        • Time: ${uhrzeit}
-• Table: ${table}
+RESERVIERUNGSDETAILS:
+• Datum: ${new Date(datum).toLocaleDateString('de-DE')}
+• Uhrzeit: ${uhrzeit}
+• Tisch: ${table}
 
-We look forward to serving you! 🍽️
+Wir freuen uns, Sie begrüßen zu dürfen! 🍽️
 
-If you need to make any changes, please contact us at info@madotrestaurant.com.
+Für Änderungen kontaktieren Sie uns bitte unter info@madotrestaurant.com.
 
-Best regards,
-Madot Restaurant Team
-123 Gourmet Street, Food City
+Mit freundlichen Grüßen
+Ihr Madot Restaurant Team
+123 Gourmet Straße, Foodstadt
 (555) 123-4567
 
-This is an automated email. Please do not reply to this message.
+Dies ist eine automatisch generierte E‑Mail. Bitte nicht antworten.
       `,
     };
 

@@ -18,13 +18,13 @@ export async function POST(req: Request) {
     const mailOptions = {
       from: `"Madot Restaurant" <${process.env.EMAIL_USER}>`,
       to,
-      subject: "❌ Reservation Update - Madot Restaurant",
+      subject: "❌ Reservierungs-Update – Madot Restaurant",
       html: `
         <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
           <!-- Header -->
           <div style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Madot Restaurant</h1>
-            <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Fine Dining Experience</p>
+            <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Feines kulinarisches Erlebnis</p>
           </div>
 
           <!-- Content -->
@@ -33,29 +33,29 @@ export async function POST(req: Request) {
 
             <!-- Title -->
             <h2 style="color: #1f2937; text-align: center; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
-              Reservation Not Available
+              Reservierung nicht verfügbar
             </h2>
 
             <!-- Greeting -->
             <p style="color: #6b7280; text-align: center; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
-              Hi <strong style="color: #d97706;">${vorname} ${nachname}</strong>,<br>
-              We regret to inform you that your reservation request could not be confirmed.
+              Hallo <strong style="color: #d97706;">${vorname} ${nachname}</strong>,<br>
+              leider können wir Ihre Reservierungsanfrage nicht bestätigen.
             </p>
 
             <!-- Reservation Details Card -->
             <div style="background-color: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 25px; margin: 30px 0;">
               <h3 style="color: #991b1b; margin: 0 0 20px 0; font-size: 18px; font-weight: 600; text-align: center;">
-                📅 Requested Reservation
+                📅 Angefragte Reservierung
               </h3>
               
               <div style="display: grid; gap: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #fca5a5;">
-                  <span style="color: #991b1b; font-weight: 500;">Date:</span>
-                  <span style="color: #1f2937; font-weight: 600;">${new Date(datum).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  <span style="color: #991b1b; font-weight: 500;">Datum:</span>
+                  <span style="color: #1f2937; font-weight: 600;">${new Date(datum).toLocaleDateString('de-DE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
-                  <span style="color: #991b1b; font-weight: 500;">Time:</span>
+                  <span style="color: #991b1b; font-weight: 500;">Uhrzeit:</span>
                   <span style="color: #1f2937; font-weight: 600;">${uhrzeit}</span>
                 </div>
               </div>
@@ -69,10 +69,10 @@ export async function POST(req: Request) {
                 </div>
                 <div>
                   <h4 style="color: #92400e; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">
-                    We sincerely apologize for the inconvenience
+                    Wir entschuldigen uns aufrichtig für die Unannehmlichkeiten
                   </h4>
                   <p style="color: #78350f; margin: 0; font-size: 14px; line-height: 1.5;">
-                    Due to high demand or operational constraints, we are unable to accommodate your reservation at this time. We encourage you to try another date or time.
+                    Aufgrund hoher Nachfrage oder betrieblicher Einschränkungen können wir Ihre Reservierung zu diesem Zeitpunkt leider nicht annehmen. Bitte versuchen Sie es an einem anderen Datum oder zu einer anderen Uhrzeit.
                   </p>
                 </div>
               </div>
@@ -81,23 +81,23 @@ export async function POST(req: Request) {
             <!-- Alternative Options -->
             <div style="background-color: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 12px; padding: 20px; margin: 25px 0;">
               <h4 style="color: #166534; margin: 0 0 12px 0; font-size: 16px; font-weight: 600; text-align: center;">
-                💡 Alternative Options
+                💡 Alternative Optionen
               </h4>
               <ul style="color: #15803d; margin: 0; padding-left: 20px; font-size: 14px;">
-                <li>Try a different date or time</li>
-                <li>Contact us for special arrangements</li>
-                <li>Visit during our less busy hours</li>
+                <li>Versuchen Sie ein anderes Datum oder eine andere Uhrzeit</li>
+                <li>Kontaktieren Sie uns für besondere Arrangements</li>
+                <li>Besuchen Sie uns während weniger frequentierter Zeiten</li>
               </ul>
             </div>
 
             <!-- Contact Info -->
             <div style="text-align: center; margin: 30px 0 20px 0; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
               <p style="color: #6b7280; margin: 0; font-size: 14px;">
-                For assistance or alternative booking options:<br>
+                Für Unterstützung oder alternative Buchungsoptionen:<br>
                 <a href="mailto:info@madotrestaurant.com" style="color: #d97706; text-decoration: none; font-weight: 500;">
                   info@madotrestaurant.com
                 </a>
-                or call <strong>004915213878030</strong>
+                oder rufen Sie an unter <strong>004915213878030</strong>
               </p>
             </div>
           </div>
@@ -108,43 +108,43 @@ export async function POST(req: Request) {
               Madot Restaurant &copy; ${new Date().getFullYear()}
             </p>
             <p style="color: #6b7280; margin: 0; font-size: 12px;">
-              123 Gourmet Street, Food City
+              123 Gourmet Straße, Foodstadt
             </p>
             <p style="color: #6b7280; margin: 15px 0 0 0; font-size: 11px;">
-              This is an automated email. Please do not reply to this message.
+              Dies ist eine automatisch generierte E‑Mail. Bitte antworten Sie nicht auf diese Nachricht.
             </p>
           </div>
         </div>
       `,
       text: `
-MADOT RESTAURANT - RESERVATION UPDATE
+MADOT RESTAURANT – RESERVIERUNGS-UPDATE
 
-Hi ${vorname} ${nachname},
+Hallo ${vorname} ${nachname},
 
-We regret to inform you that your reservation request could not be confirmed.
+leider können wir Ihre Reservierungsanfrage nicht bestätigen.
 
-REQUESTED RESERVATION:
-        • Date: ${new Date(datum).toLocaleDateString()}
-        • Time: ${uhrzeit}
+ANGEFRAGTE RESERVIERUNG:
+• Datum: ${new Date(datum).toLocaleDateString('de-DE')}
+• Uhrzeit: ${uhrzeit}
 
-We sincerely apologize for the inconvenience. Due to high demand or operational constraints, we are unable to accommodate your reservation at this time.
+Wir entschuldigen uns für die Unannehmlichkeiten. Aufgrund hoher Nachfrage oder betrieblicher Einschränkungen können wir Ihre Reservierung derzeit nicht annehmen.
 
-ALTERNATIVE OPTIONS:
-• Try a different date or time
-• Contact us for special arrangements
-• Visit during our less busy hours
+ALTERNATIVE OPTIONEN:
+• Versuchen Sie ein anderes Datum oder eine andere Uhrzeit
+• Kontaktieren Sie uns für besondere Arrangements
+• Besuchen Sie uns während weniger frequentierter Zeiten
 
-For assistance or alternative booking options:
-Email: info@madotrestaurant.com
-Phone: (555) 123-4567
+Für Unterstützung oder alternative Buchungsoptionen:
+E‑Mail: info@madotrestaurant.com
+Telefon: (555) 123-4567
 
-We hope to serve you in the future.
+Wir hoffen, Sie zukünftig bei uns begrüßen zu dürfen.
 
-Best regards,
-Madot Restaurant Team
-123 Gourmet Street, Food City
+Mit freundlichen Grüßen
+Ihr Madot Restaurant Team
+123 Gourmet Straße, Foodstadt
 
-This is an automated email. Please do not reply to this message.
+Dies ist eine automatisch generierte E‑Mail. Bitte nicht antworten.
       `,
     };
 

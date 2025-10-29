@@ -64,8 +64,7 @@ export default function Footer() {
                             Madot Restaurant
                         </h3>
                         <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                            Fine dining experience with exceptional cuisine and impeccable
-                            service since 2010.
+                            Ein Fine-Dining-Erlebnis mit außergewöhnlicher Küche und makellosem Service seit 2010.
                         </p>
                     </motion.div>
 

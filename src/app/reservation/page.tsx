@@ -15,17 +15,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
+import { de as deLocale } from "date-fns/locale";
+import gr from "../message/de.json";
 import { supabase } from "@/lib/supabaseClient";
 
 // ✅ Updated Validation Schema
 const reservationSchema = z.object({
-  vorname: z.string().min(2, "First name must be at least 2 characters").max(50),
-  nachname: z.string().min(2, "Last name must be at least 2 characters").max(50),
-  email: z.string().email("Invalid email address"),
-  telefon: z.string().min(10, "Please enter a valid telefon number").max(20),
-  datum: z.date({ error: "Please select a datum" }),
-  uhrzeit: z.string().min(1, "Please select a uhrzeit"),
-  gaeste: z.string().min(1, "Please select number of gaeste"),
+  vorname: z.string().min(2, "Vorname muss mindestens 2 Zeichen lang sein").max(50),
+  nachname: z.string().min(2, "Nachname muss mindestens 2 Zeichen lang sein").max(50),
+  email: z.string().email("Ungültige E-Mail-Adresse"),
+  telefon: z.string().min(10, "Bitte geben Sie eine gültige Telefonnummer ein").max(20),
+  datum: z.date({ error: "Bitte wählen Sie ein Datum" }),
+  uhrzeit: z.string().min(1, "Bitte wählen Sie eine Uhrzeit"),
+  gaeste: z.string().min(1, "Bitte wählen Sie die Anzahl der Gäste"),
   bemerkung: z.string().optional(),
 });
 
@@ -229,14 +231,10 @@ export default function Reservation() {
           </motion.div>
 
           <h3 className="text-2xl font-bold text-gray-900 mb-3">
-            Reservation Request Received!
+            {gr.ReservationConfirmTitle}
           </h3>
           <p className="text-gray-600 mb-4">
-            Thank you,{" "}
-            <span className="font-semibold text-amber-700">
-              {submittedData.vorname} {submittedData.nachname}
-            </span>
-            !
+            {gr.ReservationThankYou.replace("{{name}}", `${submittedData.vorname} ${submittedData.nachname}`)}
           </p>
 
           {/* 🔹 Confirmation message */}
@@ -249,11 +247,10 @@ export default function Reservation() {
               </div>
               <div className="text-left">
                 <p className="text-blue-800 font-medium text-sm mb-1">
-                  Your reservation will be confirmed shortly
+                  {gr.ReservationConfirmInfoTitle}
                 </p>
                 <p className="text-blue-700 text-xs">
-                  Please check your email at <span className="font-semibold">{submittedData.email}</span> for confirmation details.
-                  If you don&apos;t see it, please check your spam folder.
+                  {gr.ReservationConfirmInfoBody.replace("{{email}}", submittedData.email)}
                 </p>
               </div>
             </div>
@@ -261,32 +258,32 @@ export default function Reservation() {
 
           <div className="bg-amber-50 rounded-xl p-4 space-y-3 border border-amber-100 text-left">
             <p>
-              <span className="text-xs text-gray-500">Name: </span>
+              <span className="text-xs text-gray-500">{gr.LabelName}: </span>
               <span className="font-semibold">
                 {submittedData.vorname} {submittedData.nachname}
               </span>
             </p>
             <p>
-              <span className="text-xs text-gray-500">Telefon: </span>
+              <span className="text-xs text-gray-500">{gr.LabelTelefon}: </span>
               <span className="font-semibold">{submittedData.telefon}</span>
             </p>
             <p>
-              <span className="text-xs text-gray-500">Datum: </span>
+              <span className="text-xs text-gray-500">{gr.LabelDatum}: </span>
               <span className="font-semibold">
-                {format(submittedData.datum, "EEEE, MMMM d, yyyy")}
+                {format(submittedData.datum, "EEEE, MMMM d, yyyy", { locale: deLocale })}
               </span>
             </p>
             <p>
-              <span className="text-xs text-gray-500">Uhrzeit: </span>
+              <span className="text-xs text-gray-500">{gr.LabelUhrzeit}: </span>
               <span className="font-semibold">{submittedData.uhrzeit}</span>
             </p>
             <p>
-              <span className="text-xs text-gray-500">Gaeste: </span>
+              <span className="text-xs text-gray-500">{gr.LabelGaeste}: </span>
               <span className="font-semibold">{submittedData.gaeste}</span>
             </p>
             {submittedData.bemerkung && (
               <p>
-                <span className="text-xs text-gray-500">Special Requests: </span>
+                <span className="text-xs text-gray-500">{gr.LabelSpecialRequests}: </span>
                 <span className="font-semibold">{submittedData.bemerkung}</span>
               </p>
             )}
@@ -302,13 +299,13 @@ export default function Reservation() {
               href="/"
               className="w-full py-3 px-6 bg-amber-600 text-white rounded-xl hover:bg-amber-700 font-semibold block shadow-md"
             >
-              Back to Home
+              {gr.BackToHome}
             </Link>
             <button
               onClick={resetForm}
               className="w-full py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium"
             >
-              Make Another Reservation
+              {gr.MakeAnotherReservation}
             </button>
           </div>
         </motion.div>
@@ -326,13 +323,13 @@ export default function Reservation() {
           className="inline-flex items-center text-amber-700 hover:text-amber-800 mb-8 group transition-colors"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform mr-2" />
-          <span className="font-medium">Back to Home</span>
+          <span className="font-medium">{gr.BackToHome}</span>
         </Link>
 
         {/* Page Title */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-amber-800 mb-3">
-            Reserve Your Table
+            {gr.ReserveYourTable}
           </h1>
         </div>
 
@@ -487,7 +484,7 @@ export default function Reservation() {
                             }`} />
                           {field.value
                             ? format(field.value, "EEEE, MMMM d, yyyy")
-                            : "Select datum"}
+                            : "Auswählen datum"}
                         </div>
                       </button>
                     </PopoverTrigger>
@@ -586,7 +583,7 @@ export default function Reservation() {
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                     <MessageSquare className="w-4 h-4 mr-2 text-amber-600" />
-                    Special Requests <span className="text-gray-400 ml-1">(Optional)</span>
+                    {gr.SpecialRequests} <span className="text-gray-400 ml-1">(Optional)</span>
                   </label>
                   <textarea
                     {...field}
@@ -608,10 +605,10 @@ export default function Reservation() {
               {isSubmitting ? (
                 <span className="flex justify-center items-center gap-3">
                   <Loader2 className="animate-spin w-5 h-5" />
-                  Processing...
+                  {gr.Processing}
                 </span>
               ) : (
-                "Confirm Reservation"
+                `${gr.ConfirmReservation}`
               )}
             </motion.button>
             <p className="text-xs text-gray-500 text-center mt-4">

@@ -6,6 +6,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import gr from "../message/de.json";
 
 export default function EmployeeAuthCallback() {
   const router = useRouter();
@@ -63,6 +64,6 @@ export default function EmployeeAuthCallback() {
     handleLogin();
   }, [router]);
 
-  return <p className="p-6">Logging you in...</p>;
+  return <p className="p-6">{gr.LoggingYouIn}</p>;
 }
 

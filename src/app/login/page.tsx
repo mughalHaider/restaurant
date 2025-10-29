@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from "@/lib/supabaseClient";
+import gr from "../message/de.json";
 
 export default function EmployeeLogin() {
   const [email, setEmail] = useState('');
@@ -29,13 +30,13 @@ export default function EmployeeLogin() {
 
     if (error || !employees) {
       setIsLoading(false);
-      setErrorMessage("No employee found with this email."); // ✅ inline error
+      setErrorMessage("Kein Mitarbeiter mit dieser E-Mail gefunden."); // ✅ inline error
       return;
     }
 
     if (employees.status !== "active") {
       setIsLoading(false);
-      setErrorMessage("Your account is not active yet. Contact admin."); // ✅ inline error
+      setErrorMessage("Ihr Konto ist noch nicht aktiv. Kontaktieren Sie den Administrator."); // ✅ inline error
       return;
     }
 
@@ -53,7 +54,7 @@ export default function EmployeeLogin() {
 
     if (inviteError) {
       console.error(inviteError);
-      setErrorMessage("Error sending magic link. Try again later."); // ✅ inline error
+      setErrorMessage("Fehler beim Senden des Magic-Links. Versuchen Sie es später erneut."); // ✅ inline error
       return;
     }
 
@@ -69,7 +70,7 @@ export default function EmployeeLogin() {
           className="inline-flex items-center text-amber-700 hover:text-amber-800 mb-10 group transition-colors"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform mr-2" />
-          <span className="font-medium">Back to Home</span>
+          <span className="font-medium">{gr.BackToHome}</span>
         </Link>
         {/* Header */}
         <motion.div
@@ -81,8 +82,8 @@ export default function EmployeeLogin() {
           <Link href="/" className="inline-block">
             <h1 className="text-3xl font-bold text-amber-800 font-serif">Madot Restaurant</h1>
           </Link>
-          <h2 className="mt-6 text-2xl sm:text-3xl font-bold text-gray-900">Employee Login</h2>
-          <p className="mt-2 text-sm text-gray-600">Secure passwordless authentication for staff</p>
+          <h2 className="mt-6 text-2xl sm:text-3xl font-bold text-gray-900">{gr.EmployeeLogin}</h2>
+          <p className="mt-2 text-sm text-gray-600">{gr.EmployeeLoginDesc}</p>
         </motion.div>
 
         {/* Login Form */}
@@ -96,7 +97,7 @@ export default function EmployeeLogin() {
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Work Email Address
+                  {gr.LabelEmail}
                 </label>
                 <div className="mt-1">
                   <input
@@ -132,10 +133,10 @@ export default function EmployeeLogin() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Sending Magic Link...
+                      {gr.sendingMagicLink}
                     </div>
                   ) : (
-                    'Send Magic Link'
+                    `${gr.SendingMagicLink}`
                   )}
                 </motion.button>
               </div>
@@ -152,11 +153,10 @@ export default function EmployeeLogin() {
                 </svg>
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Magic Link Sent!
+                {gr.LoginMagicTitle}
               </h3>
               <p className="text-sm text-gray-600 mb-6">
-                {"We've sent a secure login link to "} <strong>{email}</strong>
-                {". Check your email and click the link to access your dashboard."}
+                {gr.LoginMagicDesc.replace("{{email}}", String(email))}
               </p>
               <div className="space-y-3">
                 <button
@@ -166,13 +166,13 @@ export default function EmployeeLogin() {
                   }}
                   className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-amber-700 bg-amber-100 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors duration-200"
                 >
-                  Send Another Link
+                  {gr.LoginSendAnother}
                 </button>
                 <Link
                   href="/"
                   className="block w-full py-2 px-4 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors duration-200"
                 >
-                  Back to Home
+                  {gr.BackToHome}
                 </Link>
               </div>
             </motion.div>
@@ -185,9 +185,9 @@ export default function EmployeeLogin() {
           className="text-center"
         >
           <p className="text-sm text-gray-600">
-            Need help?{' '}
+            {gr.NeedHelp}?{' '}
             <a href="mailto:support@madotrestaurant.com" className="font-medium text-amber-600 hover:text-amber-500 transition-colors duration-200">
-              Contact support
+              {gr.ContactSupport}
             </a>
           </p>
         </motion.div>

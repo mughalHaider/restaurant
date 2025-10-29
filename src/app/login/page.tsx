@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from "@/lib/supabaseClient";
 
@@ -62,6 +63,14 @@ export default function EmployeeLogin() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
+        {/* Back Button */}
+        <Link
+          href="/"
+          className="inline-flex items-center text-amber-700 hover:text-amber-800 mb-10 group transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform mr-2" />
+          <span className="font-medium">Back to Home</span>
+        </Link>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

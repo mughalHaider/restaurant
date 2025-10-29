@@ -447,6 +447,22 @@ function ReservationsPage({ role }: { role: string }) {
     }
   };
 
+  // Localized (German) label for reservation status
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "Ausstehend";
+      case "cancelled":
+        return "Storniert";
+      case "arrived":
+        return "Angekommen";
+      case "accepted":
+        return "Bestätigt";
+      default:
+        return status;
+    }
+  };
+
   // Modal actions
   const openActionModal = (
     type: "confirm" | "cancel" | "arrived",
@@ -783,7 +799,7 @@ function ReservationsPage({ role }: { role: string }) {
                             res.status
                           )}`}
                         >
-                          {res.status}
+                          {getStatusLabel(res.status)}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -1000,7 +1016,7 @@ function ReservationsPage({ role }: { role: string }) {
                             res.status
                           )}`}
                         >
-                          {res.status.charAt(0).toUpperCase() + res.status.slice(1)}
+                          {getStatusLabel(res.status)}
                         </span>
                       </td>
 

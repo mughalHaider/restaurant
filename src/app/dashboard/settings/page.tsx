@@ -18,7 +18,6 @@ function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [openingTime, setOpeningTime] = useState("10:00");
   const [closingTime, setClosingTime] = useState("22:00");
-  const [timeStepMinutes, setTimeStepMinutes] = useState<number>(30);
   const [closedDates, setClosedDates] = useState<string[]>([]);
   const [newHoliday, setNewHoliday] = useState("");
 
@@ -27,8 +26,7 @@ function SettingsPage() {
   const [alertType, setAlertType] = useState("success");
   const [alertMessage, setAlertMessage] = useState("");
 
-  // HTML time input uses step in seconds
-  const timeInputStepSeconds = timeStepMinutes * 60;
+  // No custom step; default browser minute granularity is sufficient
 
   // ✅ Load settings from Supabase
   useEffect(() => {
@@ -166,12 +164,11 @@ function SettingsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl items-end">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-md">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Oeffnungszeit</label>
             <input
               type="time"
-              step={timeInputStepSeconds}
               value={openingTime}
               onChange={(e) => setOpeningTime(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200 bg-white"
@@ -182,24 +179,10 @@ function SettingsPage() {
             <label className="block text-sm font-medium text-gray-700">Schliesszeit</label>
             <input
               type="time"
-              step={timeInputStepSeconds}
               value={closingTime}
               onChange={(e) => setClosingTime(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200 bg-white"
             />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Minuten‑Intervall</label>
-            <select
-              value={timeStepMinutes}
-              onChange={(e) => setTimeStepMinutes(parseInt(e.target.value) || 5)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200 bg-white"
-            >
-              {[5, 10, 15, 30, 60].map((m) => (
-                <option key={`step-${m}`} value={m}>{m} Minuten</option>
-              ))}
-            </select>
           </div>
         </div>
 
@@ -207,7 +190,6 @@ function SettingsPage() {
           <p className="text-sm text-amber-800">
             <strong>Aktuelle Zeiten:</strong> {openingTime} - {closingTime}
           </p>
-          <p className="text-xs text-amber-700 mt-1">Zeit‑Schritte: {timeStepMinutes} Minuten</p>
         </div>
       </div>
 

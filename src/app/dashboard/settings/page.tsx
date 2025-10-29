@@ -26,6 +26,20 @@ function SettingsPage() {
   const [alertType, setAlertType] = useState("success");
   const [alertMessage, setAlertMessage] = useState("");
 
+  // Generate 24-hour time options (30-minute intervals)
+  const generateTwentyFourHourTimes = () => {
+    const options: string[] = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const hh = String(hour).padStart(2, '0');
+        const mm = String(minute).padStart(2, '0');
+        options.push(`${hh}:${mm}`);
+      }
+    }
+    return options;
+  };
+  const timeOptions = generateTwentyFourHourTimes();
+
   // ✅ Load settings from Supabase
   useEffect(() => {
     const fetchSettings = async () => {
@@ -168,26 +182,30 @@ function SettingsPage() {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Oeffnungszeit</label>
             <div className="relative">
-              <input
-                type="time"
+              <select
                 value={openingTime}
                 onChange={(e) => setOpeningTime(e.target.value)}
-                lang="de-DE"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
-              />
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200 bg-white"
+              >
+                {timeOptions.map((t) => (
+                  <option key={`open-${t}`} value={t}>{t}</option>
+                ))}
+              </select>
             </div>
           </div>
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Schliesszeit</label>
             <div className="relative">
-              <input
-                type="time"
+              <select
                 value={closingTime}
                 onChange={(e) => setClosingTime(e.target.value)}
-                lang="de-DE"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200"
-              />
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors duration-200 bg-white"
+              >
+                {timeOptions.map((t) => (
+                  <option key={`close-${t}`} value={t}>{t}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

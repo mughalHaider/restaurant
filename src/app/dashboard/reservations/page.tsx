@@ -789,7 +789,7 @@ function ReservationsPage({ role }: { role: string }) {
                             value: t.id,
                             label: `Tisch ${t.nummer} (${t.kapazitaet} Plätze)`,
                           }))}
-                          placeholder="Tisch zuweisen"
+                          placeholder="Zuteilen"
                           className="min-w-[150px]"
                         />
                       </td>

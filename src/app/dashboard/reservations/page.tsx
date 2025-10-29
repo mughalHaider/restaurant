@@ -155,13 +155,13 @@ function ReservationsPage({ role }: { role: string }) {
         if (!result.success) {
           console.error("Email failed:", result.error);
           setAlertType("error");
-          setAlertMessage("Reservation Cancelled");
+          setAlertMessage("Reservierung storniert");
           setShowAlert(true);
         }
       } catch (err) {
         console.error("Error sending rejection email:", err);
         setAlertType("error");
-        setAlertMessage("Reservation Cancelled");
+        setAlertMessage("Reservierung storniert");
         setShowAlert(true);
       }
     }
@@ -184,7 +184,7 @@ function ReservationsPage({ role }: { role: string }) {
   // Confirm reservation (only if table assigned)
   const confirmReservation = async (reservation: Reservation) => {
     if (!reservation.tisch_id) {
-      setErrorMessage("⚠️ Please assign a table before confirming.");
+      setErrorMessage("⚠️ Bitte zuerst einen Tisch zuweisen.");
       return;
     }
 
@@ -231,13 +231,13 @@ function ReservationsPage({ role }: { role: string }) {
       if (!result.success) {
         console.error("Email failed:", result.error);
         setAlertType("error");
-        setAlertMessage("Reservation Confirmed but email could not sent");
+        setAlertMessage("Reservierung bestätigt, aber E‑Mail konnte nicht gesendet werden");
         setShowAlert(true);
       }
     } catch (err) {
       console.error("Error sending email:", err);
       setAlertType("error");
-      setAlertMessage("Reservation Confirmed but email could not sen");
+      setAlertMessage("Reservierung bestätigt, aber E‑Mail konnte nicht gesendet werden");
       setShowAlert(true);
     }
   };
@@ -352,7 +352,7 @@ function ReservationsPage({ role }: { role: string }) {
       if (error) {
         console.error("Error updating reservation:", error);
         setAlertType("error");
-        setAlertMessage("Reservation not Updated");
+        setAlertMessage("Reservierung nicht aktualisiert");
         setShowAlert(true);
         return;
       }
@@ -386,7 +386,7 @@ function ReservationsPage({ role }: { role: string }) {
 
       cancelEditing();
       setAlertType("success");
-      setAlertMessage("Reservation Updated Successfully!");
+      setAlertMessage("Reservierung erfolgreich aktualisiert!");
       setShowAlert(true);
     } catch (error) {
       console.error("Error saving reservation edit:", error);
@@ -585,32 +585,30 @@ function ReservationsPage({ role }: { role: string }) {
     <div className="p-6 space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Reservations</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Reservierungen</h1>
         <p className="text-gray-600 mt-1">
-          Manage and track all restaurant reservations
+          Alle Reservierungen des Restaurants verwalten und verfolgen
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">
-            Today&apos;s Reservations
-          </p>
+          <p className="text-sm font-medium text-gray-600 mb-2">Heutige Reservierungen</p>
           <p className="text-3xl font-bold text-gray-900">
             {todayReservations}
           </p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">Pending</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">Ausstehend</p>
           <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">Confirmed</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">Bestätigt</p>
           <p className="text-3xl font-bold text-green-600">{acceptedCount}</p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">Arrived</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">Angekommen</p>
           <p className="text-3xl font-bold text-blue-600">{arrivedCount}</p>
         </div>
       </div>
@@ -621,7 +619,7 @@ function ReservationsPage({ role }: { role: string }) {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search by name, email, or phone..."
+              placeholder="Nach Name, E‑Mail oder Telefon suchen..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
@@ -633,13 +631,13 @@ function ReservationsPage({ role }: { role: string }) {
               value={statusFilter}
               onValueChange={setStatusFilter}
               options={[
-                { value: "all", label: "All Status" },
-                { value: "pending", label: "Pending" },
-                { value: "accepted", label: "Confirmed" },
-                { value: "arrived", label: "Arrived" },
-                { value: "cancelled", label: "Cancelled" },
+                { value: "all", label: "Alle Status" },
+                { value: "pending", label: "Ausstehend" },
+                { value: "accepted", label: "Bestätigt" },
+                { value: "arrived", label: "Angekommen" },
+                { value: "cancelled", label: "Storniert" },
               ]}
-              placeholder="Filter by status"
+              placeholder="Nach Status filtern"
               className="flex-1"
             />
           </div>
@@ -658,17 +656,17 @@ function ReservationsPage({ role }: { role: string }) {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b">
           <h3 className="text-lg font-semibold text-gray-900">
-            Pending Requests ({filteredReservations.length})
+            Ausstehende Anfragen ({filteredReservations.length})
           </h3>
         </div>
 
         {loading ? (
           <div className="p-12 text-center text-gray-500">
-            Loading reservations...
+            Reservierungen werden geladen...
           </div>
         ) : paginatedReservations.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-gray-500">No pending reservations found</p>
+            <p className="text-gray-500">Keine ausstehenden Reservierungen gefunden</p>
           </div>
         ) : (
           <>
@@ -680,7 +678,7 @@ function ReservationsPage({ role }: { role: string }) {
                       Name
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Contact
+                      Kontakt
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Datum & Uhrzeit
@@ -695,7 +693,7 @@ function ReservationsPage({ role }: { role: string }) {
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Actions
+                      Aktionen
                     </th>
                   </tr>
                 </thead>
@@ -712,7 +710,7 @@ function ReservationsPage({ role }: { role: string }) {
                               type="button"
                               className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none cursor-pointer"
                               onClick={() => setRemarkModal({ open: true, bemerkung: res.bemerkung! })}
-                              title="View Remark"
+                              title="Bemerkung anzeigen"
                             >
                               <MessageCircle className="w-3 h-3 mr-1" />
                               Has Bemerkung
@@ -724,7 +722,7 @@ function ReservationsPage({ role }: { role: string }) {
                           <Modal
                             isOpen={remarkModal.open}
                             onClose={() => setRemarkModal({ open: false, bemerkung: "" })}
-                            title="Reservation Remark"
+                            title="Reservierungsbemerkung"
                             description=""
                           >
                             <div className="p-4">
@@ -734,7 +732,7 @@ function ReservationsPage({ role }: { role: string }) {
                                   onClick={() => setRemarkModal({ open: false, bemerkung: "" })}
                                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                                 >
-                                  Close
+                                  Schließen
                                 </button>
                               </div>
                             </div>
@@ -754,7 +752,7 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-2 text-sm text-gray-900">
                           <Calendar className="w-4 h-4 text-gray-400" />
-                          <span>{new Date(res.datum).toLocaleDateString()}</span>
+                          <span>{new Date(res.datum).toLocaleDateString('de-DE')}</span>
                         </div>
                         <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
                           <Clock className="w-4 h-4 text-gray-400" />
@@ -764,7 +762,7 @@ function ReservationsPage({ role }: { role: string }) {
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm text-gray-900">
                           <Users className="w-4 h-4 mr-2 text-gray-400" />
-                          {res.gaeste} gaeste
+                          {res.gaeste} gäste
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -773,9 +771,9 @@ function ReservationsPage({ role }: { role: string }) {
                           onValueChange={(value) => assignTable(res.id, value)}
                           options={getAvailableTables(res.tisch_id).map((t) => ({
                             value: t.id,
-                            label: `Tisch ${t.nummer} (${t.kapazitaet} seats)`,
+                            label: `Tisch ${t.nummer} (${t.kapazitaet} Plätze)`,
                           }))}
-                          placeholder="Assign Tisch"
+                          placeholder="Tisch zuweisen"
                           className="min-w-[150px]"
                         />
                       </td>
@@ -785,8 +783,7 @@ function ReservationsPage({ role }: { role: string }) {
                             res.status
                           )}`}
                         >
-                          {res.status.charAt(0).toUpperCase() +
-                            res.status.slice(1)}
+                          {res.status}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -795,7 +792,7 @@ function ReservationsPage({ role }: { role: string }) {
                             <button
                               onClick={() => openActionModal("confirm", res)}
                               className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors cursor-pointer"
-                              title="Confirm"
+                              title="Bestätigen"
                             >
                               <CheckCircle className="w-5 h-5" />
                             </button>
@@ -803,7 +800,7 @@ function ReservationsPage({ role }: { role: string }) {
                           <button
                             onClick={() => openActionModal("cancel", res)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                            title="Cancel/Delete"
+                              title="Stornieren/Löschen"
                           >
                             <XCircle className="w-5 h-5" />
                           </button>
@@ -811,7 +808,7 @@ function ReservationsPage({ role }: { role: string }) {
                             <button
                               onClick={() => openActionModal("arrived", res)}
                               className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                              title="Mark Arrived"
+                              title="Als angekommen markieren"
                             >
                               <UserCheck className="w-5 h-5" />
                             </button>
@@ -840,11 +837,11 @@ function ReservationsPage({ role }: { role: string }) {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b">
           <h3 className="text-lg font-semibold text-gray-900">
-            Confirmed Reservations ({confirmedReservations.length})
+            Bestätigte Reservierungen ({confirmedReservations.length})
           </h3>
         </div>
         {confirmedReservations.length === 0 ? (
-          <div className="p-6 text-gray-500">No confirmed reservations</div>
+          <div className="p-6 text-gray-500">Keine bestätigten Reservierungen</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -892,7 +889,7 @@ function ReservationsPage({ role }: { role: string }) {
                               type="button"
                               className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none cursor-pointer"
                               onClick={() => setRemarkModal({ open: true, bemerkung: res.bemerkung! })}
-                              title="View Remark"
+                            title="Bemerkung anzeigen"
                             >
                               <MessageCircle className="w-3 h-3 mr-1" />
                               Has Bemerkung
@@ -903,7 +900,7 @@ function ReservationsPage({ role }: { role: string }) {
                           <Modal
                             isOpen={remarkModal.open}
                             onClose={() => setRemarkModal({ open: false, bemerkung: "" })}
-                            title="Reservation Remark"
+                            title="Reservierungsbemerkung"
                             description=""
                           >
                             <div className="p-4">
@@ -911,9 +908,9 @@ function ReservationsPage({ role }: { role: string }) {
                               <div className="mt-4 flex justify-end">
                                 <button
                                   onClick={() => setRemarkModal({ open: false, bemerkung: "" })}
-                                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                                >
-                                  Close
+                              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                            >
+                              Schließen
                                 </button>
                               </div>
                             </div>
@@ -973,7 +970,7 @@ function ReservationsPage({ role }: { role: string }) {
                         ) : (
                           <div className="flex items-center text-sm text-gray-900">
                             <Users className="w-4 h-4 mr-2 text-gray-400" />
-                            {res.gaeste} guests
+                            {res.gaeste} gäste
                           </div>
                         )}
                       </td>
@@ -985,9 +982,9 @@ function ReservationsPage({ role }: { role: string }) {
                             onValueChange={(value) => setEditForm((prev) => ({ ...prev, tisch_id: value }))}
                             options={getAvailableTables(res.tisch_id).map((t) => ({
                               value: t.id,
-                              label: `Tisch ${t.nummer} (${t.kapazitaet} seats)`,
+                              label: `Tisch ${t.nummer} (${t.kapazitaet} Plätze)`,
                             }))}
-                            placeholder="Select Tisch"
+                            placeholder="Tisch wählen"
                             className="min-w-[150px]"
                           />
                         ) : (
@@ -1016,14 +1013,14 @@ function ReservationsPage({ role }: { role: string }) {
                                 className="flex items-center space-x-1 px-2 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
                               >
                                 <Save className="w-4 h-4" />
-                                <span>Save</span>
+                                <span>Speichern</span>
                               </button>
                               <button
                                 onClick={cancelEditing}
                                 className="flex items-center space-x-1 px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 transition-colors"
                               >
                                 <X className="w-4 h-4" />
-                                <span>Cancel</span>
+                                <span>Abbrechen</span>
                               </button>
                             </>
                           ) : (
@@ -1035,7 +1032,7 @@ function ReservationsPage({ role }: { role: string }) {
                                     <button
                                       onClick={() => startEditing(res)}
                                       className="flex items-center space-x-1 px-2 py-1 text-orange-800 rounded text-sm hover:bg-orange-100 transition-colors"
-                                      title="Edit Reservation"
+                                      title="Reservierung bearbeiten"
                                     >
                                       <Edit className="w-4 h-4" />
                                     </button>
@@ -1044,7 +1041,7 @@ function ReservationsPage({ role }: { role: string }) {
                                   <button
                                     onClick={() => openActionModal("arrived", res)}
                                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                                    title="Mark Arrived"
+                                    title="Als angekommen markieren"
                                   >
                                     <UserCheck className="w-5 h-5" />
                                   </button>

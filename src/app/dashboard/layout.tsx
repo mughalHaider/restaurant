@@ -4,6 +4,7 @@ import { LogOut, Menu, X, Home, Calendar, Table, BarChart3, Users, Settings, Che
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter, usePathname } from "next/navigation";
+import gr from "../message/de.json";
 
 type Role = "waiter" | "manager" | "admin";
 
@@ -66,25 +67,25 @@ function Layout({ children }: { children: React.ReactNode }) {
       roles: ["waiter", "manager", "admin"] 
     },
     { 
-      label: "Reservations", 
+      label: "Reservierungen", 
       href: "/dashboard/reservations", 
       icon: Calendar,
       roles: ["waiter", "manager", "admin"] 
     },
     { 
-      label: "Tables", 
+      label: "Tische", 
       href: "/dashboard/tables", 
       icon: Table,
       roles: ["manager", "admin", "waiter"] 
     },
     { 
-      label: "Employees", 
+      label: "Mitarbeiter", 
       href: "/dashboard/employees", 
       icon: Users,
       roles: ["admin"] 
     },
     { 
-      label: "Settings", 
+      label: "Einstellungen", 
       href: "/dashboard/settings", 
       icon: Settings,
       roles: ["admin"] 
@@ -114,7 +115,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+          <p className="text-gray-600">{gr.LoadingDashboard}</p>
         </div>
       </div>
     );
@@ -227,7 +228,7 @@ function Layout({ children }: { children: React.ReactNode }) {
               <div className="hidden md:flex items-center space-x-2 text-sm">
                 <div className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-medium">
                   <span>
-                    {new Date().toLocaleDateString("en-US", {
+                    {new Date().toLocaleDateString("de-DE", {
                       weekday: "long",
                       year: "numeric",
                       month: "long",
@@ -263,7 +264,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                       className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-150 text-sm font-medium"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span>Logout</span>
+                      <span>Abmelden</span>
                     </button>
                   </div>
                 )}

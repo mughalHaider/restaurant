@@ -141,14 +141,14 @@ function DashboardPage() {
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-              {userName ? `Welcome back, ${userName}!` : "Welcome to Madot!"}
+              {userName ? `Willkommen zurück, ${userName}!` : "Willkommen bei Madot!"}
             </h1>
             <p className="text-amber-100 text-base sm:text-lg">
-              {role ? `Ready to manage today's operations as ${role}` : "Loading your dashboard..."}
+              {role ? `Bereit, die heutigen Abläufe als ${role} zu verwalten` : "Dashboard wird geladen..."}
             </p>
             <p className="text-amber-200 mt-2 flex items-center gap-2 text-sm">
               <Calendar className="w-4 h-4" />
-              {new Date().toLocaleDateString('en-US', { 
+              {new Date().toLocaleDateString('de-DE', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
@@ -172,11 +172,11 @@ function DashboardPage() {
             <div className="p-2 bg-amber-100 rounded-lg mb-2">
               <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" />
             </div>
-            <p className="text-xs font-medium text-gray-600 mb-1">Today&apos;s Reservations</p>
+            <p className="text-xs font-medium text-gray-600 mb-1">Heutige Reservierungen</p>
             <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">{reservations.length}</p>
             <div className="flex items-center text-xs text-gray-500">
               <TrendingUp className="w-3 h-3 mr-1" />
-              <span>Confirmed</span>
+              <span>Bestätigt</span>
             </div>
           </div>
         </div>
@@ -187,7 +187,7 @@ function DashboardPage() {
             <div className="p-2 bg-green-100 rounded-lg mb-2">
               <Utensils className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
             </div>
-            <p className="text-xs font-medium text-gray-600 mb-1">Active Tables</p>
+            <p className="text-xs font-medium text-gray-600 mb-1">Aktive Tische</p>
             <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
               {reservedTables}<span className="text-lg text-gray-400">/{totalTables}</span>
             </p>
@@ -197,7 +197,7 @@ function DashboardPage() {
                 style={{ width: `${occupancyRate}%` }}
               ></div>
             </div>
-            <p className="text-xs text-gray-500 mt-1">{occupancyRate}% occupied</p>
+            <p className="text-xs text-gray-500 mt-1">{occupancyRate}% belegt</p>
           </div>
         </div>
 
@@ -207,11 +207,11 @@ function DashboardPage() {
             <div className="p-2 bg-blue-100 rounded-lg mb-2">
               <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
             </div>
-            <p className="text-xs font-medium text-gray-600 mb-1">Staff on Duty</p>
+            <p className="text-xs font-medium text-gray-600 mb-1">Mitarbeiter im Dienst</p>
             <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">{staffCount}</p>
             <div className="flex items-center text-xs text-gray-500">
               <User className="w-3 h-3 mr-1" />
-              <span>Active</span>
+              <span>Aktiv</span>
             </div>
           </div>
         </div>
@@ -222,12 +222,12 @@ function DashboardPage() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Today&apos;s Schedule</h3>
-              <p className="text-gray-600 mt-1">Confirmed reservations for your shift</p>
+              <h3 className="text-xl font-bold text-gray-900">Heutiger Ablauf</h3>
+              <p className="text-gray-600 mt-1">Bestätigte Reservierungen für Ihre Schicht</p>
             </div>
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
-                {reservations.length} reservations
+                {reservations.length} Reservierungen
               </span>
             </div>
           </div>
@@ -239,13 +239,11 @@ function DashboardPage() {
               <div className="p-4 bg-gray-100 rounded-2xl inline-block mb-4">
                 <Calendar className="w-12 h-12 text-gray-400" />
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">No reservations today</h4>
-              <p className="text-gray-500 mb-4">
-                All clear! There are no confirmed reservations scheduled for today.
-              </p>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Heute keine Reservierungen</h4>
+              <p className="text-gray-500 mb-4">Alles klar! Für heute sind keine bestätigten Reservierungen geplant.</p>
               <div className="text-sm text-gray-400 bg-gray-50 rounded-lg p-3">
                 <Clock className="w-4 h-4 inline mr-1" />
-                Check back later for new reservations
+                Später erneut prüfen für neue Reservierungen
               </div>
             </div>
           </div>
@@ -255,13 +253,13 @@ function DashboardPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Guest
+                    Gast
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Time
+                    Uhrzeit
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Party Size
+                    Gästeanzahl
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Status
@@ -298,14 +296,14 @@ function DashboardPage() {
                       <div className="flex items-center space-x-2">
                         <Users className="w-4 h-4 text-gray-400" />
                         <span className="text-sm font-medium text-gray-900">
-                          {reservation.gaeste} {reservation.gaeste === 1 ? 'guest' : 'guests'}
+                          {reservation.gaeste} {reservation.gaeste === 1 ? 'Gast' : 'Gäste'}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
                         <CheckCircle className="w-3 h-3" />
-                        <span>Confirmed</span>
+                        <span>Bestätigt</span>
                       </span>
                     </td>
                   </tr>

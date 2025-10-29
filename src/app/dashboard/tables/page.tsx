@@ -49,7 +49,7 @@ function TablesPage({ role }: { role: string }) {
 
   // Add new table
   const addTable = async () => {
-    if (!formData.nummer || !formData.kapazitaet) return alert("Enter number & capacity");
+    if (!formData.nummer || !formData.kapazitaet) return alert("Nummer und Kapazität eingeben");
     const { error } = await supabase.from("tische").insert([{ nummer: Number(formData.nummer), kapazitaet: Number(formData.kapazitaet), status: formData.status }]);
     if (!error) {
       setFormData({ nummer: "", kapazitaet: "", status: "available" });
@@ -122,8 +122,8 @@ function TablesPage({ role }: { role: string }) {
         <Modal
           isOpen={true}
           onClose={() => setModal({ type: null, table: null })}
-          title="Delete Table"
-          description="Are you sure you want to delete this table? This action cannot be undone."
+          title="Tisch löschen"
+          description="Möchten Sie diesen Tisch wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
         >
           <div className="space-y-4">
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -132,8 +132,8 @@ function TablesPage({ role }: { role: string }) {
                   <span className="text-red-700 font-bold text-lg">{modal.table.nummer}</span>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Table {modal.table.nummer}</p>
-                  <p className="text-sm text-gray-600">Capacity: {modal.table.kapazitaet} guests</p>
+                  <p className="font-medium text-gray-900">Tisch {modal.table.nummer}</p>
+                  <p className="text-sm text-gray-600">Kapazität: {modal.table.kapazitaet} Gäste</p>
                 </div>
               </div>
             </div>
@@ -143,13 +143,13 @@ function TablesPage({ role }: { role: string }) {
                 onClick={() => setModal({ type: null, table: null })}
                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
               >
-                Cancel
+                Abbrechen
               </button>
               <button
                 onClick={deleteTable}
                 className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors cursor-pointer"
               >
-                Delete Table
+                Tisch löschen
               </button>
             </div>
           </div>
@@ -158,8 +158,8 @@ function TablesPage({ role }: { role: string }) {
     }
 
     const isEdit = modal.type === "edit";
-    const title = isEdit ? "Edit Table" : "Add New Table";
-    const description = isEdit ? "Update table capacity and status" : "Add a new table to your restaurant";
+    const title = isEdit ? "Tisch bearbeiten" : "Neuen Tisch hinzufügen";
+    const description = isEdit ? "Tischkapazität und Status aktualisieren" : "Neuen Tisch zum Restaurant hinzufügen";
 
     return (
       <Modal
@@ -170,12 +170,10 @@ function TablesPage({ role }: { role: string }) {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Table Number
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tischnummer</label>
             <input
               type="number"
-              placeholder="e.g., 1"
+              placeholder="z. B. 1"
               value={formData.nummer}
               onChange={(e) => setFormData({ ...formData, nummer: e.target.value })}
               disabled={isEdit}
@@ -184,12 +182,10 @@ function TablesPage({ role }: { role: string }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Capacity
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Kapazität</label>
             <input
               type="number"
-              placeholder="e.g., 4"
+              placeholder="z. B. 4"
               value={formData.kapazitaet}
               onChange={(e) => setFormData({ ...formData, kapazitaet: e.target.value })}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
@@ -197,18 +193,16 @@ function TablesPage({ role }: { role: string }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <Select
               value={formData.status}
               onValueChange={(value) => setFormData({ ...formData, status: value })}
               options={[
-                { value: "available", label: "Available" },
-                { value: "occupied", label: "Occupied" },
-                { value: "reserved", label: "Reserved" },
+                { value: "available", label: "Verfügbar" },
+                { value: "occupied", label: "Belegt" },
+                { value: "reserved", label: "Reserviert" },
               ]}
-              placeholder="Select status"
+              placeholder="Status wählen"
               className="w-full"
             />
           </div>
@@ -218,13 +212,13 @@ function TablesPage({ role }: { role: string }) {
               onClick={() => setModal({ type: null, table: null })}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
             >
-              Cancel
+              Abbrechen
             </button>
             <button
               onClick={isEdit ? updateTable : addTable}
               className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors cursor-pointer"
             >
-              {isEdit ? "Update Table" : "Add Table"}
+              {isEdit ? "Tisch aktualisieren" : "Tisch hinzufügen"}
             </button>
           </div>
         </div>
@@ -237,8 +231,8 @@ function TablesPage({ role }: { role: string }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Table Management</h1>
-          <p className="text-gray-600 mt-1">Manage your restaurant tables and seating capacity</p>
+          <h1 className="text-2xl font-bold text-gray-900">Tischverwaltung</h1>
+          <p className="text-gray-600 mt-1">Tische und Sitzkapazitäten verwalten</p>
         </div>
         {role !== "waiter" && (
           <button
@@ -246,7 +240,7 @@ function TablesPage({ role }: { role: string }) {
             className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-150 font-medium cursor-pointer"
           >
             <Plus className="w-5 h-5" />
-            <span>Add Table</span>
+            <span>Tisch hinzufügen</span>
           </button>
         )}
       </div>
@@ -254,19 +248,19 @@ function TablesPage({ role }: { role: string }) {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">Total Tables</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">Tische insgesamt</p>
           <p className="text-3xl font-bold text-gray-900">{totalTables}</p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">Available</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">Verfügbar</p>
           <p className="text-3xl font-bold text-green-600">{availableTables}</p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">Occupied</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">Belegt</p>
           <p className="text-3xl font-bold text-red-600">{occupiedTables}</p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">Total Capacity</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">Gesamtkapazität</p>
           <p className="text-3xl font-bold text-gray-900">{totalCapacity}</p>
         </div>
       </div>
@@ -274,20 +268,20 @@ function TablesPage({ role }: { role: string }) {
       {/* Tables List */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b">
-          <h3 className="text-lg font-semibold text-gray-900">All Tables ({tables.length})</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Alle Tische ({tables.length})</h3>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-gray-500">Loading tables...</div>
+          <div className="p-12 text-center text-gray-500">Tische werden geladen...</div>
         ) : tables.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-gray-500 mb-4">No tables found. Add your first table to get started!</p>
+            <p className="text-gray-500 mb-4">Keine Tische gefunden. Fügen Sie Ihren ersten Tisch hinzu!</p>
             <button
               onClick={openAddModal}
               className="inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer"
             >
               <Plus className="w-5 h-5" />
-              <span>Add Your First Table</span>
+              <span>Ersten Tisch hinzufügen</span>
             </button>
           </div>
         ) : (
@@ -306,7 +300,7 @@ function TablesPage({ role }: { role: string }) {
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      Aktionen
                     </th>
                   </tr>
                 </thead>
@@ -324,7 +318,7 @@ function TablesPage({ role }: { role: string }) {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900">
                           <Users className="w-4 h-4 mr-2 text-gray-400" />
-                          {table.kapazitaet} gaeste
+                          {table.kapazitaet} gäste
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -338,14 +332,14 @@ function TablesPage({ role }: { role: string }) {
                             <button
                               onClick={() => openEditModal(table)}
                               className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
-                              title="Edit"
+                              title="Bearbeiten"
                             >
                               <Edit2 className="w-5 h-5" />
                             </button>
                             <button
                               onClick={() => openDeleteModal(table)}
                               className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                              title="Delete"
+                              title="Löschen"
                             >
                               <Trash2 className="w-5 h-5" />
                             </button>

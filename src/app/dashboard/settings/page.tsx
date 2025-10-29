@@ -148,8 +148,8 @@ function SettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Restaurant Settings</h1>
-          <p className="text-gray-600 mt-2">Manage opening hours, holidays, and restaurant configuration</p>
+          <h1 className="text-3xl font-bold text-gray-900">Restaurant‑Einstellungen</h1>
+          <p className="text-gray-600 mt-2">Öffnungszeiten, Schließtage und Konfiguration verwalten</p>
         </div>
         <div className="p-3 bg-amber-100 rounded-xl">
           <SettingsIcon className="w-8 h-8 text-amber-600" />
@@ -172,9 +172,7 @@ function SettingsPage() {
           </div>
           <div>
             <h2 className="text-xl font-semibold text-gray-900">Oeffnungszeiten</h2>
-            <p className="text-gray-600 text-sm">
-              {`Set your restaurant's daily operating hours`}
-            </p>
+            <p className="text-gray-600 text-sm">Tägliche Betriebszeiten festlegen</p>
           </div>
         </div>
 
@@ -212,7 +210,7 @@ function SettingsPage() {
 
         <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200">
           <p className="text-sm text-amber-800">
-            <strong>Current hours:</strong> {openingTime} - {closingTime}
+            <strong>Aktuelle Zeiten:</strong> {openingTime} - {closingTime}
           </p>
         </div>
       </div>
@@ -224,14 +222,14 @@ function SettingsPage() {
             <Calendar className="w-6 h-6 text-red-600" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Feiertage & Schliesstage</h2>
-            <p className="text-gray-600 text-sm">Mark dates when the restaurant will be closed</p>
+            <h2 className="text-xl font-semibold text-gray-900">Feiertage & Schließtage</h2>
+            <p className="text-gray-600 text-sm">Tage markieren, an denen das Restaurant geschlossen ist</p>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 mb-6">
           <div className="flex-1 space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Add Schliesstag</label>
+            <label className="block text-sm font-medium text-gray-700">Schließtag hinzufügen</label>
             <input
               type="date"
               value={newHoliday}
@@ -244,13 +242,13 @@ function SettingsPage() {
             className="flex items-center gap-2 bg-amber-600 text-white px-6 py-3 rounded-xl hover:bg-amber-700 transition-colors duration-200 font-medium"
           >
             <Plus className="w-4 h-4" />
-            Add Datum
+            Datum hinzufügen
           </button>
         </div>
 
         {closedDates.length > 0 ? (
           <div className="space-y-3">
-            <h3 className="text-lg font-medium text-gray-900">Scheduled Closures ({closedDates.length})</h3>
+            <h3 className="text-lg font-medium text-gray-900">Geplante Schließungen ({closedDates.length})</h3>
             <div className="grid gap-3">
               {closedDates.map((date) => (
                 <div
@@ -266,7 +264,7 @@ function SettingsPage() {
                     className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors duration-200 p-2 rounded-lg hover:bg-red-50"
                   >
                     <Trash2 className="w-4 h-4" />
-                    <span className="text-sm font-medium">Remove</span>
+                    <span className="text-sm font-medium">Entfernen</span>
                   </button>
                 </div>
               ))}
@@ -277,10 +275,8 @@ function SettingsPage() {
             <div className="p-4 bg-gray-100 rounded-2xl inline-block mb-4">
               <Building className="w-12 h-12 text-gray-400" />
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">No holidays scheduled</h4>
-            <p className="text-gray-500 max-w-md mx-auto">
-              Add dates when the restaurant will be closed for holidays, maintenance, or special events.
-            </p>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">Keine Schließtage geplant</h4>
+            <p className="text-gray-500 max-w-md mx-auto">Fügen Sie Tage hinzu, an denen das Restaurant wegen Feiertagen, Wartung oder Veranstaltungen geschlossen ist.</p>
           </div>
         )}
       </div>
@@ -295,12 +291,12 @@ function SettingsPage() {
           {loading ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              <span>Saving Changes...</span>
+              <span>Änderungen werden gespeichert...</span>
             </>
           ) : (
             <>
               <Save className="w-5 h-5" />
-              <span>Save Settings</span>
+              <span>Einstellungen speichern</span>
             </>
           )}
         </button>

@@ -542,7 +542,7 @@ export default function Reservation() {
                       value={field.value}
                       onValueChange={field.onChange}
                       options={timeSlots}
-                      placeholder="Select uhrzeit"
+                      placeholder="Auswählen uhrzeit"
                       className="border-2 border-gray-200 rounded-lg px-10 hover:border-amber-300 transition-colors"
                     />
                     {errors.uhrzeit && (
@@ -567,7 +567,7 @@ export default function Reservation() {
                       value={field.value}
                       onValueChange={field.onChange}
                       options={guestOptions}
-                      placeholder="Select gaeste"
+                      placeholder="Auswählen gaeste"
                       className="border-2 border-gray-200 px-10 rounded-lg hover:border-amber-300 transition-colors"
                     />
                   </div>

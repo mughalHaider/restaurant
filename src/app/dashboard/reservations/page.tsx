@@ -108,24 +108,51 @@ function ReservationsPage({ role }: { role: string }) {
         const targetReservations: Reservation[] = (resData || []).filter(
           (r) => r.status === "cancelled" || r.status === "arrived"
         );
-      
-        if (targetReservations.length > 0) {
+
+        targetReservations.forEach((r) => {
+          const combined = new Date(`${r.datum}T${r.uhrzeit}:00`);
+
+          if (isNaN(combined.getTime())) return; // skip invalid dates
+
+          const twentyFourHoursMs = 1000 * 60 * 60 * 24; // 24 hours in ms
+          const elapsed = Date.now() - combined.getTime();
+          const remaining = twentyFourHoursMs - elapsed;
+
+          // If already older than 24 hours, delete immediately
+          const delay = remaining > 0 ? remaining : 0;
+
           setTimeout(async () => {
-            const idsToDelete = targetReservations.map((r) => r.id);
-      
-            await supabase.from("reservierungen").delete().in("id", idsToDelete);
-      
-            setReservations((prev) =>
-              prev.filter((r) => !idsToDelete.includes(r.id))
-            );
-      
-            console.log("Deleted cancelled/arrived reservations after 5 seconds:", idsToDelete);
-          }, 5000); // wait 5 seconds
-        }
+             try {
+               // If reservation had a table assigned, free it before deleting the reservation
+               if (r.tisch_id) {
+                 await supabase
+                   .from("tische")
+                   .update({ status: "available" })
+                   .eq("id", r.tisch_id);
+ 
+                 // Update local tables state
+                 setTables((prev) =>
+                   prev.map((t) =>
+                     t.id === r.tisch_id ? { ...t, status: "available" } : t
+                   )
+                 );
+               }
+ 
+               // Delete the reservation
+               await supabase.from("reservierungen").delete().eq("id", r.id);
+ 
+               // Update local reservations state
+               setReservations((prev) => prev.filter((res) => res.id !== r.id));
+               console.log(`Deleted reservation ${r.id} after 24 hours.`);
+             } catch (err) {
+               console.error("Error during auto-delete cleanup:", err);
+             }
+          }, delay);
+        });
       } catch (cleanupErr) {
         console.error("Cleanup error:", cleanupErr);
       }
-      
+
     };
     fetchData();
   }, []);

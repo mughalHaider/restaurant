@@ -135,7 +135,7 @@ export default function Reservation() {
 
     const formatted = format(selectedDate, "yyyy-MM-dd");
     if (closedDates.includes(formatted)) {
-      setHolidayError("❌ Sorry, the restaurant is closed on this date. Please choose another date.");
+      setHolidayError("Das Restaurant ist an diesem Tag geschlossen. Bitte wählen Sie ein anderes Datum.");
     } else {
       setHolidayError("");
     }
@@ -147,7 +147,7 @@ export default function Reservation() {
 
     // 🔹 Prevent submission if it's a holiday
     if (closedDates.includes(formatted)) {
-      setHolidayError("❌ Sorry, the restaurant is closed on this date. Please choose another date.");
+      setHolidayError("Das Restaurant ist an diesem Tag geschlossen. Bitte wählen Sie ein anderes Datum.");
       return;
     }
 
@@ -192,7 +192,7 @@ export default function Reservation() {
       }
     } catch (error) {
       console.error("❌ Network error submitting reservation:", error);
-      
+
     }
   };
 
@@ -348,15 +348,20 @@ export default function Reservation() {
                 Schliesstage
               </h2>
               <ul className="text-red-600 text-sm space-y-1">
-                {closedDates.map((d) => (
-                  <li key={d} className="flex items-center">
-                    <span className="w-1.5 h-1.5 bg-red-400 rounded-full mr-2"></span>
-                    {d}
-                  </li>
-                ))}
+                {closedDates.map((d) => {
+                  const dateObj = new Date(d);
+                  const formattedDate = dateObj.toLocaleDateString("en-GB"); // DD/MM/YYYY
+                  return (
+                    <li key={d} className="flex items-center">
+                      <span className="w-1.5 h-1.5 bg-red-400 rounded-full mr-2"></span>
+                      {formattedDate}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}
+
 
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* First Name & Last Name */}

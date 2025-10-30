@@ -106,16 +106,15 @@ function ReservationsPage({ role }: { role: string }) {
       // Cleanup: auto-delete 'cancelled' or 'arrived' reservations older than 24 hours
       try {
         const staleIds: string[] = (resData || [])
-          .filter((r: any) => r.status === "cancelled" || r.status === "arrived")
-          .filter((r: any) => {
+          .filter((r: Reservation) => r.status === "cancelled" || r.status === "arrived")
+          .filter((r: Reservation) => {
             // Combine datum and uhrzeit into a single Date
-            // Expecting formats like 'YYYY-MM-DD' and 'HH:MM' (24h)
             const combined = new Date(`${r.datum}T${r.uhrzeit}:00`);
             if (isNaN(combined.getTime())) return false;
-            const twentyFourHoursMs = 5000;
+            const twentyFourHoursMs = 5000; // for now, 5 seconds
             return Date.now() - combined.getTime() >= twentyFourHoursMs;
           })
-          .map((r: any) => r.id);
+          .map((r: Reservation) => r.id);
 
         if (staleIds.length > 0) {
           await supabase.from("reservierungen").delete().in("id", staleIds);
@@ -838,7 +837,7 @@ function ReservationsPage({ role }: { role: string }) {
                           <button
                             onClick={() => openActionModal("cancel", res)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                              title="Stornieren/Löschen"
+                            title="Stornieren/Löschen"
                           >
                             <XCircle className="w-5 h-5" />
                           </button>
@@ -927,7 +926,7 @@ function ReservationsPage({ role }: { role: string }) {
                               type="button"
                               className="flex items-center text-xs text-blue-600 mt-1 hover:underline focus:outline-none cursor-pointer"
                               onClick={() => setRemarkModal({ open: true, bemerkung: res.bemerkung! })}
-                            title="Bemerkung anzeigen"
+                              title="Bemerkung anzeigen"
                             >
                               <MessageCircle className="w-3 h-3 mr-1" />
                               Has Bemerkung
@@ -946,9 +945,9 @@ function ReservationsPage({ role }: { role: string }) {
                               <div className="mt-4 flex justify-end">
                                 <button
                                   onClick={() => setRemarkModal({ open: false, bemerkung: "" })}
-                              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                            >
-                              Schließen
+                                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                                >
+                                  Schließen
                                 </button>
                               </div>
                             </div>

@@ -105,24 +105,27 @@ function ReservationsPage({ role }: { role: string }) {
 
       // Cleanup: auto-delete 'cancelled' or 'arrived' reservations older than 24 hours
       try {
-        const staleIds: string[] = (resData || [])
-          .filter((r: Reservation) => r.status === "cancelled" || r.status === "arrived")
-          .filter((r: Reservation) => {
-            // Combine datum and uhrzeit into a single Date
-            const combined = new Date(`${r.datum}T${r.uhrzeit}:00`);
-            if (isNaN(combined.getTime())) return false;
-            const twentyFourHoursMs = 5000; // for now, 5 seconds
-            return Date.now() - combined.getTime() >= twentyFourHoursMs;
-          })
-          .map((r: Reservation) => r.id);
-
-        if (staleIds.length > 0) {
-          await supabase.from("reservierungen").delete().in("id", staleIds);
-          setReservations((prev) => prev.filter((r) => !staleIds.includes(r.id)));
+        const targetReservations: Reservation[] = (resData || []).filter(
+          (r) => r.status === "cancelled" || r.status === "arrived"
+        );
+      
+        if (targetReservations.length > 0) {
+          setTimeout(async () => {
+            const idsToDelete = targetReservations.map((r) => r.id);
+      
+            await supabase.from("reservierungen").delete().in("id", idsToDelete);
+      
+            setReservations((prev) =>
+              prev.filter((r) => !idsToDelete.includes(r.id))
+            );
+      
+            console.log("Deleted cancelled/arrived reservations after 5 seconds:", idsToDelete);
+          }, 5000); // wait 5 seconds
         }
       } catch (cleanupErr) {
         console.error("Cleanup error:", cleanupErr);
       }
+      
     };
     fetchData();
   }, []);

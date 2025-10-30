@@ -102,6 +102,28 @@ function ReservationsPage({ role }: { role: string }) {
       setReservations(resData || []);
       setTables(tableData || []);
       setLoading(false);
+
+      // Cleanup: auto-delete 'cancelled' or 'arrived' reservations older than 24 hours
+      try {
+        const staleIds: string[] = (resData || [])
+          .filter((r: any) => r.status === "cancelled" || r.status === "arrived")
+          .filter((r: any) => {
+            // Combine datum and uhrzeit into a single Date
+            // Expecting formats like 'YYYY-MM-DD' and 'HH:MM' (24h)
+            const combined = new Date(`${r.datum}T${r.uhrzeit}:00`);
+            if (isNaN(combined.getTime())) return false;
+            const twentyFourHoursMs = 5000;
+            return Date.now() - combined.getTime() >= twentyFourHoursMs;
+          })
+          .map((r: any) => r.id);
+
+        if (staleIds.length > 0) {
+          await supabase.from("reservierungen").delete().in("id", staleIds);
+          setReservations((prev) => prev.filter((r) => !staleIds.includes(r.id)));
+        }
+      } catch (cleanupErr) {
+        console.error("Cleanup error:", cleanupErr);
+      }
     };
     fetchData();
   }, []);

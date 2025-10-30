@@ -479,23 +479,23 @@ function ReservationsPage({ role }: { role: string }) {
 
     const modalConfig = {
       confirm: {
-        title: "Confirm Reservation",
-        description: "Are you sure you want to confirm this reservation?",
-        actionText: "Confirm",
+        title: "Reservierung bestätigen",
+        description: "Sind Sie sicher, dass Sie diese Reservierung bestätigen möchten?",
+        actionText: "Bestätigen",
         actionClass: "bg-green-500 hover:bg-green-600",
         action: () => confirmReservation(reservation),
       },
       cancel: {
-        title: "Cancel Reservation",
-        description: "Are you sure you want to cancel this reservation?",
-        actionText: "Cancel Reservation",
+        title: "Reservierung stornieren",
+        description: "Sind Sie sicher, dass Sie diese Reservierung stornieren möchten?",
+        actionText: "Reservierung stornieren",
         actionClass: "bg-red-500 hover:bg-red-600",
         action: () => updateStatus(reservation.id, "cancelled"),
       },
       arrived: {
-        title: "Mark as Arrived",
-        description: "Confirm that the guest has arrived at the restaurant.",
-        actionText: "Mark Arrived",
+        title: "Als angekommen markieren",
+        description: "Bestätigen Sie, dass der Gast im Restaurant angekommen ist.",
+        actionText: "Als angekommen markieren",
         actionClass: "bg-blue-500 hover:bg-blue-600",
         action: () => updateStatus(reservation.id, "arrived"),
       },
@@ -520,53 +520,53 @@ function ReservationsPage({ role }: { role: string }) {
 
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Guest:</span>
+              <span className="text-gray-600">Gast:</span>
               <span className="font-medium text-gray-900">
                 {reservation.vorname} {reservation.nachname}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Email:</span>
+              <span className="text-gray-600">E‑Mail:</span>
               <span className="font-medium text-gray-900">
                 {reservation.email}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Telephone:</span>
+              <span className="text-gray-600">Telefon:</span>
               <span className="font-medium text-gray-900">
                 {reservation.telefon}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Date:</span>
+              <span className="text-gray-600">Datum:</span>
               <span className="font-medium text-gray-900">
                 {new Date(reservation.datum).toLocaleDateString()}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Time:</span>
+              <span className="text-gray-600">Uhrzeit:</span>
               <span className="font-medium text-gray-900">
                 {reservation.uhrzeit}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Party Size:</span>
+              <span className="text-gray-600">Personenzahl:</span>
               <span className="font-medium text-gray-900">
-                {reservation.gaeste} guests
+                {reservation.gaeste} Gäste
               </span>
             </div>
             {reservation.bemerkung && (
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Remarks:</span>
+                <span className="text-gray-600">Bemerkungen:</span>
                 <span className="font-medium text-gray-900">
                   {reservation.bemerkung}
                 </span>
               </div>
             )}
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Table Assigned:</span>
+              <span className="text-gray-600">Zugewiesener Tisch:</span>
               <span className="font-medium text-gray-900">
-                {reservation.tisch_id ? `Table ${tables.find(t => t.id === reservation.tisch_id)?.nummer}` : "None"}
+                {reservation.tisch_id ? `Tisch ${tables.find(t => t.id === reservation.tisch_id)?.nummer}` : "Keiner"}
               </span>
             </div>
           </div>
@@ -576,7 +576,7 @@ function ReservationsPage({ role }: { role: string }) {
               onClick={() => setActionModal({ type: null, reservation: null })}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
             >
-              Cancel
+              Abbrechen
             </button>
             <button
               onClick={config.action}

@@ -82,7 +82,7 @@ export default function Footer() {
                         <div className="space-y-3">
                             <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
                                 <MapPin className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                                <span>123 Gourmet Street, Culinary City, CC 10101</span>
+                                <span>Sonnenalle 14, 16321 Bernau bei Berlin</span>
                             </div>
                             <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
                                 <Mail className="w-4 h-4 text-amber-400 flex-shrink-0" />
@@ -96,10 +96,10 @@ export default function Footer() {
                             <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
                                 <Phone className="w-4 h-4 text-amber-400 flex-shrink-0" />
                                 <a
-                                    href="tel:+15551234567"
+                                    href="tel:+03338 1234-0"
                                     className="hover:text-amber-300 transition-colors cursor-pointer"
                                 >
-                                    +1 (555) 123-4567
+                                    03338 1234-0
                                 </a>
                             </div>
                         </div>

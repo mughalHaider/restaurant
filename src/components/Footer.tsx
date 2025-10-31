@@ -123,7 +123,7 @@ export default function Footer() {
                             <div className="space-y-2">
                                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm sm:text-base">
                                     <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                                    <span>Monday - Sunday</span>
+                                    <span>Montag - Sonntag</span>
                                 </div>
                                 <p className="text-gray-400 text-sm sm:text-base md:ml-7">
                                     {openingTime} - {closingTime}

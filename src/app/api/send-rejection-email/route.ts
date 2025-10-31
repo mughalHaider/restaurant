@@ -108,7 +108,7 @@ export async function POST(req: Request) {
               Madot Restaurant &copy; ${new Date().getFullYear()}
             </p>
             <p style="color: #6b7280; margin: 0; font-size: 12px;">
-              123 Gourmet Straße, Foodstadt
+              Sonnenalle 14, 16321 Bernau bei Berlin
             </p>
             <p style="color: #6b7280; margin: 15px 0 0 0; font-size: 11px;">
               Dies ist eine automatisch generierte E‑Mail. Bitte antworten Sie nicht auf diese Nachricht.
@@ -136,13 +136,13 @@ ALTERNATIVE OPTIONEN:
 
 Für Unterstützung oder alternative Buchungsoptionen:
 E‑Mail: info@madotrestaurant.com
-Telefon: (555) 123-4567
+Telefon: 03338 1234-0
 
 Wir hoffen, Sie zukünftig bei uns begrüßen zu dürfen.
 
 Mit freundlichen Grüßen
 Ihr Madot Restaurant Team
-123 Gourmet Straße, Foodstadt
+Sonnenalle 14, 16321 Bernau bei Berlin
 
 Dies ist eine automatisch generierte E‑Mail. Bitte nicht antworten.
       `,
